@@ -1,27 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Net.Sockets;
 
 namespace Ticketing_System.Models
 {
-    public class TicketPriority
+    public enum TicketPriority
     {
-        public int PriorityID { get; set; }
+        [Description("Low Priority")]
+        Low,
 
-        [Required, MaxLength(50)]
-        public string PriorityName { get; set; }
+        [Description("Medium Priority")]
+        Medium,
 
-        [MaxLength(255)]
-        public string Description { get; set; }
+        [Description("High Priority")]
+        High,
 
-        [Required]
-        public int SLAResponseHours { get; set; }
-
-        [Required]
-        public int SLAResolutionHours { get; set; }
-
-        // Navigation properties
-        public virtual ICollection<Ticket> Tickets { get; set; }
-        public virtual ICollection<AssignmentRule> AssignmentRules { get; set; }
-        public virtual ICollection<EscalationRule> EscalationRules { get; set; }
+        [Description("Critical Priority")]
+        Critical
     }
 }

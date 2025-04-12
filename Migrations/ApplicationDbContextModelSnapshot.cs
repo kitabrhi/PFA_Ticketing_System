@@ -22,6 +22,52 @@ namespace Ticketing_System.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("AssignmentRule", b =>
+                {
+                    b.Property<int>("RuleID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RuleID"));
+
+                    b.Property<int?>("AssignToTeamID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AssignToUserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RuleName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("RuleOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("RuleID");
+
+                    b.HasIndex("AssignToTeamID");
+
+                    b.HasIndex("AssignToUserID");
+
+                    b.ToTable("AssignmentRules");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -128,71 +174,13 @@ namespace Ticketing_System.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Ticketing_System.Models.AssignmentRule", b =>
-                {
-                    b.Property<int>("RuleID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RuleID"));
-
-                    b.Property<int?>("AssignToTeamID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("AssignToUserID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("CategoryID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("PriorityID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RuleName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("RuleOrder")
-                        .HasColumnType("int");
-
-                    b.HasKey("RuleID");
-
-                    b.HasIndex("AssignToTeamID");
-
-                    b.HasIndex("AssignToUserID");
-
-                    b.HasIndex("CategoryID");
-
-                    b.HasIndex("PriorityID");
-
-                    b.ToTable("AssignmentRules");
-                });
-
             modelBuilder.Entity("Ticketing_System.Models.Attachment", b =>
                 {
-                    b.Property<int>("AttachmentID")
+                    b.Property<int>("AttachmentId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AttachmentID"));
-
-                    b.Property<int?>("CommentID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AttachmentId"));
 
                     b.Property<string>("FileName")
                         .IsRequired()
@@ -201,29 +189,23 @@ namespace Ticketing_System.Migrations
 
                     b.Property<string>("FilePath")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<long>("FileSize")
-                        .HasColumnType("bigint");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TicketID")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("UploadDate")
+                    b.Property<DateTime>("UploadedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UploadedByUserID")
+                    b.Property<string>("UploaderUserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("AttachmentID");
-
-                    b.HasIndex("CommentID");
+                    b.HasKey("AttachmentId");
 
                     b.HasIndex("TicketID");
 
-                    b.HasIndex("UploadedByUserID");
+                    b.HasIndex("UploaderUserId");
 
                     b.ToTable("Attachments");
                 });
@@ -256,9 +238,10 @@ namespace Ticketing_System.Migrations
 
                     b.Property<string>("NotifyUserIDs")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                    b.Property<int?>("PriorityID")
+                    b.Property<int?>("Priority")
                         .HasColumnType("int");
 
                     b.Property<string>("RuleName")
@@ -266,7 +249,7 @@ namespace Ticketing_System.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("StatusID")
+                    b.Property<int?>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("RuleID");
@@ -274,10 +257,6 @@ namespace Ticketing_System.Migrations
                     b.HasIndex("EscalateToTeamID");
 
                     b.HasIndex("EscalateToUserID");
-
-                    b.HasIndex("PriorityID");
-
-                    b.HasIndex("StatusID");
 
                     b.ToTable("EscalationRules");
                 });
@@ -293,6 +272,9 @@ namespace Ticketing_System.Migrations
                     b.Property<string>("AuthorID")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
 
                     b.Property<int?>("CategoryID")
                         .HasColumnType("int");
@@ -322,20 +304,18 @@ namespace Ticketing_System.Migrations
 
                     b.HasIndex("AuthorID");
 
-                    b.HasIndex("CategoryID");
-
                     b.ToTable("KnowledgeBaseArticles");
                 });
 
             modelBuilder.Entity("Ticketing_System.Models.Notification", b =>
                 {
-                    b.Property<int>("NotificationID")
+                    b.Property<int>("NotificationId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationId"));
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("DateSent")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsRead")
@@ -345,25 +325,18 @@ namespace Ticketing_System.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("NotificationType")
+                    b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("TicketID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserID")
+                    b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("NotificationID");
+                    b.HasKey("NotificationId");
 
-                    b.HasIndex("IsRead");
-
-                    b.HasIndex("TicketID");
-
-                    b.HasIndex("UserID");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
                 });
@@ -413,7 +386,7 @@ namespace Ticketing_System.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("ManagerID")
+                    b.Property<string>("ManagerId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
@@ -424,25 +397,34 @@ namespace Ticketing_System.Migrations
 
                     b.HasKey("TeamID");
 
-                    b.HasIndex("ManagerID");
+                    b.HasIndex("ManagerId");
 
                     b.ToTable("SupportTeams");
                 });
 
             modelBuilder.Entity("Ticketing_System.Models.TeamMember", b =>
                 {
-                    b.Property<int>("TeamID")
+                    b.Property<int>("TeamMemberID")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("UserID")
-                        .HasColumnType("nvarchar(450)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TeamMemberID"));
 
                     b.Property<DateTime>("JoinDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("TeamID", "UserID");
+                    b.Property<int>("TeamID")
+                        .HasColumnType("int");
 
-                    b.HasIndex("UserID");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("TeamMemberID");
+
+                    b.HasIndex("TeamID");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("TeamMembers");
                 });
@@ -458,16 +440,16 @@ namespace Ticketing_System.Migrations
                     b.Property<int?>("AssignedToTeamID")
                         .HasColumnType("int");
 
-                    b.Property<string>("AssignedToUserID")
+                    b.Property<string>("AssignedToUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("CategoryID")
+                    b.Property<int>("Category")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ClosedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreatedByUserID")
+                    b.Property<string>("CreatedByUserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
@@ -484,7 +466,7 @@ namespace Ticketing_System.Migrations
                     b.Property<bool>("IsEscalated")
                         .HasColumnType("bit");
 
-                    b.Property<int>("PriorityID")
+                    b.Property<int>("Priority")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ResolutionDate")
@@ -495,7 +477,7 @@ namespace Ticketing_System.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("StatusID")
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -510,49 +492,11 @@ namespace Ticketing_System.Migrations
 
                     b.HasIndex("AssignedToTeamID");
 
-                    b.HasIndex("AssignedToUserID");
+                    b.HasIndex("AssignedToUserId");
 
-                    b.HasIndex("CategoryID");
-
-                    b.HasIndex("CreatedByUserID");
-
-                    b.HasIndex("CreatedDate");
-
-                    b.HasIndex("DueDate");
-
-                    b.HasIndex("PriorityID");
-
-                    b.HasIndex("StatusID");
+                    b.HasIndex("CreatedByUserId");
 
                     b.ToTable("Tickets");
-                });
-
-            modelBuilder.Entity("Ticketing_System.Models.TicketCategory", b =>
-                {
-                    b.Property<int>("CategoryID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryID"));
-
-                    b.Property<string>("CategoryName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int?>("ParentCategoryID")
-                        .HasColumnType("int");
-
-                    b.HasKey("CategoryID");
-
-                    b.HasIndex("ParentCategoryID");
-
-                    b.ToTable("TicketCategories");
                 });
 
             modelBuilder.Entity("Ticketing_System.Models.TicketComment", b =>
@@ -563,12 +507,12 @@ namespace Ticketing_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentID"));
 
-                    b.Property<DateTime>("CommentDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("CommentText")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsInternal")
                         .HasColumnType("bit");
@@ -576,7 +520,7 @@ namespace Ticketing_System.Migrations
                     b.Property<int>("TicketID")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserID")
+                    b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
@@ -584,22 +528,22 @@ namespace Ticketing_System.Migrations
 
                     b.HasIndex("TicketID");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("UserId");
 
                     b.ToTable("TicketComments");
                 });
 
             modelBuilder.Entity("Ticketing_System.Models.TicketHistory", b =>
                 {
-                    b.Property<int>("HistoryID")
+                    b.Property<int>("TicketHistoryID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HistoryID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketHistoryID"));
 
-                    b.Property<string>("ChangedByUserID")
+                    b.Property<string>("ChangedByUserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("ChangedDate")
                         .HasColumnType("datetime2");
@@ -611,155 +555,27 @@ namespace Ticketing_System.Migrations
 
                     b.Property<string>("NewValue")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("OldValue")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("TicketID")
                         .HasColumnType("int");
 
-                    b.HasKey("HistoryID");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasIndex("ChangedByUserID");
+                    b.HasKey("TicketHistoryID");
 
                     b.HasIndex("TicketID");
 
-                    b.ToTable("TicketHistory");
-                });
+                    b.HasIndex("UserId");
 
-            modelBuilder.Entity("Ticketing_System.Models.TicketPriority", b =>
-                {
-                    b.Property<int>("PriorityID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PriorityID"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("PriorityName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int>("SLAResolutionHours")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SLAResponseHours")
-                        .HasColumnType("int");
-
-                    b.HasKey("PriorityID");
-
-                    b.ToTable("TicketPriorities");
-
-                    b.HasData(
-                        new
-                        {
-                            PriorityID = 1,
-                            Description = "Problème mineur sans impact significatif",
-                            PriorityName = "Low",
-                            SLAResolutionHours = 72,
-                            SLAResponseHours = 24
-                        },
-                        new
-                        {
-                            PriorityID = 2,
-                            Description = "Problème avec impact limité",
-                            PriorityName = "Medium",
-                            SLAResolutionHours = 48,
-                            SLAResponseHours = 12
-                        },
-                        new
-                        {
-                            PriorityID = 3,
-                            Description = "Problème avec impact important",
-                            PriorityName = "High",
-                            SLAResolutionHours = 24,
-                            SLAResponseHours = 4
-                        },
-                        new
-                        {
-                            PriorityID = 4,
-                            Description = "Problème urgent avec impact majeur",
-                            PriorityName = "Critical",
-                            SLAResolutionHours = 8,
-                            SLAResponseHours = 1
-                        });
-                });
-
-            modelBuilder.Entity("Ticketing_System.Models.TicketStatus", b =>
-                {
-                    b.Property<int>("StatusID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StatusID"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<bool>("IsClosedStatus")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("StatusName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("StatusID");
-
-                    b.ToTable("TicketStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            StatusID = 1,
-                            Description = "Ticket nouvellement créé",
-                            IsClosedStatus = false,
-                            StatusName = "New"
-                        },
-                        new
-                        {
-                            StatusID = 2,
-                            Description = "Ticket en cours de traitement par un agent",
-                            IsClosedStatus = false,
-                            StatusName = "In Progress"
-                        },
-                        new
-                        {
-                            StatusID = 3,
-                            Description = "Ticket en attente d'information ou d'action",
-                            IsClosedStatus = false,
-                            StatusName = "On Hold"
-                        },
-                        new
-                        {
-                            StatusID = 4,
-                            Description = "Ticket résolu mais en attente de confirmation",
-                            IsClosedStatus = false,
-                            StatusName = "Resolved"
-                        },
-                        new
-                        {
-                            StatusID = 5,
-                            Description = "Ticket fermé et complété",
-                            IsClosedStatus = true,
-                            StatusName = "Closed"
-                        },
-                        new
-                        {
-                            StatusID = 6,
-                            Description = "Ticket annulé",
-                            IsClosedStatus = true,
-                            StatusName = "Cancelled"
-                        });
+                    b.ToTable("TicketHistories");
                 });
 
             modelBuilder.Entity("Ticketing_System.Models.User", b =>
@@ -846,31 +662,22 @@ namespace Ticketing_System.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Ticketing_System.Models.UserPreference", b =>
+            modelBuilder.Entity("AssignmentRule", b =>
                 {
-                    b.Property<string>("UserID")
-                        .HasColumnType("nvarchar(450)");
+                    b.HasOne("Ticketing_System.Models.SupportTeam", "AssignToTeam")
+                        .WithMany()
+                        .HasForeignKey("AssignToTeamID")
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.Property<bool>("DarkModeEnabled")
-                        .HasColumnType("bit");
+                    b.HasOne("Ticketing_System.Models.User", "AssignToUser")
+                        .WithMany()
+                        .HasForeignKey("AssignToUserID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
-                    b.Property<string>("DefaultDashboard")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Navigation("AssignToTeam");
 
-                    b.Property<bool>("EmailNotifications")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("InAppNotifications")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ItemsPerPage")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserID");
-
-                    b.ToTable("UserPreferences");
+                    b.Navigation("AssignToUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -924,87 +731,41 @@ namespace Ticketing_System.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Ticketing_System.Models.AssignmentRule", b =>
-                {
-                    b.HasOne("Ticketing_System.Models.SupportTeam", "AssignToTeam")
-                        .WithMany("AssignmentRules")
-                        .HasForeignKey("AssignToTeamID");
-
-                    b.HasOne("Ticketing_System.Models.User", "AssignToUser")
-                        .WithMany()
-                        .HasForeignKey("AssignToUserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Ticketing_System.Models.TicketCategory", "Category")
-                        .WithMany("AssignmentRules")
-                        .HasForeignKey("CategoryID");
-
-                    b.HasOne("Ticketing_System.Models.TicketPriority", "Priority")
-                        .WithMany("AssignmentRules")
-                        .HasForeignKey("PriorityID");
-
-                    b.Navigation("AssignToTeam");
-
-                    b.Navigation("AssignToUser");
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Priority");
-                });
-
             modelBuilder.Entity("Ticketing_System.Models.Attachment", b =>
                 {
-                    b.HasOne("Ticketing_System.Models.TicketComment", "Comment")
-                        .WithMany("Attachments")
-                        .HasForeignKey("CommentID");
-
                     b.HasOne("Ticketing_System.Models.Ticket", "Ticket")
-                        .WithMany("Attachments")
+                        .WithMany("TicketAttachments")
                         .HasForeignKey("TicketID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Ticketing_System.Models.User", "UploadedByUser")
+                    b.HasOne("Ticketing_System.Models.User", "Uploader")
                         .WithMany("Attachments")
-                        .HasForeignKey("UploadedByUserID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("UploaderUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("Comment");
 
                     b.Navigation("Ticket");
 
-                    b.Navigation("UploadedByUser");
+                    b.Navigation("Uploader");
                 });
 
             modelBuilder.Entity("Ticketing_System.Models.EscalationRule", b =>
                 {
                     b.HasOne("Ticketing_System.Models.SupportTeam", "EscalateToTeam")
-                        .WithMany("EscalationRules")
-                        .HasForeignKey("EscalateToTeamID");
+                        .WithMany()
+                        .HasForeignKey("EscalateToTeamID")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Ticketing_System.Models.User", "EscalateToUser")
                         .WithMany()
                         .HasForeignKey("EscalateToUserID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.HasOne("Ticketing_System.Models.TicketPriority", "Priority")
-                        .WithMany("EscalationRules")
-                        .HasForeignKey("PriorityID");
-
-                    b.HasOne("Ticketing_System.Models.TicketStatus", "Status")
-                        .WithMany("EscalationRules")
-                        .HasForeignKey("StatusID");
 
                     b.Navigation("EscalateToTeam");
 
                     b.Navigation("EscalateToUser");
-
-                    b.Navigation("Priority");
-
-                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("Ticketing_System.Models.KnowledgeBaseArticle", b =>
@@ -1012,33 +773,19 @@ namespace Ticketing_System.Migrations
                     b.HasOne("Ticketing_System.Models.User", "Author")
                         .WithMany("Articles")
                         .HasForeignKey("AuthorID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Ticketing_System.Models.TicketCategory", "Category")
-                        .WithMany("KnowledgeBaseArticles")
-                        .HasForeignKey("CategoryID");
-
                     b.Navigation("Author");
-
-                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("Ticketing_System.Models.Notification", b =>
                 {
-                    b.HasOne("Ticketing_System.Models.Ticket", "Ticket")
-                        .WithMany("Notifications")
-                        .HasForeignKey("TicketID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Ticketing_System.Models.User", "User")
                         .WithMany("Notifications")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("Ticket");
 
                     b.Navigation("User");
                 });
@@ -1047,8 +794,8 @@ namespace Ticketing_System.Migrations
                 {
                     b.HasOne("Ticketing_System.Models.User", "Manager")
                         .WithMany("ManagedTeams")
-                        .HasForeignKey("ManagerID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Manager");
@@ -1059,13 +806,13 @@ namespace Ticketing_System.Migrations
                     b.HasOne("Ticketing_System.Models.SupportTeam", "Team")
                         .WithMany("TeamMembers")
                         .HasForeignKey("TeamID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Ticketing_System.Models.User", "User")
                         .WithMany("TeamMemberships")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Team");
@@ -1077,71 +824,39 @@ namespace Ticketing_System.Migrations
                 {
                     b.HasOne("Ticketing_System.Models.SupportTeam", "AssignedToTeam")
                         .WithMany("AssignedTickets")
-                        .HasForeignKey("AssignedToTeamID");
+                        .HasForeignKey("AssignedToTeamID")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Ticketing_System.Models.User", "AssignedToUser")
                         .WithMany("AssignedTickets")
-                        .HasForeignKey("AssignedToUserID")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Ticketing_System.Models.TicketCategory", "Category")
-                        .WithMany("Tickets")
-                        .HasForeignKey("CategoryID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AssignedToUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Ticketing_System.Models.User", "CreatedByUser")
                         .WithMany("CreatedTickets")
-                        .HasForeignKey("CreatedByUserID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Ticketing_System.Models.TicketPriority", "Priority")
-                        .WithMany("Tickets")
-                        .HasForeignKey("PriorityID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Ticketing_System.Models.TicketStatus", "Status")
-                        .WithMany("Tickets")
-                        .HasForeignKey("StatusID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("AssignedToTeam");
 
                     b.Navigation("AssignedToUser");
 
-                    b.Navigation("Category");
-
                     b.Navigation("CreatedByUser");
-
-                    b.Navigation("Priority");
-
-                    b.Navigation("Status");
-                });
-
-            modelBuilder.Entity("Ticketing_System.Models.TicketCategory", b =>
-                {
-                    b.HasOne("Ticketing_System.Models.TicketCategory", "ParentCategory")
-                        .WithMany("ChildCategories")
-                        .HasForeignKey("ParentCategoryID");
-
-                    b.Navigation("ParentCategory");
                 });
 
             modelBuilder.Entity("Ticketing_System.Models.TicketComment", b =>
                 {
                     b.HasOne("Ticketing_System.Models.Ticket", "Ticket")
-                        .WithMany("Comments")
+                        .WithMany("TicketComments")
                         .HasForeignKey("TicketID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Ticketing_System.Models.User", "User")
                         .WithMany("Comments")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Ticket");
@@ -1151,86 +866,31 @@ namespace Ticketing_System.Migrations
 
             modelBuilder.Entity("Ticketing_System.Models.TicketHistory", b =>
                 {
-                    b.HasOne("Ticketing_System.Models.User", "ChangedByUser")
-                        .WithMany("TicketChanges")
-                        .HasForeignKey("ChangedByUserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Ticketing_System.Models.Ticket", "Ticket")
-                        .WithMany("History")
+                    b.HasOne("Ticketing_System.Models.Ticket", null)
+                        .WithMany("TicketHistories")
                         .HasForeignKey("TicketID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ChangedByUser");
-
-                    b.Navigation("Ticket");
-                });
-
-            modelBuilder.Entity("Ticketing_System.Models.UserPreference", b =>
-                {
-                    b.HasOne("Ticketing_System.Models.User", "User")
-                        .WithOne("Preference")
-                        .HasForeignKey("Ticketing_System.Models.UserPreference", "UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
+                    b.HasOne("Ticketing_System.Models.User", null)
+                        .WithMany("TicketChanges")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Ticketing_System.Models.SupportTeam", b =>
                 {
                     b.Navigation("AssignedTickets");
 
-                    b.Navigation("AssignmentRules");
-
-                    b.Navigation("EscalationRules");
-
                     b.Navigation("TeamMembers");
                 });
 
             modelBuilder.Entity("Ticketing_System.Models.Ticket", b =>
                 {
-                    b.Navigation("Attachments");
+                    b.Navigation("TicketAttachments");
 
-                    b.Navigation("Comments");
+                    b.Navigation("TicketComments");
 
-                    b.Navigation("History");
-
-                    b.Navigation("Notifications");
-                });
-
-            modelBuilder.Entity("Ticketing_System.Models.TicketCategory", b =>
-                {
-                    b.Navigation("AssignmentRules");
-
-                    b.Navigation("ChildCategories");
-
-                    b.Navigation("KnowledgeBaseArticles");
-
-                    b.Navigation("Tickets");
-                });
-
-            modelBuilder.Entity("Ticketing_System.Models.TicketComment", b =>
-                {
-                    b.Navigation("Attachments");
-                });
-
-            modelBuilder.Entity("Ticketing_System.Models.TicketPriority", b =>
-                {
-                    b.Navigation("AssignmentRules");
-
-                    b.Navigation("EscalationRules");
-
-                    b.Navigation("Tickets");
-                });
-
-            modelBuilder.Entity("Ticketing_System.Models.TicketStatus", b =>
-                {
-                    b.Navigation("EscalationRules");
-
-                    b.Navigation("Tickets");
+                    b.Navigation("TicketHistories");
                 });
 
             modelBuilder.Entity("Ticketing_System.Models.User", b =>
@@ -1248,9 +908,6 @@ namespace Ticketing_System.Migrations
                     b.Navigation("ManagedTeams");
 
                     b.Navigation("Notifications");
-
-                    b.Navigation("Preference")
-                        .IsRequired();
 
                     b.Navigation("TeamMemberships");
 

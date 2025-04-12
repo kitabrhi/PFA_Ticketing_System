@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Ticketing_System;
+using Ticketing_System.Models;
 
 namespace Ticketing_System
 {
@@ -9,17 +11,33 @@ namespace Ticketing_System
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Configuration de la chaÓne de connexion SQL Server
+            // Configuration de la cha√Æne de connexion SQL Server
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
-            builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+            // Configuration d'Identity avec le mod√®le utilisateur personnalis√©
+            builder.Services.AddDefaultIdentity<User>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+                // Configuration des options de mot de passe
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
 
-            // Ajout des services MVC
+            })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
+
+            // Ajout des services Razor Pages et MVC
+            builder.Services.AddRazorPages(options =>
+            {
+                options.Conventions.AddPageRoute("/Identity/Account/Register", "/Register");
+            });
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
@@ -36,14 +54,17 @@ namespace Ticketing_System
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
-            // DÈfinir les routes
+            app.MapRazorPages();
+
+            // D√©finir les routes
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
-            // DÈmarrer l'application
+            // D√©marrer l'application
             app.Run();
         }
     }

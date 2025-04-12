@@ -1,31 +1,27 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ticketing_System.Models
 {
     public class Notification
     {
-        public int NotificationID { get; set; }
+        [Key]
+        public int NotificationId { get; set; }
 
         [Required]
-        public string UserID { get; set; }
+        public string UserId { get; set; }
 
-        [Required]
-        public int TicketID { get; set; }
-
-        [Required, MaxLength(50)]
-        public string NotificationType { get; set; }
+        [Required, MaxLength(100)]
+        public string Title { get; set; }
 
         [Required]
         public string Message { get; set; }
 
-        [Required]
+        public DateTime DateSent { get; set; } = DateTime.Now;
+
         public bool IsRead { get; set; } = false;
 
-        [Required]
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
-
-        // Navigation properties
+        [ForeignKey("UserId")]
         public virtual User User { get; set; }
-        public virtual Ticket Ticket { get; set; }
     }
 }

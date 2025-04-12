@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Reflection.Emit;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Ticketing_System.Models;
 
@@ -14,150 +11,144 @@ namespace Ticketing_System
         {
         }
 
-        public DbSet<TicketCategory> TicketCategories { get; set; }
-        public DbSet<TicketPriority> TicketPriorities { get; set; }
-        public DbSet<TicketStatus> TicketStatuses { get; set; }
+        // DbSet des entités du système de ticketing
         public DbSet<SupportTeam> SupportTeams { get; set; }
         public DbSet<TeamMember> TeamMembers { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<TicketComment> TicketComments { get; set; }
         public DbSet<Attachment> Attachments { get; set; }
-        public DbSet<TicketHistory> TicketHistory { get; set; }
+        public DbSet<TicketHistory> TicketHistories { get; set; }
         public DbSet<AssignmentRule> AssignmentRules { get; set; }
         public DbSet<EscalationRule> EscalationRules { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<KnowledgeBaseArticle> KnowledgeBaseArticles { get; set; }
-        public DbSet<UserPreference> UserPreferences { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // IMPORTANT : Appeler d'abord la configuration d’Identity
             base.OnModelCreating(modelBuilder);
 
-            // Configurer les clés composites
+            // --------------------------
+            // Configuration des relations
+            // --------------------------
+
             modelBuilder.Entity<TeamMember>()
-                .HasKey(tm => new { tm.TeamID, tm.UserID });
+            .HasOne(tm => tm.Team)
+            .WithMany(st => st.TeamMembers)
+            .HasForeignKey(tm => tm.TeamID)
+            .OnDelete(DeleteBehavior.Restrict);
 
-            // Configurer les relations
-            modelBuilder.Entity<Ticket>()
-                .HasOne(t => t.CreatedByUser)
-                .WithMany(u => u.CreatedTickets)
-                .HasForeignKey(t => t.CreatedByUserID)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Ticket>()
-                .HasOne(t => t.AssignedToUser)
-                .WithMany(u => u.AssignedTickets)
-                .HasForeignKey(t => t.AssignedToUserID)
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired(false);
-
-            modelBuilder.Entity<TicketCategory>()
-                .HasOne(c => c.ParentCategory)
-                .WithMany(c => c.ChildCategories)
-                .HasForeignKey(c => c.ParentCategoryID)
-                .IsRequired(false);
-
-            modelBuilder.Entity<Attachment>()
-                .HasOne(a => a.Comment)
-                .WithMany(c => c.Attachments)
-                .HasForeignKey(a => a.CommentID)
-                .IsRequired(false);
-
-            modelBuilder.Entity<AssignmentRule>()
-                .HasKey(ar => ar.RuleID);
-
-            modelBuilder.Entity<EscalationRule>()
-                .HasKey(ar => ar.RuleID);
-
-            modelBuilder.Entity<KnowledgeBaseArticle>()
-               .HasKey(ar => ar.ArticleID);
-
+            // SupportTeam -> TeamMembers
             modelBuilder.Entity<SupportTeam>()
-                .HasKey(st => st.TeamID);
+                .HasMany(st => st.TeamMembers)
+                .WithOne(tm => tm.Team)
+                .HasForeignKey(tm => tm.TeamID)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            
+            // SupportTeam -> AssignedTickets
+            modelBuilder.Entity<SupportTeam>()
+                .HasMany(st => st.AssignedTickets)
+                .WithOne(t => t.AssignedToTeam)
+                .HasForeignKey(t => t.AssignedToTeamID)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<TicketPriority>()
-                .HasKey(tp => tp.PriorityID);
+            // User -> CreatedTickets
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.CreatedTickets)
+                .WithOne(t => t.CreatedByUser)
+                .HasForeignKey(t => t.CreatedByUserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<TicketStatus>()
-                .HasKey(ts => ts.StatusID);
+            // User -> AssignedTickets
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.AssignedTickets)
+                .WithOne(t => t.AssignedToUser)
+                .HasForeignKey(t => t.AssignedToUserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<TicketComment>()
-                .HasKey(ts => ts.CommentID);
+            // User -> ManagedTeams
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.ManagedTeams)
+                .WithOne(st => st.Manager)
+                .HasForeignKey(st => st.ManagerId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<TicketHistory>()
-                .HasKey(th => th.HistoryID);
+            // User -> TeamMemberships
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.TeamMemberships)
+                .WithOne(tm => tm.User)
+                .HasForeignKey(tm => tm.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<Notification>()
-                .HasKey(n => n.NotificationID);
+            // User -> Comments (TicketComments)
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Comments)
+                .WithOne(tc => tc.User)
+                .HasForeignKey(tc => tc.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<UserPreference>()
-                .HasKey(up => up.UserID);
+            // User -> Attachments
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Attachments)
+                .WithOne(a => a.Uploader)
+                .HasForeignKey(a => a.UploaderUserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-           
+            // User -> KnowledgeBaseArticles
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Articles)
+                .WithOne(kba => kba.Author)
+                .HasForeignKey(kba => kba.AuthorID)
+                .OnDelete(DeleteBehavior.NoAction);
 
+            // User -> Notifications
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Notifications)
+                .WithOne(n => n.User)
+                .HasForeignKey(n => n.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-
-            // Index
+            // Ticket -> TicketComments
             modelBuilder.Entity<Ticket>()
-                .HasIndex(t => t.StatusID);
+                .HasMany(t => t.TicketComments)
+                .WithOne(tc => tc.Ticket)
+                .HasForeignKey(tc => tc.TicketID)
+                .OnDelete(DeleteBehavior.NoAction);
 
+            // Ticket -> TicketAttachments (ici, la DbSet Attachments correspond aux pièces jointes)
             modelBuilder.Entity<Ticket>()
-                .HasIndex(t => t.PriorityID);
+                .HasMany(t => t.TicketAttachments)
+                .WithOne(a => a.Ticket)
+                .HasForeignKey(a => a.TicketID)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<Ticket>()
-                .HasIndex(t => t.CategoryID);
+            // AssignmentRule -> AssignToTeam
+            modelBuilder.Entity<AssignmentRule>()
+                .HasOne(ar => ar.AssignToTeam)
+                .WithMany()
+                .HasForeignKey(ar => ar.AssignToTeamID)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<Ticket>()
-                .HasIndex(t => t.AssignedToUserID);
+            // AssignmentRule -> AssignToUser
+            modelBuilder.Entity<AssignmentRule>()
+                .HasOne(ar => ar.AssignToUser)
+                .WithMany()
+                .HasForeignKey(ar => ar.AssignToUserID)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<Ticket>()
-                .HasIndex(t => t.AssignedToTeamID);
+            // EscalationRule -> EscalateToTeam
+            modelBuilder.Entity<EscalationRule>()
+                .HasOne(er => er.EscalateToTeam)
+                .WithMany()
+                .HasForeignKey(er => er.EscalateToTeamID)
+                .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<Ticket>()
-                .HasIndex(t => t.CreatedDate);
-
-            modelBuilder.Entity<Ticket>()
-                .HasIndex(t => t.DueDate);
-
-            modelBuilder.Entity<TicketComment>()
-                .HasIndex(tc => tc.TicketID);
-
-            modelBuilder.Entity<TicketHistory>()
-                .HasIndex(th => th.TicketID);
-
-            modelBuilder.Entity<Notification>()
-                .HasIndex(n => n.UserID);
-
-            modelBuilder.Entity<Notification>()
-                .HasIndex(n => n.IsRead);
-
-            // Configuration des données initiales
-            SeedInitialData(modelBuilder);
+            // EscalationRule -> EscalateToUser
+            modelBuilder.Entity<EscalationRule>()
+                .HasOne(er => er.EscalateToUser)
+                .WithMany()
+                .HasForeignKey(er => er.EscalateToUserID)
+                .OnDelete(DeleteBehavior.NoAction);
         }
-
-        private void SeedInitialData(ModelBuilder modelBuilder)
-        {
-            // Initialiser les statuts des tickets
-            modelBuilder.Entity<TicketStatus>().HasData(
-                new TicketStatus { StatusID = 1, StatusName = "New", Description = "Ticket nouvellement créé", IsClosedStatus = false },
-                new TicketStatus { StatusID = 2, StatusName = "In Progress", Description = "Ticket en cours de traitement par un agent", IsClosedStatus = false },
-                new TicketStatus { StatusID = 3, StatusName = "On Hold", Description = "Ticket en attente d'information ou d'action", IsClosedStatus = false },
-                new TicketStatus { StatusID = 4, StatusName = "Resolved", Description = "Ticket résolu mais en attente de confirmation", IsClosedStatus = false },
-                new TicketStatus { StatusID = 5, StatusName = "Closed", Description = "Ticket fermé et complété", IsClosedStatus = true },
-                new TicketStatus { StatusID = 6, StatusName = "Cancelled", Description = "Ticket annulé", IsClosedStatus = true }
-            );
-
-            // Initialiser les priorités des tickets
-            modelBuilder.Entity<TicketPriority>().HasData(
-                new TicketPriority { PriorityID = 1, PriorityName = "Low", Description = "Problème mineur sans impact significatif", SLAResponseHours = 24, SLAResolutionHours = 72 },
-                new TicketPriority { PriorityID = 2, PriorityName = "Medium", Description = "Problème avec impact limité", SLAResponseHours = 12, SLAResolutionHours = 48 },
-                new TicketPriority { PriorityID = 3, PriorityName = "High", Description = "Problème avec impact important", SLAResponseHours = 4, SLAResolutionHours = 24 },
-                new TicketPriority { PriorityID = 4, PriorityName = "Critical", Description = "Problème urgent avec impact majeur", SLAResponseHours = 1, SLAResolutionHours = 8 }
-            );
-        }
-
     }
 }
-    

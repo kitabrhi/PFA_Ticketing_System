@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ticketing_System.Models
 {
@@ -13,26 +14,29 @@ namespace Ticketing_System.Models
         [MaxLength(255)]
         public string Description { get; set; }
 
-        public int? PriorityID { get; set; }
-
-        public int? StatusID { get; set; }
+        // Critères d'escalade basés sur la priorité et le statut du ticket.
+        public TicketPriority? Priority { get; set; }
+        public TicketStatus? Status { get; set; }
 
         [Required]
         public int EscalateAfterHours { get; set; }
 
+        // Références pour l'escalade automatique vers un utilisateur ou une équipe.
         public string EscalateToUserID { get; set; }
-
         public int? EscalateToTeamID { get; set; }
 
+        // Liste de IDs d'utilisateurs à notifier (pouvant être gérée comme une chaîne séparée par des virgules ou autrement)
+        [MaxLength(500)]
         public string NotifyUserIDs { get; set; }
 
         [Required]
         public bool IsActive { get; set; } = true;
 
         // Navigation properties
-        public virtual TicketPriority Priority { get; set; }
-        public virtual TicketStatus Status { get; set; }
+        [ForeignKey("EscalateToUserID")]
         public virtual User EscalateToUser { get; set; }
+
+        [ForeignKey("EscalateToTeamID")]
         public virtual SupportTeam EscalateToTeam { get; set; }
     }
 }

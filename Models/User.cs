@@ -31,7 +31,7 @@ namespace Ticketing_System.Models
         public virtual ICollection<TicketHistory> TicketChanges { get; set; }
         public virtual ICollection<KnowledgeBaseArticle> Articles { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
-        public virtual UserPreference Preference { get; set; }
+       
     }
 }
 

@@ -1,26 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Net.Sockets;
 
 namespace Ticketing_System.Models
 {
-    public class TicketCategory
+    public enum TicketCategory
     {
-        [Key]
-        public int CategoryID { get; set; }
+        [Description("Software Issue")]
+        SoftwareIssue,
 
-        [Required, MaxLength(100)]
-        public string CategoryName { get; set; }
+        [Description("Hardware Issue")]
+        HardwareIssue,
 
-        [MaxLength(255)]
-        public string Description { get; set; }
+        [Description("Network Problem")]
+        NetworkProblem,
 
-        public int? ParentCategoryID { get; set; }
-
-        // Navigation properties
-        public virtual TicketCategory ParentCategory { get; set; }
-        public virtual ICollection<TicketCategory> ChildCategories { get; set; }
-        public virtual ICollection<Ticket> Tickets { get; set; }
-        public virtual ICollection<KnowledgeBaseArticle> KnowledgeBaseArticles { get; set; }
-        public virtual ICollection<AssignmentRule> AssignmentRules { get; set; }
+        [Description("General Inquiry")]
+        GeneralInquiry
     }
 }
