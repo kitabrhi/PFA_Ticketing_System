@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "1U5WGEasqG0=",
+  "dgSpecHash": "ZjHU7K8LoAA=",
   "success": true,
   "projectFilePath": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Ticketing System.csproj",
   "expectedPackageFiles": [
@@ -143,6 +143,8 @@
     "C:\\Users\\elabd\\.nuget\\packages\\sqlitepclraw.core\\2.1.10\\sqlitepclraw.core.2.1.10.nupkg.sha512",
     "C:\\Users\\elabd\\.nuget\\packages\\sqlitepclraw.lib.e_sqlite3\\2.1.10\\sqlitepclraw.lib.e_sqlite3.2.1.10.nupkg.sha512",
     "C:\\Users\\elabd\\.nuget\\packages\\sqlitepclraw.provider.e_sqlite3\\2.1.10\\sqlitepclraw.provider.e_sqlite3.2.1.10.nupkg.sha512",
+    "C:\\Users\\elabd\\.nuget\\packages\\syncfusion.ej2.aspnet.core\\29.1.37\\syncfusion.ej2.aspnet.core.29.1.37.nupkg.sha512",
+    "C:\\Users\\elabd\\.nuget\\packages\\syncfusion.licensing\\29.1.37\\syncfusion.licensing.29.1.37.nupkg.sha512",
     "C:\\Users\\elabd\\.nuget\\packages\\system.clientmodel\\1.0.0\\system.clientmodel.1.0.0.nupkg.sha512",
     "C:\\Users\\elabd\\.nuget\\packages\\system.codedom\\6.0.0\\system.codedom.6.0.0.nupkg.sha512",
     "C:\\Users\\elabd\\.nuget\\packages\\system.collections.immutable\\8.0.0\\system.collections.immutable.8.0.0.nupkg.sha512",

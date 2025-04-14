@@ -7,7 +7,7 @@ namespace Ticketing_System
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -17,19 +17,16 @@ namespace Ticketing_System
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
-            // Configuration d'Identity avec le modèle utilisateur personnalisé
             builder.Services.AddDefaultIdentity<User>(options =>
             {
-                options.SignIn.RequireConfirmedAccount = true;
-                // Configuration des options de mot de passe
+                options.SignIn.RequireConfirmedAccount = false;
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 6;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
-
             })
-            .AddRoles<IdentityRole>()
+            .AddRoles<Role>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
@@ -64,8 +61,45 @@ namespace Ticketing_System
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
-            // Démarrer l'application
-            app.Run();
+            using (var scope = app.Services.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+                var roles = new[] { "Admin", "SupportAgent", "User" };
+
+                foreach (var role in roles)
+                {
+                    if (!await roleManager.RoleExistsAsync(role))
+                    {
+                        await roleManager.CreateAsync(new Role { Name = role });
+                    }
+                }
+
+                using (var innerScope = app.Services.CreateScope())
+                {
+                    var userManager = innerScope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+                    string email = "admin@admin.com";
+                    string password = "Admin@123";
+
+                    if (await userManager.FindByEmailAsync(email) == null)
+                    {
+                        var user = new User
+                        {
+                            UserName = email,
+                            Email = email,
+                            FirstName = "Admin",
+                            LastName = "User"
+                        };
+                        var result = await userManager.CreateAsync(user, password);
+                        if (result.Succeeded)
+                        {
+                            await userManager.AddToRoleAsync(user, "Admin");
+                        }
+                    }
+                }
+
+                app.Run();
+            }
         }
     }
 }

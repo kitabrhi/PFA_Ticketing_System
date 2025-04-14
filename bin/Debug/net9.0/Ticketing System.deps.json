@@ -15,7 +15,8 @@
           "Microsoft.EntityFrameworkCore.SqlServer": "9.0.3",
           "Microsoft.EntityFrameworkCore.Sqlite": "9.0.0",
           "Microsoft.EntityFrameworkCore.Tools": "9.0.3",
-          "Microsoft.VisualStudio.Web.CodeGeneration.Design": "9.0.0"
+          "Microsoft.VisualStudio.Web.CodeGeneration.Design": "9.0.0",
+          "Syncfusion.EJ2.AspNet.Core": "29.1.37"
         },
         "runtime": {
           "Ticketing System.dll": {}
@@ -2137,6 +2138,26 @@
           }
         }
       },
+      "Syncfusion.EJ2.AspNet.Core/29.1.37": {
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.3",
+          "Syncfusion.Licensing": "29.1.37"
+        },
+        "runtime": {
+          "lib/net9.0/Syncfusion.EJ2.dll": {
+            "assemblyVersion": "29.1.37.0",
+            "fileVersion": "29.1.37.0"
+          }
+        }
+      },
+      "Syncfusion.Licensing/29.1.37": {
+        "runtime": {
+          "lib/net9.0/Syncfusion.Licensing.dll": {
+            "assemblyVersion": "29.1.37.0",
+            "fileVersion": "29.1.37.0"
+          }
+        }
+      },
       "System.ClientModel/1.0.0": {
         "dependencies": {
           "System.Memory.Data": "1.0.2",
@@ -3342,6 +3363,20 @@
       "sha512": "sha512-uZVTi02C1SxqzgT0HqTWatIbWGb40iIkfc3FpFCpE/r7g6K0PqzDUeefL6P6HPhDtc6BacN3yQysfzP7ks+wSQ==",
       "path": "sqlitepclraw.provider.e_sqlite3/2.1.10",
       "hashPath": "sqlitepclraw.provider.e_sqlite3.2.1.10.nupkg.sha512"
+    },
+    "Syncfusion.EJ2.AspNet.Core/29.1.37": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-mGHtKvy6Crp3MaU9bR0BzjxIQW6sxvZ1cNikCGOOwLoRRDseeloWUGMNXyZbmJvv5YYl9uEXKLQ3Q0GZympgjg==",
+      "path": "syncfusion.ej2.aspnet.core/29.1.37",
+      "hashPath": "syncfusion.ej2.aspnet.core.29.1.37.nupkg.sha512"
+    },
+    "Syncfusion.Licensing/29.1.37": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-0IT7/SJ6Jgs7Hdl8RrBxH3bQjpoTT2yMs/mPpExLeqrn27A3aeDqKIEyS0KGBkYIo39BofuNl+0ExE22uCC4Rg==",
+      "path": "syncfusion.licensing/29.1.37",
+      "hashPath": "syncfusion.licensing.29.1.37.nupkg.sha512"
     },
     "System.ClientModel/1.0.0": {
       "type": "package",
