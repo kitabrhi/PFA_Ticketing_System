@@ -1,77 +1,464 @@
 ﻿@page
+@using Microsoft.CodeAnalysis.Differencing
 @model RegisterModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Inscription";
 }
 
-<h1>@ViewData["Title"]</h1>
+<style>
+    /* Palette de couleurs QuantumDesk */
+    :root {
+        --primary-color: #1a3a5f; /* Bleu profond */
+        --secondary-color: #00a78e; /* Turquoise */
+        --tertiary-color: #7b68ee; /* Violet clair */
+        --accent-color: #ff6b6b; /* Rouge corail */
+        --light-bg: #f5f7fa; /* Gris très clair */
+        --light-accent: #e9f7f5; /* Turquoise très clair */
+        --dark-text: #2c3e50; /* Bleu très foncé */
+        --light-text: #ffffff; /* Blanc */
+        --muted-text: #8da1b5; /* Bleu gris */
+    }
 
-<div class="row">
-    <div class="col-md-4">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new account.</h2>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.FirstName" class="form-control" aria-required="true" placeholder="First Name" />
-                <label asp-for="Input.FirstName">First Name</label>
-                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.LastName" class="form-control" aria-required="true" placeholder="Last Name" />
-                <label asp-for="Input.LastName">Last Name</label>
-                <span asp-validation-for="Input.LastName" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label asp-for="Input.Email">Email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.Password">Password</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
-        </form>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            @if ((Model.ExternalLogins?.Count ?? 0) == 0)
-            {
-                <div>
-                    <p>
-                        There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">
-                            article
-                            about setting up this ASP.NET application to support logging in via external services
-                        </a>.
-                    </p>
+    .register-container {
+        background-color: var(--light-text);
+        border-radius: 0.75rem;
+        box-shadow: 0 15px 35px rgba(26, 58, 95, 0.08);
+        padding: 2.5rem;
+        margin-top: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .register-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--secondary-color), var(--tertiary-color));
+            border-radius: 4px 0 0 4px;
+        }
+
+    .register-title {
+        color: var(--primary-color);
+        font-weight: 700;
+        margin-bottom: 2rem;
+        position: relative;
+        display: inline-block;
+    }
+
+        .register-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(to right, var(--secondary-color), var(--tertiary-color));
+            border-radius: 3px;
+        }
+
+    .section-title {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-floating > label {
+        color: var(--muted-text);
+    }
+
+    .form-control:focus {
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 0.25rem rgba(0, 167, 142, 0.25);
+    }
+
+    .btn-success-quantum {
+        background: linear-gradient(135deg, var(--secondary-color), #018d79);
+        border: none;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        border-radius: 50rem;
+        box-shadow: 0 5px 15px rgba(0, 167, 142, 0.4);
+        transition: all 0.3s ease;
+        color: var(--light-text);
+    }
+
+        .btn-success-quantum:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+    .btn-external {
+        background-color: var(--light-bg);
+        color: var(--dark-text);
+        border: none;
+        padding: 0.6rem 1.2rem;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+        border-radius: 50rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    }
+
+        .btn-external:hover {
+            background-color: var(--light-accent);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+    .logo-icon {
+        color: var(--secondary-color);
+        margin-right: 0.5rem;
+        font-size: 2rem;
+    }
+
+    .quantum-link {
+        color: var(--tertiary-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+        .quantum-link:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+    .or-divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 1.5rem 0;
+        color: var(--muted-text);
+    }
+
+        .or-divider::before,
+        .or-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #eee;
+        }
+
+        .or-divider::before {
+            margin-right: 1rem;
+        }
+
+        .or-divider::after {
+            margin-left: 1rem;
+        }
+
+    .service-container {
+        background-color: var(--light-bg);
+        border-radius: 0.75rem;
+        padding: 2.5rem;
+        height: 100%;
+    }
+
+    Edit (max-width: 768px) {
+        .register-container, .service-container
+
+    {
+        padding: 1.5rem;
+    }
+
+    }
+
+    .header-container {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .brand-icon {
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .logo-text {
+        font-weight: 700;
+        font-size: 1.8rem;
+        letter-spacing: -0.5px;
+        background: linear-gradient(135deg, var(--secondary-color), var(--tertiary-color));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-fill-color: transparent;
+    }
+
+    .features-list {
+        list-style: none;
+        padding-left: 0;
+    }
+
+        .features-list li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+        }
+
+    .feature-icon-small {
+        color: var(--secondary-color);
+        margin-right: 0.75rem;
+        min-width: 20px;
+        margin-top: 0.25rem;
+    }
+
+    .password-strength {
+        height: 5px;
+        background-color: #e9ecef;
+        border-radius: 50rem;
+        margin-top: 0.5rem;
+        overflow: hidden;
+    }
+
+    .password-strength-meter {
+        height: 100%;
+        border-radius: 50rem;
+        transition: width 0.3s ease;
+    }
+
+    .password-weak {
+        width: 25%;
+        background-color: var(--accent-color);
+    }
+
+    .password-medium {
+        width: 50%;
+        background-color: #ffc107;
+    }
+
+    .password-strong {
+        width: 75%;
+        background-color: #77c13a;
+    }
+
+    .password-very-strong {
+        width: 100%;
+        background-color: var(--secondary-color);
+    }
+
+    .feature-illustration {
+        width: 100%;
+        height: auto;
+        max-width: 300px;
+        margin: 0 auto 1.5rem;
+        display: block;
+    }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="header-container">
+                <div class="brand-icon">
+                    <i class="fas fa-ticket-alt logo-icon"></i>
+                    <span class="logo-text">QuantumDesk</span>
                 </div>
-            }
-            else
-            {
-                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                    <div>
-                        <p>
-                            @foreach (var provider in Model.ExternalLogins!)
-                            {
-                                <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                            }
-                        </p>
+                <h1 class="register-title">@ViewData["Title"]</h1>
+                <p class="text-muted">Créez votre compte et commencez à utiliser notre système de gestion de tickets</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-5">
+            <div class="register-container">
+                <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <h2 class="section-title">Créer un nouveau compte</h2>
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3 mb-md-0">
+                                <input asp-for="Input.FirstName" class="form-control" aria-required="true" placeholder="Prénom" />
+                                <label asp-for="Input.FirstName">Prénom</label>
+                                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input asp-for="Input.LastName" class="form-control" aria-required="true" placeholder="Nom" />
+                                <label asp-for="Input.LastName">Nom</label>
+                                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                        <label asp-for="Input.Email">Email</label>
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-floating mb-2">
+                        <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Mot de passe" />
+                        <label asp-for="Input.Password">Mot de passe</label>
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="password-strength mb-3">
+                        <div class="password-strength-meter password-medium"></div>
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Confirmez le mot de passe" />
+                        <label asp-for="Input.ConfirmPassword">Confirmez le mot de passe</label>
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="termsCheck" required />
+                        <label class="form-check-label" for="termsCheck">
+                            J'accepte les <a href="#" class="quantum-link">conditions d'utilisation</a> et la <a href="#" class="quantum-link">politique de confidentialité</a>
+                        </label>
+                    </div>
+
+                    <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-success-quantum">
+                        <i class="fas fa-user-plus me-2"></i>Créer mon compte
+                    </button>
+
+                    <div class="text-center mt-4">
+                        <p>Vous avez déjà un compte ? <a asp-page="./Login" class="quantum-link">Connexion</a></p>
                     </div>
                 </form>
-            }
-        </section>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="service-container h-100">
+                <section>
+                    <h3 class="section-title">Pourquoi QuantumDesk ?</h3>
+
+                    <ul class="features-list">
+                        <li>
+                            <i class="fas fa-ticket-alt feature-icon-small"></i>
+                            <div>
+                                <strong>Gestion de tickets optimisée</strong><br />
+                                <span class="text-muted">Suivi et résolution rapide de tous vos tickets</span>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fas fa-tachometer-alt feature-icon-small"></i>
+                            <div>
+                                <strong>Tableaux de bord personnalisables</strong><br />
+                                <span class="text-muted">Visualisez vos performances en temps réel</span>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fas fa-bolt feature-icon-small"></i>
+                            <div>
+                                <strong>Automatisation intelligente</strong><br />
+                                <span class="text-muted">Réduisez les tâches manuelles et gagnez du temps</span>
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fas fa-chart-line feature-icon-small"></i>
+                            <div>
+                                <strong>Rapports détaillés</strong><br />
+                                <span class="text-muted">Suivez vos KPIs et améliorez votre service</span>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="or-divider">ou</div>
+
+                    <h3 class="section-title">S'inscrire avec</h3>
+                    @if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-plug mb-3" style="font-size: 3rem; color: var(--muted-text);"></i>
+                            <p class="mb-0">
+                                Aucun service d'authentification externe n'est configuré.
+                            </p>
+                            <p class="text-muted small">
+                                Consultez cet <a href="https://go.microsoft.com/fwlink/?LinkID=532715" class="quantum-link">article sur la configuration de cette application ASP.NET</a> pour prendre en charge la connexion via des services externes.
+                            </p>
+                        </div>
+                    }
+                    else
+                    {
+                        <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                            <div class="d-flex flex-wrap">
+                                @foreach (var provider in Model.ExternalLogins!)
+                                {
+                                    <button type="submit" class="btn btn-external" name="provider" value="@provider.Name" title="S'inscrire avec votre compte @provider.DisplayName">
+                                        @if (provider.DisplayName == "Google")
+                                        {
+                                            <i class="fab fa-google me-2"></i>
+                                        }
+                                        else if (provider.DisplayName == "Facebook")
+                                        {
+                                            <i class="fab fa-facebook me-2"></i>
+                                        }
+                                        else if (provider.DisplayName == "Microsoft")
+                                        {
+                                            <i class="fab fa-microsoft me-2"></i>
+                                        }
+                                        else if (provider.DisplayName == "Twitter")
+                                        {
+                                            <i class="fab fa-twitter me-2"></i>
+                                        }
+                                        else if (provider.DisplayName == "LinkedIn")
+                                        {
+                                            <i class="fab fa-linkedin me-2"></i>
+                                        }
+                                        else if (provider.DisplayName == "GitHub")
+                                        {
+                                            <i class="fab fa-github me-2"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-external-link-alt me-2"></i>
+                                        }
+                                        @provider.DisplayName
+                                    </button>
+                                }
+                            </div>
+                        </form>
+                    }
+                </section>
+            </div>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <!-- Ajout de Fonts et Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <script>
+        // Script pour simuler un indicateur de force du mot de passe
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.querySelector('input[asp-for="Input.Password"]');
+            const strengthMeter = document.querySelector('.password-strength-meter');
+
+            passwordInput.addEventListener('input', function() {
+                const value = passwordInput.value;
+
+                // Retirez toutes les classes existantes
+                strengthMeter.classList.remove('password-weak', 'password-medium', 'password-strong', 'password-very-strong');
+
+                // Assignez la classe appropriée en fonction de la longueur du mot de passe
+                // Ceci est une simple démonstration, en production vous devriez utiliser une vérification plus robuste
+                if (value.length === 0) {
+                    strengthMeter.style.width = '0';
+                } else if (value.length < 6) {
+                    strengthMeter.classList.add('password-weak');
+                } else if (value.length < 10) {
+                    strengthMeter.classList.add('password-medium');
+                } else if (value.length < 14) {
+                    strengthMeter.classList.add('password-strong');
+                } else {
+                    strengthMeter.classList.add('password-very-strong');
+                }
+            });
+        });
+    </script>
 }
