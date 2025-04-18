@@ -10,10 +10,6 @@
   <ItemGroup>
     <Folder Include="ApiControllers\" />
     <Folder Include="Migrations\" />
-    <Folder Include="Repository Pattern\Interfaces\" />
-    <Folder Include="Repository Pattern\Repository\" />
-    <Folder Include="Service Layer\Interfaces\" />
-    <Folder Include="Service Layer\Service\" />
   </ItemGroup>
 
   <ItemGroup>

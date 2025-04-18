@@ -12,8 +12,8 @@ using Ticketing_System;
 namespace Ticketing_System.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250414110648_Initiale")]
-    partial class Initiale
+    [Migration("20250416075106_initiale")]
+    partial class initiale
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -356,10 +356,6 @@ namespace Ticketing_System.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)

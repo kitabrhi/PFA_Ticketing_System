@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Ticketing_System;
 using Ticketing_System.Models;
+using Ticketing_System.Repository.Interfaces;
 
 namespace Ticketing_System
 {
@@ -13,6 +14,18 @@ namespace Ticketing_System
 
             // Configuration de la chaîne de connexion SQL Server
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+
+            builder.Services.AddScoped<ITicketRepository, TicketRepository>();
+            builder.Services.AddScoped<ITicketCommentRepository, TicketCommentRepository>();
+            builder.Services.AddScoped<ITicketHistoryRepository, TicketHistoryRepository>();
+            builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();
+
+
+
+
+
+
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
