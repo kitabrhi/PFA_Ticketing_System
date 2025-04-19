@@ -112,7 +112,7 @@ namespace Ticketing_System.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
+            returnUrl ??= Url.Content("~/Home/Accueil");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             // Si l'utilisateur est déjà connecté et qu'il est Admin ou SupportAgent,

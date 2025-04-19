@@ -2,6 +2,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Ticketing_System;
 using Ticketing_System.Models;
+using Ticketing_System.Repository;
+using Ticketing_System.Repository.Interfaces;
+using Ticketing_System.Service_Layer;
+using Ticketing_System.Service_Layer.Interfaces;
+using Ticketing_System.Service_Layer.Service;
 
 namespace Ticketing_System
 {
@@ -13,6 +18,28 @@ namespace Ticketing_System
 
             // Configuration de la chaîne de connexion SQL Server
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+            // Repository Pattern
+            builder.Services.AddScoped<ITicketRepository, TicketRepository>();
+            builder.Services.AddScoped<ITicketCommentRepository, TicketCommentRepository>();
+            builder.Services.AddScoped<ITicketHistoryRepository, TicketHistoryRepository>();
+            builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();
+            builder.Services.AddScoped<ISupportTeamRepository, SupportTeamRepository>();
+            builder.Services.AddScoped<INotificationRepository,NotificationRepository>();
+
+            //Service Layer
+            builder.Services.AddScoped<ITicketService, TicketService>();
+            builder.Services.AddScoped<ITicketCommentService, TicketCommentService>();
+            builder.Services.AddScoped<ITicketHistoryService, TicketHistoryService>();
+            builder.Services.AddScoped<IAttachmentService, AttachmentService>();
+            builder.Services.AddScoped<ISupportTeamService, SupportTeamService>();
+            builder.Services.AddScoped<INotificationService,NotificationService>();
+
+
+
+
+
+            builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
@@ -53,6 +80,7 @@ namespace Ticketing_System
 
             app.UseAuthentication();
             app.UseAuthorization();
+          
 
             app.MapRazorPages();
 

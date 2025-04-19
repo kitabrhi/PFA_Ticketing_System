@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ticketing_System.Models
 {
@@ -23,6 +24,9 @@ namespace Ticketing_System.Models
         public string NewValue { get; set; }
 
         public DateTime ChangedDate { get; set; } = DateTime.Now;
-        
+
+        [ForeignKey("ChangedByUserId")]
+        public virtual User ChangedByUser { get; set; }
+
     }
 }

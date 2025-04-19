@@ -1,0 +1,17 @@
+﻿using Ticketing_System.Models;
+using Ticketing_System;
+using Microsoft.EntityFrameworkCore;
+
+public class TicketHistoryRepository : Repository<TicketHistory>, ITicketHistoryRepository
+{
+    public TicketHistoryRepository(ApplicationDbContext context) : base(context) { }
+
+    public async Task<IEnumerable<TicketHistory>> GetHistoryByTicketIdAsync(int ticketId)
+    {
+        return await _dbSet
+            .Where(h => h.TicketID == ticketId)
+            .Include(h => h.ChangedByUser)
+            .OrderByDescending(h => h.ChangedDate)
+            .ToListAsync();
+    }
+}

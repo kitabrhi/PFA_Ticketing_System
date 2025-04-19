@@ -1,0 +1,51 @@
+﻿@model Ticketing_System.Models.TicketComment
+@{
+    ViewData["Title"] = "Supprimer un commentaire";
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Tickets</a></li>
+            <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@ViewBag.TicketId">Détails</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Supprimer un commentaire</li>
+        </ol>
+    </nav>
+
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0">Confirmer la suppression</h4>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Êtes-vous sûr de vouloir supprimer ce commentaire ? Cette action ne peut pas être annulée.
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div>
+                        <strong>Auteur:</strong> @Model.User?.FirstName @Model.User?.LastName
+                        <small class="text-muted ms-2">@Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")</small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p style="white-space: pre-wrap;">@Model.CommentText</p>
+                </div>
+            </div>
+            
+            <form asp-action="DeleteComment" method="post">
+                <input type="hidden" asp-for="CommentID" />
+                
+                <div class="d-flex justify-content-end">
+                    <a asp-action="Details" asp-route-id="@Model.TicketID" class="btn btn-secondary me-2">
+                        Annuler
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i> Supprimer définitivement
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

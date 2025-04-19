@@ -11,7 +11,7 @@ namespace Ticketing_System.Models
         [Required]
         public int TicketID { get; set; }
 
-        [Required, MaxLength(255)]
+        [ MaxLength(255)]
         public string FileName { get; set; }
 
         [Required]

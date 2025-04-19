@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ticketing_System.Models;
 
@@ -18,10 +19,12 @@ namespace Ticketing_System.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        [Authorize] // Pour s'assurer que seuls les utilisateurs connectés puissent y accéder
+        public IActionResult Accueil()
         {
             return View();
         }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
