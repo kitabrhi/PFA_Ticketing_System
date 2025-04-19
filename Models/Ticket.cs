@@ -6,6 +6,8 @@ namespace Ticketing_System.Models
 {
     public class Ticket
     {
+        internal string? UpdatedByUserId;
+
         [Key]
         public int TicketID { get; set; }  // La numérotation automatique sera assurée par EF Core (IDENTITY)
 

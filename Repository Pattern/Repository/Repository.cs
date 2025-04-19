@@ -33,8 +33,8 @@ public class Repository<T> : IRepository<T> where T : class
 
     public virtual async Task UpdateAsync(T entity)
     {
-        _dbSet.Update(entity);
-        await _context.SaveChangesAsync();
+        _context.Entry(entity).State = EntityState.Modified;
+        await _context.SaveChangesAsync(); ;
     }
 
     public virtual async Task DeleteAsync(T entity)

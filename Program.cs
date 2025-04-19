@@ -74,19 +74,7 @@ namespace Ticketing_System
 
             app.UseAuthentication();
             app.UseAuthorization();
-            // Ajoutez ce middleware après UseAuthorization mais avant UseEndpoints
-            app.Use(async (context, next) =>
-            {
-                // Si l'utilisateur vient de se connecter (vérifiez un indicateur de session ou un cookie)
-                if (context.User.Identity.IsAuthenticated &&
-                    context.Request.Path.StartsWithSegments("/Identity/Account/Login", StringComparison.OrdinalIgnoreCase))
-                {
-                    context.Response.Redirect("/Home/Accueil");
-                    return;
-                }
-
-                await next();
-            });
+          
 
             app.MapRazorPages();
 

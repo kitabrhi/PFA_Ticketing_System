@@ -1,13 +1,13 @@
 ﻿using Ticketing_System.Models;
 using Ticketing_System.Repository.Interfaces;
 using Ticketing_System.Service_Layer.Interfaces;
+
 public class TicketService : ITicketService
 {
     private readonly ITicketRepository _ticketRepository;
     private readonly ITicketHistoryService _historyService;
 
-
-    public TicketService(ITicketRepository ticketRepository,ITicketHistoryService historyService)
+    public TicketService(ITicketRepository ticketRepository, ITicketHistoryService historyService)
     {
         _ticketRepository = ticketRepository;
         _historyService = historyService;
@@ -62,7 +62,6 @@ public class TicketService : ITicketService
         await _historyService.AddHistoryEntryAsync(history);
 
         return createdTicket;
-
     }
 
     public async Task UpdateTicketAsync(Ticket ticket)
@@ -75,11 +74,36 @@ public class TicketService : ITicketService
             throw new KeyNotFoundException($"Ticket with ID {ticket.TicketID} not found");
         }
 
+        // Création des entrées d'historique pour chaque champ modifié
+        await TrackChanges(existingTicket, ticket, ticket.CreatedByUserId);
+
+        // Mettre à jour les propriétés de l'entité existante au lieu de créer une nouvelle instance
+        existingTicket.Title = ticket.Title;
+        existingTicket.Description = ticket.Description;
+        existingTicket.Category = ticket.Category;
+        existingTicket.Priority = ticket.Priority;
+        existingTicket.Status = ticket.Status;
+        existingTicket.AssignedToUserId = ticket.AssignedToUserId;
+        existingTicket.AssignedToTeamID = ticket.AssignedToTeamID;
+        existingTicket.DueDate = ticket.DueDate;
+        existingTicket.Source = ticket.Source;
+
         // Mise à jour de la date de modification
-        ticket.UpdatedDate = DateTime.Now;
+        existingTicket.UpdatedDate = DateTime.Now;
+
+        // Si le statut est résolu et que la date de résolution n'est pas définie, la définir
+        if (existingTicket.Status == TicketStatus.Resolved && !existingTicket.ResolutionDate.HasValue)
+        {
+            existingTicket.ResolutionDate = DateTime.Now;
+        }
+        // Si le statut est fermé et que la date de fermeture n'est pas définie, la définir
+        else if (existingTicket.Status == TicketStatus.Closed && !existingTicket.ClosedDate.HasValue)
+        {
+            existingTicket.ClosedDate = DateTime.Now;
+        }
 
         // Mise à jour du ticket
-        await _ticketRepository.UpdateAsync(ticket);
+        await _ticketRepository.UpdateAsync(existingTicket);
     }
 
     public async Task DeleteTicketAsync(int ticketId)
@@ -89,6 +113,17 @@ public class TicketService : ITicketService
         {
             throw new KeyNotFoundException($"Ticket with ID {ticketId} not found");
         }
+
+        // Créer une entrée d'historique pour la suppression
+        await _historyService.AddHistoryEntryAsync(new TicketHistory
+        {
+            TicketID = ticketId,
+            ChangedByUserId = ticket.CreatedByUserId, // Ou l'ID de l'utilisateur qui fait la suppression
+            FieldName = "Status",
+            OldValue = ticket.Status.ToString(),
+            NewValue = "Deleted",
+            ChangedDate = DateTime.Now
+        });
 
         await _ticketRepository.DeleteAsync(ticket);
     }
@@ -128,6 +163,7 @@ public class TicketService : ITicketService
     {
         return await _ticketRepository.SearchTicketsAsync(searchTerm);
     }
+
     public async Task<Ticket> ChangeTicketStatusAsync(int ticketId, TicketStatus newStatus, string userId)
     {
         var ticket = await _ticketRepository.GetByIdAsync(ticketId);
@@ -161,7 +197,8 @@ public class TicketService : ITicketService
             ChangedByUserId = userId,
             FieldName = "Status",
             OldValue = oldStatus.ToString(),
-            NewValue = newStatus.ToString()
+            NewValue = newStatus.ToString(),
+            ChangedDate = DateTime.Now
         });
 
         return ticket;
@@ -189,7 +226,8 @@ public class TicketService : ITicketService
             ChangedByUserId = updatedByUserId,
             FieldName = "AssignedToUser",
             OldValue = oldAssignedUser ?? "Unassigned",
-            NewValue = assignedToUserId ?? "Unassigned"
+            NewValue = assignedToUserId ?? "Unassigned",
+            ChangedDate = DateTime.Now
         });
 
         return ticket;
@@ -217,7 +255,8 @@ public class TicketService : ITicketService
             ChangedByUserId = updatedByUserId,
             FieldName = "AssignedToTeam",
             OldValue = oldTeamId?.ToString() ?? "Unassigned",
-            NewValue = teamId.ToString()
+            NewValue = teamId.ToString(),
+            ChangedDate = DateTime.Now
         });
 
         return ticket;
@@ -261,5 +300,120 @@ public class TicketService : ITicketService
         }
 
         return result;
+    }
+
+    private async Task TrackChanges(Ticket oldTicket, Ticket newTicket, string userId)
+    {
+        // Vérification du titre
+        if (oldTicket.Title != newTicket.Title)
+        {
+            await _historyService.AddHistoryEntryAsync(new TicketHistory
+            {
+                TicketID = oldTicket.TicketID,
+                ChangedByUserId = userId,
+                FieldName = "Title",
+                OldValue = oldTicket.Title,
+                NewValue = newTicket.Title,
+                ChangedDate = DateTime.Now
+            });
+        }
+
+        // Vérification de la description
+        if (oldTicket.Description != newTicket.Description)
+        {
+            await _historyService.AddHistoryEntryAsync(new TicketHistory
+            {
+                TicketID = oldTicket.TicketID,
+                ChangedByUserId = userId,
+                FieldName = "Description",
+                OldValue = oldTicket.Description,
+                NewValue = newTicket.Description,
+                ChangedDate = DateTime.Now
+            });
+        }
+
+        // Vérification de la catégorie
+        if (oldTicket.Category != newTicket.Category)
+        {
+            await _historyService.AddHistoryEntryAsync(new TicketHistory
+            {
+                TicketID = oldTicket.TicketID,
+                ChangedByUserId = userId,
+                FieldName = "Category",
+                OldValue = oldTicket.Category.ToString(),
+                NewValue = newTicket.Category.ToString(),
+                ChangedDate = DateTime.Now
+            });
+        }
+
+        // Vérification de la priorité
+        if (oldTicket.Priority != newTicket.Priority)
+        {
+            await _historyService.AddHistoryEntryAsync(new TicketHistory
+            {
+                TicketID = oldTicket.TicketID,
+                ChangedByUserId = userId,
+                FieldName = "Priority",
+                OldValue = oldTicket.Priority.ToString(),
+                NewValue = newTicket.Priority.ToString(),
+                ChangedDate = DateTime.Now
+            });
+        }
+
+        // Vérification du statut
+        if (oldTicket.Status != newTicket.Status)
+        {
+            await _historyService.AddHistoryEntryAsync(new TicketHistory
+            {
+                TicketID = oldTicket.TicketID,
+                ChangedByUserId = userId,
+                FieldName = "Status",
+                OldValue = oldTicket.Status.ToString(),
+                NewValue = newTicket.Status.ToString(),
+                ChangedDate = DateTime.Now
+            });
+        }
+
+        // Vérification de l'assignation à un utilisateur
+        if (oldTicket.AssignedToUserId != newTicket.AssignedToUserId)
+        {
+            await _historyService.AddHistoryEntryAsync(new TicketHistory
+            {
+                TicketID = oldTicket.TicketID,
+                ChangedByUserId = userId,
+                FieldName = "AssignedToUser",
+                OldValue = oldTicket.AssignedToUserId ?? "Unassigned",
+                NewValue = newTicket.AssignedToUserId ?? "Unassigned",
+                ChangedDate = DateTime.Now
+            });
+        }
+
+        // Vérification de l'assignation à une équipe
+        if (oldTicket.AssignedToTeamID != newTicket.AssignedToTeamID)
+        {
+            await _historyService.AddHistoryEntryAsync(new TicketHistory
+            {
+                TicketID = oldTicket.TicketID,
+                ChangedByUserId = userId,
+                FieldName = "AssignedToTeam",
+                OldValue = oldTicket.AssignedToTeamID?.ToString() ?? "Unassigned",
+                NewValue = newTicket.AssignedToTeamID?.ToString() ?? "Unassigned",
+                ChangedDate = DateTime.Now
+            });
+        }
+
+        // Vérification de la date d'échéance
+        if (oldTicket.DueDate != newTicket.DueDate)
+        {
+            await _historyService.AddHistoryEntryAsync(new TicketHistory
+            {
+                TicketID = oldTicket.TicketID,
+                ChangedByUserId = userId,
+                FieldName = "DueDate",
+                OldValue = oldTicket.DueDate?.ToString("dd/MM/yyyy") ?? "Not set",
+                NewValue = newTicket.DueDate?.ToString("dd/MM/yyyy") ?? "Not set",
+                ChangedDate = DateTime.Now
+            });
+        }
     }
 }

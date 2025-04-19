@@ -1,76 +1,203 @@
-﻿```html
-@model Ticketing_System.Models.Ticket
+﻿@model Ticketing_System.Models.Ticket
+
 @{
-    ViewData["Title"] = "Create Ticket";
+    ViewData["Title"] = "Modifier le ticket";
+    Layout = "_Layout";
 }
 
-<div class="container mt-4">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-action="Index">Tickets</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Create</li>
-        </ol>
-    </nav>
+<style>
+    /* Palette de couleurs QuantumDesk */
+    :root {
+        --primary-color: #1a3a5f; /* Bleu profond */
+        --secondary-color: #00a78e; /* Turquoise */
+        --tertiary-color: #7b68ee; /* Violet clair */
+        --accent-color: #ff6b6b; /* Rouge corail */
+        --light-bg: #f5f7fa; /* Gris très clair */
+        --light-accent: #e9f7f5; /* Turquoise très clair */
+        --dark-text: #2c3e50; /* Bleu très foncé */
+        --light-text: #ffffff; /* Blanc */
+        --muted-text: #8da1b5; /* Bleu gris */
+    }
 
-    <div class="card shadow-sm">
-        <div class="card-header">
-            <h4 class="mb-0">Create New Ticket</h4>
-        </div>
-        <div class="card-body">
-            <form asp-action="Create" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    .ticket-edit-container {
+        background-color: var(--light-text);
+        border-radius: 0.75rem;
+        box-shadow: 0 15px 35px rgba(26, 58, 95, 0.08);
+        padding: 2.5rem;
+        position: relative;
+        overflow: hidden;
+    }
 
-                <div class="mb-3">
-                    <label asp-for="Title" class="form-label">Title</label>
-                    <input asp-for="Title" class="form-control" />
-                    <span asp-validation-for="Title" class="text-danger"></span>
-                </div>
+    .ticket-edit-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 6px;
+        height: 100%;
+        background: linear-gradient(to bottom, var(--tertiary-color), var(--secondary-color));
+        border-radius: 4px 0 0 4px;
+    }
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label asp-for="Category" class="form-label">Category</label>
-                            <select asp-for="Category" class="form-select" asp-items="ViewBag.Categories">
-                                <option value="">-- Select Category --</option>
-                            </select>
-                            <span asp-validation-for="Category" class="text-danger"></span>
+    .edit-title {
+        color: var(--primary-color);
+        font-weight: 700;
+        margin-bottom: 2rem;
+        position: relative;
+        display: inline-block;
+    }
+
+    .edit-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(to right, var(--secondary-color), var(--tertiary-color));
+        border-radius: 3px;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, var(--tertiary-color), var(--secondary-color));
+        border: none;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        border-radius: 50rem;
+        box-shadow: 0 5px 15px rgba(123, 104, 238, 0.3);
+        transition: all 0.3s ease;
+        color: var(--light-text);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-cancel {
+        background-color: var(--light-bg);
+        color: var(--dark-text);
+        border: none;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        border-radius: 50rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        background-color: #e9ecef;
+    }
+</style>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="ticket-edit-container mt-4 mb-4">
+                <h2 class="edit-title">Modifier le ticket #@Model.TicketID</h2>
+
+                <form asp-action="Edit" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="TicketID" />
+                    <input type="hidden" asp-for="CreatedByUserId" />
+                    <input type="hidden" asp-for="CreatedDate" />
+                    <input type="hidden" asp-for="Source" />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Title" class="control-label">Titre</label>
+                                <input asp-for="Title" class="form-control" required />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Category" class="control-label">Catégorie</label>
+                                <select asp-for="Category" class="form-select" asp-items="Html.GetEnumSelectList<TicketCategory>()">
+                                </select>
+                                <span asp-validation-for="Category" class="text-danger"></span>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label asp-for="Priority" class="form-label">Priority</label>
-                            <select asp-for="Priority" class="form-select" asp-items="ViewBag.Priorities">
-                                <option value="">-- Select Priority --</option>
-                            </select>
-                            <span asp-validation-for="Priority" class="text-danger"></span>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Priority" class="control-label">Priorité</label>
+                                <select asp-for="Priority" class="form-select" asp-items="Html.GetEnumSelectList<TicketPriority>()">
+                                </select>
+                                <span asp-validation-for="Priority" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Status" class="control-label">Statut</label>
+                                <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<TicketStatus>()">
+                                </select>
+                                <span asp-validation-for="Status" class="text-danger"></span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="mb-3">
-                    <label asp-for="Description" class="form-label">Description</label>
-                    <textarea asp-for="Description" class="form-control" rows="8"></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label">Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="6" required></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
 
-                <div class="mb-3">
-                    <input type="hidden" asp-for="Source" value="Web" />
-                </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="AssignedToUserId" class="control-label">Assigné à (Agent)</label>
+                                <select asp-for="AssignedToUserId" class="form-select">
+                                    <option value="">Non assigné</option>
+                                    @* Vous devriez ajouter ici une boucle pour les agents disponibles *@
+                                    @* @foreach (var agent in ViewBag.Agents) { 
+                                        <option value="@agent.Id" selected="@(Model.AssignedToUserId == agent.Id)">@agent.FirstName @agent.LastName</option>
+                                    } *@
+                                </select>
+                                <span asp-validation-for="AssignedToUserId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="AssignedToTeamID" class="control-label">Assigné à (Équipe)</label>
+                                <select asp-for="AssignedToTeamID" class="form-select">
+                                    <option value="">Non assigné</option>
+                                    @* Vous devriez ajouter ici une boucle pour les équipes disponibles *@
+                                    @* @foreach (var team in ViewBag.Teams) { 
+                                        <option value="@team.TeamID" selected="@(Model.AssignedToTeamID == team.TeamID)">@team.TeamName</option>
+                                    } *@
+                                </select>
+                                <span asp-validation-for="AssignedToTeamID" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="d-flex justify-content-end">
-                    <a asp-action="Index" class="btn btn-secondary me-2">Cancel</a>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Create Ticket
-                    </button>
-                </div>
-            </form>
+                    <div class="form-group">
+                        <label asp-for="DueDate" class="control-label">Date d'échéance</label>
+                        <input asp-for="DueDate" type="date" class="form-control" />
+                        <span asp-validation-for="DueDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group d-flex justify-content-between mt-4">
+                        <a asp-action="Details" asp-route-id="@Model.TicketID" class="btn btn-cancel">Annuler</a>
+                        <button type="submit" class="btn btn-submit">
+                            <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
+    <!-- Ajout de Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 }
-```

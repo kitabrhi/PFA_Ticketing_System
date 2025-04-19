@@ -33,6 +33,10 @@ namespace Ticketing_System.Controllers
             _userManager = userManager;
         }
 
+       
+
+        
+
         // GET: Ticket
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -246,11 +250,8 @@ namespace Ticketing_System.Controllers
         public async Task<IActionResult> Edit(int id, Ticket ticket)
         {
             if (id != ticket.TicketID)
-            {
                 return BadRequest();
-            }
 
-            // Vérifier si l'utilisateur est autorisé à modifier ce ticket
             try
             {
                 var existingTicket = await _ticketService.GetTicketByIdAsync(id);
@@ -265,10 +266,19 @@ namespace Ticketing_System.Controllers
                 ticket.CreatedByUserId = existingTicket.CreatedByUserId;
                 ticket.CreatedDate = existingTicket.CreatedDate;
 
+                ModelState.Remove("CreatedByUser");
+                ModelState.Remove("AssignedToUser");
+                ModelState.Remove("AssignedToTeam");
+                ModelState.Remove("TicketComments");
+                ModelState.Remove("TicketHistories");
+                ModelState.Remove("TicketAttachments");
+
                 if (ModelState.IsValid)
                 {
                     try
                     {
+                        // Passer l'ID de l'utilisateur qui fait la modification
+                        ticket.UpdatedByUserId = userId; // Ajouter cette propriété à votre modèle Ticket si nécessaire
                         await _ticketService.UpdateTicketAsync(ticket);
                         TempData["SuccessMessage"] = "Ticket updated successfully!";
                         return RedirectToAction(nameof(Details), new { id = ticket.TicketID });
@@ -282,6 +292,7 @@ namespace Ticketing_System.Controllers
                         ModelState.AddModelError("", $"Unable to update ticket: {ex.Message}");
                     }
                 }
+
 
                 // Recréer les listes déroulantes en cas d'erreur
                 ViewBag.Categories = Enum.GetValues(typeof(TicketCategory))
@@ -326,7 +337,7 @@ namespace Ticketing_System.Controllers
 
         // GET: Ticket/Delete/5
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -342,7 +353,7 @@ namespace Ticketing_System.Controllers
 
         // POST: Ticket/Delete/5
         [HttpPost, ActionName("Delete")]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -375,7 +386,7 @@ namespace Ticketing_System.Controllers
 
         // GET: Ticket/ChangeStatus/5?status=Resolved
         [HttpGet]
-        [Authorize(Roles = "Admin,SupportAgent")]
+        [Authorize]
         public async Task<IActionResult> ChangeStatus(int id, TicketStatus status)
         {
             try
@@ -398,7 +409,7 @@ namespace Ticketing_System.Controllers
 
         // GET: Ticket/Assign/5
         [HttpGet]
-        [Authorize(Roles = "Admin,SupportAgent")]
+        [Authorize]
         public async Task<IActionResult> Assign(int id)
         {
             try
@@ -418,7 +429,7 @@ namespace Ticketing_System.Controllers
 
         // POST: Ticket/Assign/5
         [HttpPost]
-        [Authorize(Roles = "Admin,SupportAgent")]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Assign(int id, string assignedToUserId)
         {

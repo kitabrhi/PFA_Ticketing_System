@@ -27,25 +27,28 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="mb-3">
                             <label asp-for="Category" class="form-label">Category</label>
-                            <select asp-for="Category" class="form-select" asp-items="ViewBag.Categories">
-                                <option value="">-- Select Category --</option>
+                            <select asp-for="Category"
+                                    class="form-select"
+                                    asp-items="ViewBag.Categories"
+                                    asp-option-label="-- Select Category --">
                             </select>
                             <span asp-validation-for="Category" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="mb-3">
                             <label asp-for="Priority" class="form-label">Priority</label>
-                            <select asp-for="Priority" class="form-select" asp-items="ViewBag.Priorities">
-                                <option value="">-- Select Priority --</option>
+                            <select asp-for="Priority"
+                                    class="form-select"
+                                    asp-items="ViewBag.Priorities"
+                                    asp-option-label="-- Select Priority --">
                             </select>
                             <span asp-validation-for="Priority" class="text-danger"></span>
                         </div>
                     </div>
-                </div>
 
                 <div class="mb-3">
                     <label asp-for="Description" class="form-label">Description</label>
