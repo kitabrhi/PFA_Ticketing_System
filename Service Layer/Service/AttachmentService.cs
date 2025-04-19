@@ -24,18 +24,8 @@ public class AttachmentService : IAttachmentService
         return attachment;
     }
 
-    public async Task<Attachment> AddAttachmentAsync(Attachment attachment, Stream fileContent)
-    {
-        if (attachment == null) throw new ArgumentNullException(nameof(attachment));
-        if (fileContent == null) throw new ArgumentNullException(nameof(fileContent));
+    // Dans AttachmentService.cs
 
-        attachment.UploadedDate = DateTime.Now;
-        var addedAttachment = await _attachmentRepository.AddAsync(attachment);
-
-        await _attachmentRepository.SaveAttachmentContentAsync(addedAttachment.AttachmentId, fileContent);
-
-        return addedAttachment;
-    }
 
     public async Task DeleteAttachmentAsync(int attachmentId)
     {
@@ -61,5 +51,26 @@ public class AttachmentService : IAttachmentService
         // Le créateur de la pièce jointe ou un admin peut la supprimer
         return attachment.UploaderUserId == userId;
         // Note: Dans un cas réel, ajoutez également une vérification du rôle Admin
+    }
+
+    public async Task<Attachment> AddAttachmentAsync(Attachment attachment, Stream fileContent)
+    {
+        if (attachment == null) throw new ArgumentNullException(nameof(attachment));
+        if (fileContent == null) throw new ArgumentNullException(nameof(fileContent));
+
+        try
+        {
+            attachment.UploadedDate = DateTime.Now;
+
+            // Utiliser la nouvelle méthode qui gère tout en une seule transaction
+            return await _attachmentRepository.AddWithContentAsync(attachment, fileContent);
+        }
+        catch (Exception ex)
+        {
+            // Log de l'erreur
+            Console.WriteLine($"Error adding attachment: {ex.Message}");
+            // Rethrow avec plus de contexte
+            throw new Exception($"Failed to add attachment: {ex.Message}", ex);
+        }
     }
 }

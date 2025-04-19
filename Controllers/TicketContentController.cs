@@ -213,7 +213,6 @@ namespace Ticketing_System.Controllers
             }
         }
 
-        // POST: Ticket/UploadAttachment
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -221,42 +220,56 @@ namespace Ticketing_System.Controllers
         {
             if (file == null || file.Length == 0)
             {
-                TempData["ErrorMessage"] = "Aucun fichier n'a été téléchargé";
-                return RedirectToAction(nameof(Details), new { id = ticketId });
+                TempData["ErrorMessage"] = "No file uploaded";
+                return RedirectToAction("Details", "Ticket", new { id = ticketId });
             }
 
             try
             {
                 // Vérifier si le ticket existe
-                await _ticketService.GetTicketByIdAsync(ticketId);
+                var ticket = await _ticketService.GetTicketByIdAsync(ticketId);
 
-                // Créer la pièce jointe
+                // Vérifier l'ID utilisateur
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    TempData["ErrorMessage"] = "User identification failed";
+                    return RedirectToAction("Details", "Ticket", new { id = ticketId });
+                }
+
+                // Créer la pièce jointe avec des valeurs par défaut
                 var attachment = new Attachment
                 {
                     TicketID = ticketId,
-                    FileName = file.FileName,
-                    UploaderUserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
-                    UploadedDate = DateTime.Now
+                    FileName = Path.GetFileName(file.FileName), // Utiliser uniquement le nom du fichier sans le chemin
+                    UploaderUserId = userId,
+                    UploadedDate = DateTime.Now,
+                    // FilePath sera défini plus tard
                 };
 
-                // Enregistrer le fichier
-                using (var stream = file.OpenReadStream())
+                // Utiliser un MemoryStream pour garantir que le contenu complet est disponible
+                using (var memoryStream = new MemoryStream())
                 {
-                    await _attachmentService.AddAttachmentAsync(attachment, stream);
+                    await file.CopyToAsync(memoryStream);
+                    memoryStream.Position = 0; // Réinitialiser la position pour la lecture
+
+                    await _attachmentService.AddAttachmentAsync(attachment, memoryStream);
                 }
 
-                TempData["SuccessMessage"] = "Fichier téléchargé avec succès";
+                TempData["SuccessMessage"] = "File uploaded successfully";
             }
             catch (KeyNotFoundException)
             {
-                TempData["ErrorMessage"] = "Ticket non trouvé";
+                TempData["ErrorMessage"] = "Ticket not found";
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Erreur lors du téléchargement du fichier: {ex.Message}";
+                // Capture de l'exception interne pour plus de détails
+                var innerException = ex.InnerException != null ? $" Inner error: {ex.InnerException.Message}" : "";
+                TempData["ErrorMessage"] = $"Error uploading file: {ex.Message}.{innerException}";
             }
 
-            return RedirectToAction(nameof(Details), new { id = ticketId });
+            return RedirectToAction("Details", "Ticket", new { id = ticketId });
         }
 
         // GET: Ticket/DownloadAttachment/5

@@ -40,17 +40,70 @@ public class AttachmentRepository : Repository<Attachment>, IAttachmentRepositor
         if (attachment == null)
             throw new ArgumentException("Attachment not found", nameof(attachmentId));
 
+        // Créer le dossier s'il n'existe pas
         string directory = Path.Combine(_storageBasePath, attachmentId.ToString());
         Directory.CreateDirectory(directory);
 
-        string filePath = Path.Combine(directory, attachment.FileName);
-        attachment.FilePath = Path.Combine(attachmentId.ToString(), attachment.FileName);
+        // Nom de fichier sécurisé
+        string safeFileName = Path.GetFileNameWithoutExtension(attachment.FileName) + "_" +
+                              Guid.NewGuid().ToString().Substring(0, 8) +
+                              Path.GetExtension(attachment.FileName);
 
+        // Chemin complet du fichier
+        string filePath = Path.Combine(directory, safeFileName);
+
+        // Mettre à jour le chemin dans l'entité
+        attachment.FilePath = Path.Combine(attachmentId.ToString(), safeFileName);
+
+        try
+        {
+            // Enregistrer le fichier sur le disque
+            using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            {
+                content.Position = 0; // S'assurer que le stream est au début
+                await content.CopyToAsync(fileStream);
+            }
+
+            // Mettre à jour l'entité dans la base de données
+            await UpdateAsync(attachment);
+        }
+        catch (Exception ex)
+        {
+            // Log de l'erreur ou propagation avec plus de détails
+            throw new Exception($"Failed to save attachment content: {ex.Message}", ex);
+        }
+    }
+    public async Task<Attachment> AddWithContentAsync(Attachment attachment, Stream content)
+    {
+        // Génération d'un nom de fichier temporaire unique
+        attachment.FilePath = $"temp_{Guid.NewGuid()}";
+
+        // Sauvegarde initiale dans la base de données
+        var addedAttachment = await AddAsync(attachment);
+
+        // Création du répertoire de stockage
+        string directory = Path.Combine(_storageBasePath, addedAttachment.AttachmentId.ToString());
+        Directory.CreateDirectory(directory);
+
+        // Génération d'un nom de fichier sécurisé
+        string safeFileName = Path.GetFileNameWithoutExtension(attachment.FileName) + "_" +
+                             Guid.NewGuid().ToString().Substring(0, 8) +
+                             Path.GetExtension(attachment.FileName);
+
+        string filePath = Path.Combine(directory, safeFileName);
+        string relativePath = Path.Combine(addedAttachment.AttachmentId.ToString(), safeFileName);
+
+        // Sauvegarde du fichier sur le disque
         using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
         {
+            content.Position = 0;
             await content.CopyToAsync(fileStream);
         }
 
-        await UpdateAsync(attachment);
+        // Mise à jour du chemin du fichier
+        addedAttachment.FilePath = relativePath;
+        await UpdateAsync(addedAttachment);
+
+        return addedAttachment;
     }
 }

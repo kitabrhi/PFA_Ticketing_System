@@ -39,7 +39,7 @@ namespace Ticketing_System
 
 
 
-
+            builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
