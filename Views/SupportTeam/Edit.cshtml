@@ -1,0 +1,55 @@
+@model Ticketing_System.Models.SupportTeam
+
+@{
+    ViewData["Title"] = "Modifier l'équipe";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+<form asp-action="Edit" method="post">
+    @* Clé primaire cachée *@
+    <input type="hidden" asp-for="TeamID" />
+
+    <div class="form-group">
+        <label asp-for="TeamName"></label>
+        <input asp-for="TeamName" class="form-control" />
+        <span asp-validation-for="TeamName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <input asp-for="Description" class="form-control" />
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ManagerId">Manager</label>
+        <select asp-for="ManagerId" class="form-control" asp-items="ViewBag.Users">
+            <option value="">-- Sélectionner un manager --</option>
+        </select>
+        <span asp-validation-for="ManagerId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Membres de l’équipe</label>
+        <select name="TeamMembersIds" class="form-control" multiple asp-items="ViewBag.TeamMembers">
+        </select>
+        <span class="text-danger">@Html.ValidationMessage("TeamMembers")</span>
+    </div>
+
+    <div class="form-group">
+        <label>Tickets assignés à l’équipe</label>
+        <select name="AssignedTicketsIds" class="form-control" multiple asp-items="ViewBag.AssignedTickets">
+        </select>
+        <span class="text-danger">@Html.ValidationMessage("AssignedTickets")</span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
+    <a asp-action="Index" class="btn btn-secondary">Annuler</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
