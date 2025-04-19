@@ -33,9 +33,9 @@ namespace Ticketing_System.Controllers
             _userManager = userManager;
         }
 
-       
 
-        
+
+
 
         // GET: Ticket
         [HttpGet]
@@ -72,11 +72,28 @@ namespace Ticketing_System.Controllers
             try
             {
                 var ticket = await _ticketService.GetTicketByIdAsync(id);
+                var history = await _historyService.GetHistoryByTicketIdAsync(id);
+                var comments = await _commentService.GetCommentsByTicketIdAsync(id);
+                var attachments = await _attachmentService.GetAttachmentsByTicketIdAsync(id);
 
-                // Récupérer les commentaires, l'historique et les pièces jointes
-                ViewBag.Comments = await _commentService.GetCommentsByTicketIdAsync(id);
-                ViewBag.History = await _historyService.GetHistoryByTicketIdAsync(id);
-                ViewBag.Attachments = await _attachmentService.GetAttachmentsByTicketIdAsync(id);
+                // Récupérer tous les IDs d'utilisateurs uniques des historiques
+                var historyUserIds = history.Select(h => h.ChangedByUserId).Distinct().ToList();
+
+                // Charger les utilisateurs correspondants
+                Dictionary<string, User> users = new Dictionary<string, User>();
+                foreach (var userId in historyUserIds)
+                {
+                    var user = await _userManager.FindByIdAsync(userId);
+                    if (user != null)
+                    {
+                        users[userId] = user;
+                    }
+                }
+
+                ViewBag.History = history;
+                ViewBag.HistoryUsers = users;
+                ViewBag.Comments = comments;
+                ViewBag.Attachments = attachments;
 
                 return View(ticket);
             }

@@ -542,7 +542,7 @@ namespace Ticketing_System.Migrations
 
                     b.Property<string>("ChangedByUserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("ChangedDate")
                         .HasColumnType("datetime2");
@@ -565,14 +565,11 @@ namespace Ticketing_System.Migrations
                     b.Property<int>("TicketID")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("TicketHistoryID");
 
-                    b.HasIndex("TicketID");
+                    b.HasIndex("ChangedByUserId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("TicketID");
 
                     b.ToTable("TicketHistories");
                 });
@@ -865,15 +862,19 @@ namespace Ticketing_System.Migrations
 
             modelBuilder.Entity("Ticketing_System.Models.TicketHistory", b =>
                 {
+                    b.HasOne("Ticketing_System.Models.User", "ChangedByUser")
+                        .WithMany("TicketChanges")
+                        .HasForeignKey("ChangedByUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Ticketing_System.Models.Ticket", null)
                         .WithMany("TicketHistories")
                         .HasForeignKey("TicketID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Ticketing_System.Models.User", null)
-                        .WithMany("TicketChanges")
-                        .HasForeignKey("UserId");
+                    b.Navigation("ChangedByUser");
                 });
 
             modelBuilder.Entity("Ticketing_System.Models.SupportTeam", b =>

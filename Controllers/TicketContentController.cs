@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Ticketing_System.Models;
 using Ticketing_System.Service_Layer.Interfaces;
+using Index = Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor.Index;
 
 namespace Ticketing_System.Controllers
 {
@@ -23,18 +25,16 @@ namespace Ticketing_System.Controllers
             _commentService = commentService;
             _attachmentService = attachmentService;
         }
-
-        // POST: TicketContent/AddComment
+        // POST: Ticket/AddComment
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> AddComment(int ticketId, string commentText, bool isInternal = false)
         {
-            // Vérifier si le texte du commentaire est valide
             if (string.IsNullOrWhiteSpace(commentText))
             {
-                TempData["ErrorMessage"] = "Comment text cannot be empty";
-                return RedirectToAction("Details", "Ticket", new { id = ticketId });
+                TempData["ErrorMessage"] = "Le texte du commentaire ne peut pas être vide";
+                return RedirectToAction(nameof(Details), new { id = ticketId });
             }
 
             try
@@ -59,22 +59,21 @@ namespace Ticketing_System.Controllers
                 };
 
                 await _commentService.AddCommentAsync(comment);
-                TempData["SuccessMessage"] = "Comment added successfully";
+                TempData["SuccessMessage"] = "Commentaire ajouté avec succès";
             }
             catch (KeyNotFoundException)
             {
-                TempData["ErrorMessage"] = "Ticket not found";
+                TempData["ErrorMessage"] = "Ticket non trouvé";
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error adding comment: {ex.Message}";
+                TempData["ErrorMessage"] = $"Erreur lors de l'ajout du commentaire: {ex.Message}";
             }
 
-            // Rediriger vers la page des détails du ticket
-            return RedirectToAction("Details", "Ticket", new { id = ticketId });
+            return RedirectToAction(nameof(Details), new { id = ticketId });
         }
 
-        // GET: TicketContent/EditComment/5
+        // GET: Ticket/EditComment/5
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> EditComment(int id)
@@ -99,7 +98,7 @@ namespace Ticketing_System.Controllers
             }
         }
 
-        // POST: TicketContent/EditComment/5
+        // POST: Ticket/EditComment/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -110,10 +109,9 @@ namespace Ticketing_System.Controllers
                 return BadRequest();
             }
 
-            // Vérifier le texte du commentaire
             if (string.IsNullOrWhiteSpace(comment.CommentText))
             {
-                ModelState.AddModelError("CommentText", "Comment text cannot be empty");
+                ModelState.AddModelError("CommentText", "Le texte du commentaire ne peut pas être vide");
                 ViewBag.TicketId = comment.TicketID;
                 return View(comment);
             }
@@ -140,9 +138,9 @@ namespace Ticketing_System.Controllers
                 }
 
                 await _commentService.UpdateCommentAsync(existingComment);
-                TempData["SuccessMessage"] = "Comment updated successfully";
+                TempData["SuccessMessage"] = "Commentaire mis à jour avec succès";
 
-                return RedirectToAction("Details", "Ticket", new { id = existingComment.TicketID });
+                return RedirectToAction(nameof(Details), new { id = existingComment.TicketID });
             }
             catch (KeyNotFoundException)
             {
@@ -150,13 +148,13 @@ namespace Ticketing_System.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", $"Error updating comment: {ex.Message}");
+                ModelState.AddModelError("", $"Erreur lors de la mise à jour du commentaire: {ex.Message}");
                 ViewBag.TicketId = comment.TicketID;
                 return View(comment);
             }
         }
 
-        // GET: TicketContent/DeleteComment/5
+        // GET: Ticket/DeleteComment/5
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> DeleteComment(int id)
@@ -181,7 +179,7 @@ namespace Ticketing_System.Controllers
             }
         }
 
-        // POST: TicketContent/DeleteComment/5
+        // POST: Ticket/DeleteComment/5
         [HttpPost, ActionName("DeleteComment")]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -201,8 +199,8 @@ namespace Ticketing_System.Controllers
                 int ticketId = comment.TicketID;
                 await _commentService.DeleteCommentAsync(id);
 
-                TempData["SuccessMessage"] = "Comment deleted successfully";
-                return RedirectToAction("Details", "Ticket", new { id = ticketId });
+                TempData["SuccessMessage"] = "Commentaire supprimé avec succès";
+                return RedirectToAction(nameof(Details), new { id = ticketId });
             }
             catch (KeyNotFoundException)
             {
@@ -210,12 +208,12 @@ namespace Ticketing_System.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error deleting comment: {ex.Message}";
-                return RedirectToAction("Index", "Ticket");
+                TempData["ErrorMessage"] = $"Erreur lors de la suppression du commentaire: {ex.Message}";
+                return RedirectToAction(nameof(Index));
             }
         }
 
-        // POST: TicketContent/UploadAttachment
+        // POST: Ticket/UploadAttachment
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -223,8 +221,8 @@ namespace Ticketing_System.Controllers
         {
             if (file == null || file.Length == 0)
             {
-                TempData["ErrorMessage"] = "No file uploaded";
-                return RedirectToAction("Details", "Ticket", new { id = ticketId });
+                TempData["ErrorMessage"] = "Aucun fichier n'a été téléchargé";
+                return RedirectToAction(nameof(Details), new { id = ticketId });
             }
 
             try
@@ -247,21 +245,21 @@ namespace Ticketing_System.Controllers
                     await _attachmentService.AddAttachmentAsync(attachment, stream);
                 }
 
-                TempData["SuccessMessage"] = "File uploaded successfully";
+                TempData["SuccessMessage"] = "Fichier téléchargé avec succès";
             }
             catch (KeyNotFoundException)
             {
-                TempData["ErrorMessage"] = "Ticket not found";
+                TempData["ErrorMessage"] = "Ticket non trouvé";
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error uploading file: {ex.Message}";
+                TempData["ErrorMessage"] = $"Erreur lors du téléchargement du fichier: {ex.Message}";
             }
 
-            return RedirectToAction("Details", "Ticket", new { id = ticketId });
+            return RedirectToAction(nameof(Details), new { id = ticketId });
         }
 
-        // GET: TicketContent/DownloadAttachment/5
+        // GET: Ticket/DownloadAttachment/5
         [HttpGet]
         public async Task<IActionResult> DownloadAttachment(int id)
         {
@@ -280,17 +278,17 @@ namespace Ticketing_System.Controllers
             }
             catch (KeyNotFoundException)
             {
-                TempData["ErrorMessage"] = "Attachment not found";
-                return RedirectToAction("Index", "Ticket");
+                TempData["ErrorMessage"] = "Pièce jointe non trouvée";
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error downloading attachment: {ex.Message}";
-                return RedirectToAction("Index", "Ticket");
+                TempData["ErrorMessage"] = $"Erreur lors du téléchargement de la pièce jointe: {ex.Message}";
+                return RedirectToAction(nameof(Index));
             }
         }
 
-        // GET: TicketContent/DeleteAttachment/5
+        // GET: Ticket/DeleteAttachment/5
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> DeleteAttachment(int id)
@@ -317,7 +315,7 @@ namespace Ticketing_System.Controllers
             }
         }
 
-        // POST: TicketContent/DeleteAttachment/5
+        // POST: Ticket/DeleteAttachment/5
         [HttpPost, ActionName("DeleteAttachment")]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -339,8 +337,8 @@ namespace Ticketing_System.Controllers
                 int ticketId = attachment.TicketID;
                 await _attachmentService.DeleteAttachmentAsync(id);
 
-                TempData["SuccessMessage"] = "Attachment deleted successfully";
-                return RedirectToAction("Details", "Ticket", new { id = ticketId });
+                TempData["SuccessMessage"] = "Pièce jointe supprimée avec succès";
+                return RedirectToAction(nameof(Details), new { id = ticketId });
             }
             catch (KeyNotFoundException)
             {
@@ -348,8 +346,8 @@ namespace Ticketing_System.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error deleting attachment: {ex.Message}";
-                return RedirectToAction("Index", "Ticket");
+                TempData["ErrorMessage"] = $"Erreur lors de la suppression de la pièce jointe: {ex.Message}";
+                return RedirectToAction(nameof(Index));
             }
         }
     }

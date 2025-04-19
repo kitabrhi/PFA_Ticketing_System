@@ -10,6 +10,7 @@
   <ItemGroup>
     <Folder Include="ApiControllers\" />
     <Folder Include="Migrations\" />
+    <Folder Include="Views\TicketContent\" />
   </ItemGroup>
 
   <ItemGroup>

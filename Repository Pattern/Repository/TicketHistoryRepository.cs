@@ -10,6 +10,7 @@ public class TicketHistoryRepository : Repository<TicketHistory>, ITicketHistory
     {
         return await _dbSet
             .Where(h => h.TicketID == ticketId)
+            .Include(h => h.ChangedByUser)
             .OrderByDescending(h => h.ChangedDate)
             .ToListAsync();
     }

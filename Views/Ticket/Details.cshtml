@@ -1,61 +1,76 @@
-﻿```html
-@model Ticketing_System.Models.Ticket
+﻿@model Ticketing_System.Models.Ticket
+@using System.Security.Claims
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
-    ViewData["Title"] = "Ticket Details";
+    ViewData["Title"] = "Détails du ticket";
 }
 
 <div class="container mt-4">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-action="Index">Tickets</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Details</li>
+            <li class="breadcrumb-item active" aria-current="page">Détails</li>
         </ol>
     </nav>
 
-    <div class="card shadow-sm mb-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Ticket #@Model.TicketID</h4>
+            <h4 class="mb-0">Ticket #@Model.TicketID - @Model.Title</h4>
             <div>
-                <a asp-action="Edit" asp-route-id="@Model.TicketID" class="btn btn-warning btn-sm">
-                    <i class="fas fa-edit"></i> Edit
+                <a asp-action="Edit" asp-route-id="@Model.TicketID" class="btn btn-warning">
+                    <i class="fas fa-edit"></i> Modifier
                 </a>
-                <a asp-action="Index" class="btn btn-secondary btn-sm">
-                    <i class="fas fa-arrow-left"></i> Back
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour
                 </a>
             </div>
         </div>
         <div class="card-body">
-            <h3>@Model.Title</h3>
-
-            <div class="row mb-4 mt-3">
+            <div class="row mb-4">
                 <div class="col-md-6">
                     <dl class="row">
-                        <dt class="col-sm-4">Status</dt>
+                        <dt class="col-sm-4">Statut</dt>
                         <dd class="col-sm-8">
                             <span class="badge bg-primary">@Model.Status</span>
                         </dd>
 
-                        <dt class="col-sm-4">Priority</dt>
+                        <dt class="col-sm-4">Priorité</dt>
                         <dd class="col-sm-8">
                             <span class="badge bg-warning">@Model.Priority</span>
                         </dd>
 
-                        <dt class="col-sm-4">Category</dt>
+                        <dt class="col-sm-4">Catégorie</dt>
                         <dd class="col-sm-8">@Model.Category</dd>
 
-                        <dt class="col-sm-4">Created By</dt>
+                        <dt class="col-sm-4">Créé par</dt>
                         <dd class="col-sm-8">@Model.CreatedByUser?.FirstName @Model.CreatedByUser?.LastName</dd>
                     </dl>
                 </div>
                 <div class="col-md-6">
                     <dl class="row">
-                        <dt class="col-sm-4">Created Date</dt>
-                        <dd class="col-sm-8">@Model.CreatedDate.ToString("dd MMM yyyy HH:mm")</dd>
+                        <dt class="col-sm-4">Date de création</dt>
+                        <dd class="col-sm-8">@Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")</dd>
 
-                        <dt class="col-sm-4">Updated Date</dt>
-                        <dd class="col-sm-8">@Model.UpdatedDate.ToString("dd MMM yyyy HH:mm")</dd>
+                        <dt class="col-sm-4">Dernière mise à jour</dt>
+                        <dd class="col-sm-8">@Model.UpdatedDate.ToString("dd/MM/yyyy HH:mm")</dd>
 
-                        <dt class="col-sm-4">Assigned To</dt>
+                        <dt class="col-sm-4">Assigné à</dt>
                         <dd class="col-sm-8">
                             @if (Model.AssignedToUser != null)
                             {
@@ -63,11 +78,11 @@
                             }
                             else if (Model.AssignedToTeam != null)
                             {
-                                <span>Team: @Model.AssignedToTeam.TeamName</span>
+                                <span>Équipe: @Model.AssignedToTeam.TeamName</span>
                             }
                             else
                             {
-                                <span class="text-muted">Unassigned</span>
+                                <span class="text-muted">Non assigné</span>
                             }
                         </dd>
 
@@ -82,18 +97,206 @@
                     <h5 class="mb-0">Description</h5>
                 </div>
                 <div class="card-body">
-                    <p class="white-space-pre-wrap">@Model.Description</p>
+                    <p style="white-space: pre-wrap;">@Model.Description</p>
                 </div>
             </div>
 
-            <!-- Commentaires et autres informations peuvent être ajoutés ici -->
+            <!-- Onglets pour commentaires, pièces jointes et historique -->
+            <ul class="nav nav-tabs" id="ticketTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button" role="tab" aria-controls="comments" aria-selected="true">Commentaires</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="attachments-tab" data-bs-toggle="tab" data-bs-target="#attachments" type="button" role="tab" aria-controls="attachments" aria-selected="false">Pièces jointes</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab" aria-controls="history" aria-selected="false">Historique</button>
+                </li>
+            </ul>
+
+            <div class="tab-content p-3 border border-top-0 rounded-bottom" id="ticketTabsContent">
+                <!-- Onglet Commentaires -->
+                <div class="tab-pane fade show active" id="comments" role="tabpanel" aria-labelledby="comments-tab">
+                    <!-- Formulaire d'ajout de commentaire -->
+                    <form asp-controller="TicketContent" asp-action="AddComment" method="post" class="mb-4">
+                        <input type="hidden" name="ticketId" value="@Model.TicketID" />
+
+                        <div class="mb-3">
+                            <label for="commentText" class="form-label">Ajouter un commentaire</label>
+                            <textarea name="commentText" id="commentText" class="form-control" rows="3" required></textarea>
+                        </div>
+
+                        @if (User.IsInRole("Admin") || User.IsInRole("SupportAgent"))
+                        {
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="isInternal" id="isInternal" value="true">
+                                <label class="form-check-label" for="isInternal">
+                                    Commentaire interne (visible uniquement par le support)
+                                </label>
+                            </div>
+                        }
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-comment"></i> Ajouter
+                        </button>
+                    </form>
+
+                    <!-- Liste des commentaires -->
+                    @if (ViewBag.Comments != null && ViewBag.Comments.Count > 0)
+                    {
+                        <h5 class="mt-4 mb-3">Commentaires (@ViewBag.Comments.Count)</h5>
+
+                        @foreach (var comment in ViewBag.Comments)
+                        {
+                            <div class="card mb-3 @(comment.IsInternal ? "border-warning" : "")">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>@comment.User?.FirstName @comment.User?.LastName</strong>
+                                        <small class="text-muted ms-2">@comment.CreatedDate.ToString("dd/MM/yyyy HH:mm")</small>
+                                        @if (comment.IsInternal)
+                                        {
+                                            <span class="badge bg-warning ms-2">Interne</span>
+                                        }
+                                    </div>
+                                    <div>
+                                        @if (User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value == comment.UserId || User.IsInRole("Admin"))
+                                        {
+                                            <a asp-controller="TicketContent" asp-action="EditComment" asp-route-id="@comment.CommentID" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-controller="TicketContent" asp-action="DeleteComment" asp-route-id="@comment.CommentID" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <p style="white-space: pre-wrap;">@comment.CommentText</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-info mt-4">
+                            <i class="fas fa-info-circle"></i> Aucun commentaire pour ce ticket.
+                        </div>
+                    }
+                </div>
+
+                <!-- Onglet Pièces jointes -->
+                <div class="tab-pane fade" id="attachments" role="tabpanel" aria-labelledby="attachments-tab">
+                    <!-- Formulaire d'upload de pièce jointe -->
+                    <form asp-controller="TicketContent" asp-action="UploadAttachment" method="post" enctype="multipart/form-data" class="mb-4">
+                        <input type="hidden" name="ticketId" value="@Model.TicketID" />
+
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Ajouter une pièce jointe</label>
+                            <input type="file" name="file" id="file" class="form-control" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload"></i> Télécharger
+                        </button>
+                    </form>
+
+                    <!-- Liste des pièces jointes -->
+                    @if (ViewBag.Attachments != null && ViewBag.Attachments.Count > 0)
+                    {
+                        <h5 class="mt-4 mb-3">Pièces jointes (@ViewBag.Attachments.Count)</h5>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Nom du fichier</th>
+                                        <th>Téléchargé par</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var attachment in ViewBag.Attachments)
+                                    {
+                                        <tr>
+                                            <td>@attachment.FileName</td>
+                                            <td>@attachment.Uploader?.FirstName @attachment.Uploader?.LastName</td>
+                                            <td>@attachment.UploadedDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td>
+                                                <a asp-controller="TicketContent" asp-action="DownloadAttachment" asp-route-id="@attachment.AttachmentId" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-download"></i>
+                                                </a>
+                                                @if (User.FindFirstValue(ClaimTypes.NameIdentifier) == attachment.UploaderUserId || User.IsInRole("Admin"))
+                                                {
+                                                    <a asp-controller="TicketContent" asp-action="DeleteAttachment" asp-route-id="@attachment.AttachmentId" class="btn btn-sm btn-outline-danger">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info mt-4">
+                            <i class="fas fa-info-circle"></i> Aucune pièce jointe pour ce ticket.
+                        </div>
+                    }
+                </div>
+
+                <!-- Onglet Historique -->
+                <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
+                    @if (ViewBag.History != null && ViewBag.History.Count > 0)
+                    {
+                        <h5 class="mt-2 mb-3">Historique du ticket</h5>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Champ</th>
+                                        <th>Ancienne valeur</th>
+                                        <th>Nouvelle valeur</th>
+                                        <th>Modifié par</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var history in ViewBag.History)
+                                    {
+                                        <tr>
+                                            <td>@history.ChangedDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td>@history.FieldName</td>
+                                            <td>@history.OldValue</td>
+                                            <td>@history.NewValue</td>
+                                            <td>
+                                                @if (ViewBag.HistoryUsers != null && ViewBag.HistoryUsers.ContainsKey(history.ChangedByUserId))
+                                                {
+                                                    var user = ViewBag.HistoryUsers[history.ChangedByUserId];
+                                                    @(user.FirstName + " " + user.LastName)
+                                                }
+                                                else
+                                                {
+                                                    @history.ChangedByUserId
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info mt-4">
+                            <i class="fas fa-info-circle"></i> Aucun historique disponible pour ce ticket.
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
-<style>
-    .white-space-pre-wrap {
-        white-space: pre-wrap;
-    }
-</style>
-```

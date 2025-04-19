@@ -1,0 +1,54 @@
+﻿@model Ticketing_System.Models.Attachment
+@{
+    ViewData["Title"] = "Supprimer une pièce jointe";
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Tickets</a></li>
+            <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@ViewBag.TicketId">Détails</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Supprimer une pièce jointe</li>
+        </ol>
+    </nav>
+
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0">Confirmer la suppression</h4>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Êtes-vous sûr de vouloir supprimer cette pièce jointe ? Cette action ne peut pas être annulée.
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">Nom du fichier</dt>
+                        <dd class="col-sm-9">@Model.FileName</dd>
+
+                        <dt class="col-sm-3">Téléchargé par</dt>
+                        <dd class="col-sm-9">@Model.Uploader?.FirstName @Model.Uploader?.LastName</dd>
+
+                        <dt class="col-sm-3">Date</dt>
+                        <dd class="col-sm-9">@Model.UploadedDate.ToString("dd/MM/yyyy HH:mm")</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <form asp-action="DeleteAttachment" method="post">
+                <input type="hidden" asp-for="AttachmentId" />
+
+                <div class="d-flex justify-content-end">
+                    <a asp-action="Details" asp-route-id="@Model.TicketID" class="btn btn-secondary me-2">
+                        Annuler
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i> Supprimer définitivement
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
