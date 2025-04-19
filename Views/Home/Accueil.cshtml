@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Accueil";
+}
+
+<div class="container mt-4">
+    <div class="jumbotron">
+        <h1 class="display-4">Bienvenue sur QuantumDesk, @User.Identity.Name!</h1>
+        <p class="lead">Votre système de gestion de tickets de support.</p>
+        <hr class="my-4">
+        <p>Commencez par consulter vos tickets ou créer un nouveau ticket.</p>
+        <div class="d-flex gap-3">
+            <a asp-controller="Ticket" asp-action="Index" class="btn btn-primary btn-lg">
+                <i class="fas fa-ticket-alt"></i> Voir tous les tickets
+            </a>
+            <a asp-controller="Ticket" asp-action="Create" class="btn btn-success btn-lg">
+                <i class="fas fa-plus"></i> Créer un ticket
+            </a>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Mes tickets</h5>
+                </div>
+                <div class="card-body">
+                    <p>Consultez les tickets que vous avez créés.</p>
+                    <a asp-controller="Ticket" asp-action="MyTickets" class="btn btn-outline-primary">
+                        <i class="fas fa-list"></i> Mes tickets
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Tickets assignés</h5>
+                </div>
+                <div class="card-body">
+                    <p>Consultez les tickets qui vous sont assignés.</p>
+                    <a asp-controller="Ticket" asp-action="AssignedTickets" class="btn btn-outline-warning">
+                        <i class="fas fa-tasks"></i> Tickets assignés
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Base de connaissances</h5>
+                </div>
+                <div class="card-body">
+                    <p>Consultez notre base de connaissances pour trouver des solutions.</p>
+                    <a href="#" class="btn btn-outline-info">
+                        <i class="fas fa-book"></i> Base de connaissances
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

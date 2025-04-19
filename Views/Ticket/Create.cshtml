@@ -1,5 +1,5 @@
-﻿```html
-@model Ticketing_System.Models.Ticket
+﻿@model Ticketing_System.Models.Ticket
+
 @{
     ViewData["Title"] = "Create Ticket";
 }
@@ -52,10 +52,18 @@
                     <textarea asp-for="Description" class="form-control" rows="8"></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
+                <div class="mb-3">
+                    <label class="form-label">Assign To (Testing Only)</label>
+                    <select name="TestAssignmentId" class="form-select" asp-items="ViewBag.TestAgents">
+                    </select>
+                    <small class="text-muted">Cette option est temporaire pour les tests</small>
+                </div>
 
                 <div class="mb-3">
                     <input type="hidden" asp-for="Source" value="Web" />
                 </div>
+                @* Champ caché prérempli par le serveur (via le GET ou via JavaScript) *@
+                @Html.HiddenFor(m => m.CreatedByUserId, new { Value = User?.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value })
 
                 <div class="d-flex justify-content-end">
                     <a asp-action="Index" class="btn btn-secondary me-2">Cancel</a>
@@ -63,6 +71,7 @@
                         <i class="fas fa-save"></i> Create Ticket
                     </button>
                 </div>
+
             </form>
         </div>
     </div>

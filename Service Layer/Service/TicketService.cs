@@ -36,14 +36,33 @@ public class TicketService : ITicketService
         if (string.IsNullOrEmpty(ticket.Title)) throw new ArgumentException("Ticket title cannot be empty");
         if (string.IsNullOrEmpty(ticket.Description)) throw new ArgumentException("Ticket description cannot be empty");
 
+        ticket.TicketComments = new List<TicketComment>();
+        ticket.TicketAttachments = new List<Attachment>();
+
         // Valeurs par défaut
         ticket.CreatedDate = DateTime.Now;
         ticket.UpdatedDate = DateTime.Now;
         ticket.Status = TicketStatus.Open;
         if (string.IsNullOrEmpty(ticket.Source)) ticket.Source = "Web";
 
-        // Création du ticket
-        return await _ticketRepository.AddAsync(ticket);
+        // Créer le ticket
+        var createdTicket = await _ticketRepository.AddAsync(ticket);
+
+        // Ajouter une entrée d'historique pour la création
+        var history = new TicketHistory
+        {
+            TicketID = createdTicket.TicketID,
+            ChangedByUserId = createdTicket.CreatedByUserId,
+            FieldName = "Status",
+            OldValue = "",
+            NewValue = "Created",
+            ChangedDate = DateTime.Now
+        };
+
+        await _historyService.AddHistoryEntryAsync(history);
+
+        return createdTicket;
+
     }
 
     public async Task UpdateTicketAsync(Ticket ticket)

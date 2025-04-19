@@ -104,29 +104,60 @@ namespace Ticketing_System.Controllers
                     Text = p.ToString()
                 }).ToList();
 
+            ViewBag.TestAgents = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "", Text = "-- No Assignment --" },
+                new SelectListItem { Value = "test-agent-1", Text = "Test Agent 1" },
+                new SelectListItem { Value = "test-agent-2", Text = "Test Agent 2" }
+            };
+
             return View();
         }
 
-        // POST: Ticket/Create
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Ticket ticket)
+        public async Task<IActionResult> Create(Ticket ticket, string TestAssignmentId)
         {
+
+            // Injecter l’ID du user connecté
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ticket.CreatedByUserId = userId;
+            ModelState.Remove(nameof(ticket.CreatedByUserId));
+
+            // navigation suppression 
+            ModelState.Remove("CreatedByUser");
+
+            ModelState.Remove("AssignedToUser");
+            ModelState.Remove("AssignedToTeam");
+            ModelState.Remove("TicketComments");
+            ModelState.Remove("TicketHistories");
+            ModelState.Remove("TicketAttachments");
+
+            // *** CELA EST JUSTE 
+
+            /*if (!string.IsNullOrEmpty(TestAssignmentId))
+            {
+                ticket.AssignedToUserId = TestAssignmentId;
+            }*/
+
+            // CECI EST TEMPORAIREEE
+            ticket.AssignedToUserId = null;
+
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Définir l'utilisateur actuel comme créateur
-                    ticket.CreatedByUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
                     await _ticketService.CreateTicketAsync(ticket);
                     TempData["SuccessMessage"] = "Ticket created successfully!";
                     return RedirectToAction(nameof(MyTickets));
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", $"Unable to create ticket: {ex.Message}");
+                    var sqlError = ex.InnerException?.Message;
+                    ModelState.AddModelError("",
+                        $"Impossible de créer le ticket : {ex.Message} - Détail : {sqlError}");
                 }
             }
 
