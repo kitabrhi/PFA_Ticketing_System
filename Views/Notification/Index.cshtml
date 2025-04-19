@@ -1,0 +1,46 @@
+@model List<Ticketing_System.Models.Notification>
+
+@{
+    ViewData["Title"] = "My Notifications";
+}
+
+<h2 class="mb-3">🔔 My Notifications</h2>
+
+<a asp-action="TestSend" class="btn btn-primary mb-3">📤 Tester Notification</a>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Title</th>
+            <th>Message</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var notif in Model)
+        {
+            <tr class="@(notif.IsRead ? "" : "table-warning")">
+                <td>@notif.Title</td>
+                <td>@notif.Message</td>
+                <td>@notif.DateSent.ToString("g")</td>
+                <td>@(notif.IsRead ? "Read" : "Unread")</td>
+                <td>
+                    @if (!notif.IsRead)
+                    {
+                        <a asp-controller="Notification" asp-action="MarkAsRead" asp-route-id="@notif.NotificationId"
+                           class="btn btn-sm btn-success">
+                            Mark as Read
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
