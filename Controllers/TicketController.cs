@@ -1,20 +1,35 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Ticketing_System.Models;
+using Ticketing_System.Service_Layer.Interfaces;
 
 namespace Ticketing_System.Controllers
 {
     public class TicketController : Controller
     {
         private readonly ITicketService _ticketService;
+        private readonly ITicketCommentService _commentService;
+        private readonly ITicketHistoryService _historyService;
+        private readonly IAttachmentService _attachmentService;
         private readonly UserManager<User> _userManager;
 
-        public TicketController(ITicketService ticketService, UserManager<User> userManager)
+        public TicketController(
+            ITicketService ticketService,
+            ITicketCommentService commentService,
+            ITicketHistoryService historyService,
+            IAttachmentService attachmentService,
+            UserManager<User> userManager)
         {
             _ticketService = ticketService;
+            _commentService = commentService;
+            _historyService = historyService;
+            _attachmentService = attachmentService;
             _userManager = userManager;
         }
 
@@ -53,6 +68,12 @@ namespace Ticketing_System.Controllers
             try
             {
                 var ticket = await _ticketService.GetTicketByIdAsync(id);
+
+                // Récupérer les commentaires, l'historique et les pièces jointes
+                ViewBag.Comments = await _commentService.GetCommentsByTicketIdAsync(id);
+                ViewBag.History = await _historyService.GetHistoryByTicketIdAsync(id);
+                ViewBag.Attachments = await _attachmentService.GetAttachmentsByTicketIdAsync(id);
+
                 return View(ticket);
             }
             catch (KeyNotFoundException)
@@ -67,7 +88,7 @@ namespace Ticketing_System.Controllers
         public IActionResult Create()
         {
             // Préparer les listes déroulantes pour le formulaire
-            ViewData["Categories"] = Enum.GetValues(typeof(TicketCategory))
+            ViewBag.Categories = Enum.GetValues(typeof(TicketCategory))
                 .Cast<TicketCategory>()
                 .Select(c => new SelectListItem
                 {
@@ -75,7 +96,7 @@ namespace Ticketing_System.Controllers
                     Text = c.ToString()
                 }).ToList();
 
-            ViewData["Priorities"] = Enum.GetValues(typeof(TicketPriority))
+            ViewBag.Priorities = Enum.GetValues(typeof(TicketPriority))
                 .Cast<TicketPriority>()
                 .Select(p => new SelectListItem
                 {
@@ -100,6 +121,7 @@ namespace Ticketing_System.Controllers
                     ticket.CreatedByUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                     await _ticketService.CreateTicketAsync(ticket);
+                    TempData["SuccessMessage"] = "Ticket created successfully!";
                     return RedirectToAction(nameof(MyTickets));
                 }
                 catch (Exception ex)
@@ -109,7 +131,7 @@ namespace Ticketing_System.Controllers
             }
 
             // En cas d'erreur, recréer les listes déroulantes
-            ViewData["Categories"] = Enum.GetValues(typeof(TicketCategory))
+            ViewBag.Categories = Enum.GetValues(typeof(TicketCategory))
                 .Cast<TicketCategory>()
                 .Select(c => new SelectListItem
                 {
@@ -117,7 +139,7 @@ namespace Ticketing_System.Controllers
                     Text = c.ToString()
                 }).ToList();
 
-            ViewData["Priorities"] = Enum.GetValues(typeof(TicketPriority))
+            ViewBag.Priorities = Enum.GetValues(typeof(TicketPriority))
                 .Cast<TicketPriority>()
                 .Select(p => new SelectListItem
                 {
@@ -145,7 +167,7 @@ namespace Ticketing_System.Controllers
                 }
 
                 // Préparer les listes déroulantes
-                ViewData["Categories"] = Enum.GetValues(typeof(TicketCategory))
+                ViewBag.Categories = Enum.GetValues(typeof(TicketCategory))
                     .Cast<TicketCategory>()
                     .Select(c => new SelectListItem
                     {
@@ -154,7 +176,7 @@ namespace Ticketing_System.Controllers
                         Selected = c.Equals(ticket.Category)
                     }).ToList();
 
-                ViewData["Priorities"] = Enum.GetValues(typeof(TicketPriority))
+                ViewBag.Priorities = Enum.GetValues(typeof(TicketPriority))
                     .Cast<TicketPriority>()
                     .Select(p => new SelectListItem
                     {
@@ -163,7 +185,7 @@ namespace Ticketing_System.Controllers
                         Selected = p.Equals(ticket.Priority)
                     }).ToList();
 
-                ViewData["Statuses"] = Enum.GetValues(typeof(TicketStatus))
+                ViewBag.Statuses = Enum.GetValues(typeof(TicketStatus))
                     .Cast<TicketStatus>()
                     .Select(s => new SelectListItem
                     {
@@ -171,6 +193,12 @@ namespace Ticketing_System.Controllers
                         Text = s.ToString(),
                         Selected = s.Equals(ticket.Status)
                     }).ToList();
+
+                // Si c'est un admin ou un agent, préparer la liste des agents
+                if (User.IsInRole("Admin") || User.IsInRole("SupportAgent"))
+                {
+                    ViewBag.Agents = await _userManager.GetUsersInRoleAsync("SupportAgent");
+                }
 
                 return View(ticket);
             }
@@ -211,6 +239,7 @@ namespace Ticketing_System.Controllers
                     try
                     {
                         await _ticketService.UpdateTicketAsync(ticket);
+                        TempData["SuccessMessage"] = "Ticket updated successfully!";
                         return RedirectToAction(nameof(Details), new { id = ticket.TicketID });
                     }
                     catch (KeyNotFoundException)
@@ -224,7 +253,7 @@ namespace Ticketing_System.Controllers
                 }
 
                 // Recréer les listes déroulantes en cas d'erreur
-                ViewData["Categories"] = Enum.GetValues(typeof(TicketCategory))
+                ViewBag.Categories = Enum.GetValues(typeof(TicketCategory))
                     .Cast<TicketCategory>()
                     .Select(c => new SelectListItem
                     {
@@ -233,7 +262,7 @@ namespace Ticketing_System.Controllers
                         Selected = c.Equals(ticket.Category)
                     }).ToList();
 
-                ViewData["Priorities"] = Enum.GetValues(typeof(TicketPriority))
+                ViewBag.Priorities = Enum.GetValues(typeof(TicketPriority))
                     .Cast<TicketPriority>()
                     .Select(p => new SelectListItem
                     {
@@ -242,7 +271,7 @@ namespace Ticketing_System.Controllers
                         Selected = p.Equals(ticket.Priority)
                     }).ToList();
 
-                ViewData["Statuses"] = Enum.GetValues(typeof(TicketStatus))
+                ViewBag.Statuses = Enum.GetValues(typeof(TicketStatus))
                     .Cast<TicketStatus>()
                     .Select(s => new SelectListItem
                     {
@@ -250,6 +279,11 @@ namespace Ticketing_System.Controllers
                         Text = s.ToString(),
                         Selected = s.Equals(ticket.Status)
                     }).ToList();
+
+                if (User.IsInRole("Admin") || User.IsInRole("SupportAgent"))
+                {
+                    ViewBag.Agents = await _userManager.GetUsersInRoleAsync("SupportAgent");
+                }
 
                 return View(ticket);
             }
@@ -284,6 +318,7 @@ namespace Ticketing_System.Controllers
             try
             {
                 await _ticketService.DeleteTicketAsync(id);
+                TempData["SuccessMessage"] = "Ticket deleted successfully!";
                 return RedirectToAction(nameof(Index));
             }
             catch (KeyNotFoundException)
@@ -301,8 +336,81 @@ namespace Ticketing_System.Controllers
                 }
                 catch
                 {
+                    TempData["ErrorMessage"] = $"Error deleting ticket: {ex.Message}";
                     return RedirectToAction(nameof(Index));
                 }
+            }
+        }
+
+        // GET: Ticket/ChangeStatus/5?status=Resolved
+        [HttpGet]
+        [Authorize(Roles = "Admin,SupportAgent")]
+        public async Task<IActionResult> ChangeStatus(int id, TicketStatus status)
+        {
+            try
+            {
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                await _ticketService.ChangeTicketStatusAsync(id, status, userId);
+                TempData["SuccessMessage"] = $"Ticket status changed to {status}";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction(nameof(Details), new { id });
+            }
+        }
+
+        // GET: Ticket/Assign/5
+        [HttpGet]
+        [Authorize(Roles = "Admin,SupportAgent")]
+        public async Task<IActionResult> Assign(int id)
+        {
+            try
+            {
+                var ticket = await _ticketService.GetTicketByIdAsync(id);
+
+                // Récupérer la liste des agents pour le dropdown
+                ViewBag.Agents = await _userManager.GetUsersInRoleAsync("SupportAgent");
+
+                return View(ticket);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+        // POST: Ticket/Assign/5
+        [HttpPost]
+        [Authorize(Roles = "Admin,SupportAgent")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Assign(int id, string assignedToUserId)
+        {
+            try
+            {
+                string updatedByUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                await _ticketService.AssignTicketAsync(id, assignedToUserId, updatedByUserId);
+                TempData["SuccessMessage"] = "Ticket assigned successfully!";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+
+                // Récupérer à nouveau la liste des agents pour le dropdown
+                ViewBag.Agents = await _userManager.GetUsersInRoleAsync("SupportAgent");
+
+                var ticket = await _ticketService.GetTicketByIdAsync(id);
+                return View(ticket);
             }
         }
 
@@ -353,6 +461,27 @@ namespace Ticketing_System.Controllers
             var tickets = await _ticketService.GetTicketsByCategoryAsync(category);
             ViewData["CurrentFilter"] = $"Category: {category}";
             return View("Index", tickets);
+        }
+
+        // GET: Ticket/Dashboard
+        [HttpGet]
+        [Authorize(Roles = "Admin,SupportAgent")]
+        public async Task<IActionResult> Dashboard()
+        {
+            // Récupérer les statistiques des tickets
+            var statusDistribution = await _ticketService.GetTicketStatusDistributionAsync();
+            var priorityDistribution = await _ticketService.GetTicketPriorityDistributionAsync();
+
+            // Récupérer les tickets récents
+            var recentTickets = (await _ticketService.GetAllTicketsAsync())
+                .OrderByDescending(t => t.CreatedDate)
+                .Take(10);
+
+            ViewBag.StatusDistribution = statusDistribution;
+            ViewBag.PriorityDistribution = priorityDistribution;
+            ViewBag.RecentTickets = recentTickets;
+
+            return View();
         }
     }
 }

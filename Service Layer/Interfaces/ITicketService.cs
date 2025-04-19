@@ -18,4 +18,11 @@ public interface ITicketService
     Task<IEnumerable<Ticket>> GetTicketsByPriorityAsync(TicketPriority priority);
     Task<IEnumerable<Ticket>> GetTicketsByCategoryAsync(TicketCategory category);
     Task<IEnumerable<Ticket>> SearchTicketsAsync(string searchTerm);
+
+    Task<Ticket> ChangeTicketStatusAsync(int ticketId, TicketStatus newStatus, string userId);
+    Task<Ticket> AssignTicketAsync(int ticketId, string assignedToUserId, string updatedByUserId);
+    Task<Ticket> AssignTicketToTeamAsync(int ticketId, int teamId, string updatedByUserId);
+    Task<int> GetTicketCountByStatusAsync(TicketStatus status);
+    Task<Dictionary<TicketStatus, int>> GetTicketStatusDistributionAsync();
+    Task<Dictionary<TicketPriority, int>> GetTicketPriorityDistributionAsync();
 }

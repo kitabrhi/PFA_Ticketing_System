@@ -1,12 +1,16 @@
 ﻿using Ticketing_System.Models;
 using Ticketing_System.Repository.Interfaces;
+using Ticketing_System.Service_Layer.Interfaces;
 public class TicketService : ITicketService
 {
     private readonly ITicketRepository _ticketRepository;
+    private readonly ITicketHistoryService _historyService;
 
-    public TicketService(ITicketRepository ticketRepository)
+
+    public TicketService(ITicketRepository ticketRepository,ITicketHistoryService historyService)
     {
         _ticketRepository = ticketRepository;
+        _historyService = historyService;
     }
 
     // Méthodes de base CRUD
@@ -104,5 +108,139 @@ public class TicketService : ITicketService
     public async Task<IEnumerable<Ticket>> SearchTicketsAsync(string searchTerm)
     {
         return await _ticketRepository.SearchTicketsAsync(searchTerm);
+    }
+    public async Task<Ticket> ChangeTicketStatusAsync(int ticketId, TicketStatus newStatus, string userId)
+    {
+        var ticket = await _ticketRepository.GetByIdAsync(ticketId);
+        if (ticket == null)
+        {
+            throw new KeyNotFoundException($"Ticket with ID {ticketId} not found");
+        }
+
+        var oldStatus = ticket.Status;
+
+        // Mise à jour du statut
+        ticket.Status = newStatus;
+        ticket.UpdatedDate = DateTime.Now;
+
+        // Mise à jour de dates spécifiques selon le statut
+        if (newStatus == TicketStatus.Resolved && !ticket.ResolutionDate.HasValue)
+        {
+            ticket.ResolutionDate = DateTime.Now;
+        }
+        else if (newStatus == TicketStatus.Closed && !ticket.ClosedDate.HasValue)
+        {
+            ticket.ClosedDate = DateTime.Now;
+        }
+
+        await _ticketRepository.UpdateAsync(ticket);
+
+        // Ajout d'une entrée dans l'historique
+        await _historyService.AddHistoryEntryAsync(new TicketHistory
+        {
+            TicketID = ticketId,
+            ChangedByUserId = userId,
+            FieldName = "Status",
+            OldValue = oldStatus.ToString(),
+            NewValue = newStatus.ToString()
+        });
+
+        return ticket;
+    }
+
+    public async Task<Ticket> AssignTicketAsync(int ticketId, string assignedToUserId, string updatedByUserId)
+    {
+        var ticket = await _ticketRepository.GetByIdAsync(ticketId);
+        if (ticket == null)
+        {
+            throw new KeyNotFoundException($"Ticket with ID {ticketId} not found");
+        }
+
+        var oldAssignedUser = ticket.AssignedToUserId;
+        ticket.AssignedToUserId = assignedToUserId;
+        ticket.AssignedToTeamID = null; // Désassigner de l'équipe si assigné à un utilisateur
+        ticket.UpdatedDate = DateTime.Now;
+
+        await _ticketRepository.UpdateAsync(ticket);
+
+        // Ajout d'une entrée dans l'historique
+        await _historyService.AddHistoryEntryAsync(new TicketHistory
+        {
+            TicketID = ticketId,
+            ChangedByUserId = updatedByUserId,
+            FieldName = "AssignedToUser",
+            OldValue = oldAssignedUser ?? "Unassigned",
+            NewValue = assignedToUserId ?? "Unassigned"
+        });
+
+        return ticket;
+    }
+
+    public async Task<Ticket> AssignTicketToTeamAsync(int ticketId, int teamId, string updatedByUserId)
+    {
+        var ticket = await _ticketRepository.GetByIdAsync(ticketId);
+        if (ticket == null)
+        {
+            throw new KeyNotFoundException($"Ticket with ID {ticketId} not found");
+        }
+
+        var oldTeamId = ticket.AssignedToTeamID;
+        ticket.AssignedToTeamID = teamId;
+        ticket.AssignedToUserId = null; // Désassigner de l'utilisateur si assigné à une équipe
+        ticket.UpdatedDate = DateTime.Now;
+
+        await _ticketRepository.UpdateAsync(ticket);
+
+        // Ajout d'une entrée dans l'historique
+        await _historyService.AddHistoryEntryAsync(new TicketHistory
+        {
+            TicketID = ticketId,
+            ChangedByUserId = updatedByUserId,
+            FieldName = "AssignedToTeam",
+            OldValue = oldTeamId?.ToString() ?? "Unassigned",
+            NewValue = teamId.ToString()
+        });
+
+        return ticket;
+    }
+
+    public async Task<int> GetTicketCountByStatusAsync(TicketStatus status)
+    {
+        return await _ticketRepository.GetTicketCountByStatusAsync(status);
+    }
+
+    public async Task<Dictionary<TicketStatus, int>> GetTicketStatusDistributionAsync()
+    {
+        var result = new Dictionary<TicketStatus, int>();
+
+        // Obtenir tous les statuts possibles (à partir de l'énumération)
+        var statuses = Enum.GetValues(typeof(TicketStatus)).Cast<TicketStatus>();
+
+        // Pour chaque statut, obtenir le nombre de tickets
+        foreach (var status in statuses)
+        {
+            int count = await _ticketRepository.GetTicketCountByStatusAsync(status);
+            result.Add(status, count);
+        }
+
+        return result;
+    }
+
+    public async Task<Dictionary<TicketPriority, int>> GetTicketPriorityDistributionAsync()
+    {
+        var result = new Dictionary<TicketPriority, int>();
+        var allTickets = await _ticketRepository.GetAllAsync();
+
+        // Obtenir tous les niveaux de priorité possibles
+        var priorities = Enum.GetValues(typeof(TicketPriority)).Cast<TicketPriority>();
+
+        // Pour chaque priorité, compter les tickets
+        foreach (var priority in priorities)
+        {
+            int count = allTickets.Count(t => t.Priority == priority);
+            result.Add(priority, count);
+        }
+
+        return result;
     }
 }

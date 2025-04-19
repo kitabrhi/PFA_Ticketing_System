@@ -1,6 +1,4 @@
-﻿
-
-using Ticketing_System.Models;
+﻿using Ticketing_System.Models;
 
 namespace Ticketing_System.Repository.Interfaces;
 
