@@ -1,0 +1,66 @@
+﻿@model Ticketing_System.Models.User
+@{
+    ViewData["Title"] = "Delete User";
+    var userRoles = ViewBag.UserRoles as IEnumerable<string>;
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Users">Users</a></li>
+            <li class="breadcrumb-item"><a asp-action="UserDetails" asp-route-id="@Model.Id">Details</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Delete</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm border-danger">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0">Confirm User Deactivation</h4>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Are you sure you want to deactivate this user? This action will prevent the user from accessing the system.
+            </div>
+
+            <div class="mb-4">
+                <h5>User Information</h5>
+                <dl class="row">
+                    <dt class="col-sm-3">Name</dt>
+                    <dd class="col-sm-9">@Model.FirstName @Model.LastName</dd>
+
+                    <dt class="col-sm-3">Email</dt>
+                    <dd class="col-sm-9">@Model.Email</dd>
+
+                    <dt class="col-sm-3">Roles</dt>
+                    <dd class="col-sm-9">
+                        @if (userRoles != null && userRoles.Any())
+                        {
+                            foreach (var role in userRoles)
+                            {
+                                <span class="badge bg-primary me-1">@role</span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="text-muted">No roles assigned</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-3">Created Date</dt>
+                    <dd class="col-sm-9">@Model.CreatedDate.ToString("dd MMM yyyy HH:mm")</dd>
+                </dl>
+            </div>
+
+            <form asp-action="DeleteUserConfirmed" method="post">
+                <input type="hidden" asp-for="Id" />
+                <div class="d-flex justify-content-end">
+                    <a asp-action="UserDetails" asp-route-id="@Model.Id" class="btn btn-secondary me-2">Cancel</a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-user-times me-1"></i> Deactivate User
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

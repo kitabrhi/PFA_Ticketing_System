@@ -4,70 +4,46 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Ticketing_System</title>
-
-    <!-- Bootstrap & CSS -->
+    
+    <!-- CSS files - removed duplicates -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/quantumdesk-theme.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Ticketing_System.styles.css" asp-append-version="true" />
-
-    <!-- Syncfusion Styles -->
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Syncfusion styles -->
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/29.1.33/material.css" />
+    
+    <!-- Styles spécifiques par section -->
+    @RenderSection("Styles", required: false)
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">Ticketing_System</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto mb-2 mb-sm-0">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">🏠 Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Notification" asp-action="Index">🔔 Notifications</a>
-                        </li>
-
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="SupportTeam" asp-action="Index">👥 Équipes</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="TeamMember" asp-action="Index">👤 Membres</a>
-                            </li>
-                            <li class="nav-item">
-        <a class="nav-link text-dark" asp-controller="TeamMember" asp-action="AddAgent">➕ Ajouter SupportAgent</a>
-    </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        <partial name="_Navbar" />
     </header>
-
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted mt-4">
-        <div class="container text-center">
-            &copy; 2025 - Ticketing_System | <a asp-controller="Home" asp-action="Privacy">Mentions légales</a>
-        </div>
+    <main role="main">
+        @RenderBody()
+    </main>
+    <footer>
+        <partial name="_Footer" />
     </footer>
 
-    <!-- Scripts -->
+
+    <!-- JavaScript files - removed duplicates -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/quantumdesk.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <!-- Syncfusion scripts -->
     <script src="https://cdn.syncfusion.com/ej2/29.1.33/dist/ej2.min.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-
-    <!-- Syncfusion -->
     @Html.EJS().ScriptManager()
+    
+    <!-- Scripts spécifiques par section -->
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
