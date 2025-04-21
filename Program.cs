@@ -42,6 +42,8 @@ namespace Ticketing_System
             builder.Services.AddScoped<ISupportTeamService, SupportTeamService>();
             builder.Services.AddScoped<INotificationService,NotificationService>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<ITeamMemberRepository, TeamMemberRepository>();
+            builder.Services.AddScoped<ITeamMemberService, TeamMemberService>();
 
 
 
