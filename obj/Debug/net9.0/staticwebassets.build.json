@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "ytKLvgUKpohOp6V81uee/67q/Up2FvFbixZZVxcgKUM=",
+  "Hash": "STZB6SFj4Pz0OeI+I+CskAA9IrFPcZgNoHasaXrZjPI=",
   "Source": "Ticketing System",
   "BasePath": "_content/Ticketing System",
   "Mode": "Default",
@@ -2243,6 +2243,27 @@
       "OriginalItemSpec": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map"
     },
     {
+      "Identity": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\ddf5z86wdo-7dt9ds9uk4.gz",
+      "SourceId": "Ticketing System",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\",
+      "BasePath": "_content/Ticketing System",
+      "RelativePath": "css/quantumdesk-theme#[.{fingerprint=7dt9ds9uk4}]?.css.gz",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\css\\quantumdesk-theme.css",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "Fingerprint": "f3wx2jzmof",
+      "Integrity": "uz7C/wogBVJA2ySl5gq6vQkAA6jsW28mLLyAG/TktsU=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\css\\quantumdesk-theme.css"
+    },
+    {
       "Identity": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\dhd00oo1nb-ay5nd8zt9x.gz",
       "SourceId": "Ticketing System",
       "SourceType": "Discovered",
@@ -3188,6 +3209,48 @@
       "OriginalItemSpec": "C:\\Users\\elabd\\.nuget\\packages\\microsoft.aspnetcore.identity.ui\\9.0.0\\staticwebassets\\V5\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map"
     },
     {
+      "Identity": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\pa8d2ykpct-c2976stlh9.gz",
+      "SourceId": "Ticketing System",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\",
+      "BasePath": "_content/Ticketing System",
+      "RelativePath": "css/identity-pages#[.{fingerprint=c2976stlh9}]?.css.gz",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\css\\identity-pages.css",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "Fingerprint": "vkv0zq4po6",
+      "Integrity": "38p2fY2tYylbMbGxCHHyS3WamNNwtbdSf0Is0qMVMxE=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\css\\identity-pages.css"
+    },
+    {
+      "Identity": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\peun5bw6bh-kh1sz1ubpy.gz",
+      "SourceId": "Ticketing System",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\",
+      "BasePath": "_content/Ticketing System",
+      "RelativePath": "js/identity-forms#[.{fingerprint=kh1sz1ubpy}]?.js.gz",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\js\\identity-forms.js",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "Fingerprint": "um45ufxkkd",
+      "Integrity": "tjBK8Wdx8MlJgTEBTjQ9ncyGhThhFeOoXrmIstFWmr0=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\js\\identity-forms.js"
+    },
+    {
       "Identity": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\pmo9kgtuwk-4gxs3k148c.gz",
       "SourceId": "Ticketing System",
       "SourceType": "Discovered",
@@ -3291,6 +3354,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\Users\\elabd\\.nuget\\packages\\microsoft.aspnetcore.identity.ui\\9.0.0\\staticwebassets\\V5\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map"
+    },
+    {
+      "Identity": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\qvxyg5w0bv-xpml26f6ph.gz",
+      "SourceId": "Ticketing System",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\",
+      "BasePath": "_content/Ticketing System",
+      "RelativePath": "js/quantumdesk#[.{fingerprint=xpml26f6ph}]?.js.gz",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Alternative",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\js\\quantumdesk.js",
+      "AssetTraitName": "Content-Encoding",
+      "AssetTraitValue": "gzip",
+      "Fingerprint": "f517h4baaz",
+      "Integrity": "k3Kdtu4VlRofwSygVmfhzKY5ifSWJZzkyXsGZaq+1J4=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\js\\quantumdesk.js"
     },
     {
       "Identity": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\rh65p086id-c2jlpeoesf.gz",
@@ -4007,6 +4091,48 @@
       "OriginalItemSpec": "wwwroot\\Attachments\\2\\PFA_7e5d0c4e.txt"
     },
     {
+      "Identity": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\css\\identity-pages.css",
+      "SourceId": "Ticketing System",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\",
+      "BasePath": "_content/Ticketing System",
+      "RelativePath": "css/identity-pages#[.{fingerprint}]?.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "c2976stlh9",
+      "Integrity": "XBAyAgpHBuWzN+SBQrg9db7LN+ohGc0QKC/l/alON84=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\identity-pages.css"
+    },
+    {
+      "Identity": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\css\\quantumdesk-theme.css",
+      "SourceId": "Ticketing System",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\",
+      "BasePath": "_content/Ticketing System",
+      "RelativePath": "css/quantumdesk-theme#[.{fingerprint}]?.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "7dt9ds9uk4",
+      "Integrity": "FdYawx6sdnTy5CuxawPqk5fkBabDkjJSa9hSgBPN1lc=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\quantumdesk-theme.css"
+    },
+    {
       "Identity": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\css\\site.css",
       "SourceId": "Ticketing System",
       "SourceType": "Discovered",
@@ -4047,6 +4173,48 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\js\\identity-forms.js",
+      "SourceId": "Ticketing System",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\",
+      "BasePath": "_content/Ticketing System",
+      "RelativePath": "js/identity-forms#[.{fingerprint}]?.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "kh1sz1ubpy",
+      "Integrity": "iD1xmpEhrxU6i3ZIFSN4Tl1oQQkFQY8Whm3q7U419rQ=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\identity-forms.js"
+    },
+    {
+      "Identity": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\js\\quantumdesk.js",
+      "SourceId": "Ticketing System",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\",
+      "BasePath": "_content/Ticketing System",
+      "RelativePath": "js/quantumdesk#[.{fingerprint}]?.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "xpml26f6ph",
+      "Integrity": "uw8pK+bcE/jn0I6g85zgPkmJeVA2KxpQjBv/KPAu4a4=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\quantumdesk.js"
     },
     {
       "Identity": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\js\\site.js",
@@ -5563,6 +5731,602 @@
         {
           "Name": "integrity",
           "Value": "sha256-jzdJS+MMgTr8vVkDNv+gPwpPQVoL+KuKRNSqz2hmj4o="
+        }
+      ]
+    },
+    {
+      "Route": "css/identity-pages.c2976stlh9.css",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\pa8d2ykpct-c2976stlh9.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000514668039"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1942"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"38p2fY2tYylbMbGxCHHyS3WamNNwtbdSf0Is0qMVMxE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 18:08:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"XBAyAgpHBuWzN+SBQrg9db7LN+ohGc0QKC/l/alON84=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "c2976stlh9"
+        },
+        {
+          "Name": "label",
+          "Value": "css/identity-pages.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-XBAyAgpHBuWzN+SBQrg9db7LN+ohGc0QKC/l/alON84="
+        }
+      ]
+    },
+    {
+      "Route": "css/identity-pages.c2976stlh9.css",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\css\\identity-pages.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "8004"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"XBAyAgpHBuWzN+SBQrg9db7LN+ohGc0QKC/l/alON84=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 18:08:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "c2976stlh9"
+        },
+        {
+          "Name": "label",
+          "Value": "css/identity-pages.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-XBAyAgpHBuWzN+SBQrg9db7LN+ohGc0QKC/l/alON84="
+        }
+      ]
+    },
+    {
+      "Route": "css/identity-pages.c2976stlh9.css.gz",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\pa8d2ykpct-c2976stlh9.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1942"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"38p2fY2tYylbMbGxCHHyS3WamNNwtbdSf0Is0qMVMxE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 18:08:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "c2976stlh9"
+        },
+        {
+          "Name": "label",
+          "Value": "css/identity-pages.css.gz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-38p2fY2tYylbMbGxCHHyS3WamNNwtbdSf0Is0qMVMxE="
+        }
+      ]
+    },
+    {
+      "Route": "css/identity-pages.css",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\pa8d2ykpct-c2976stlh9.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000514668039"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1942"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"38p2fY2tYylbMbGxCHHyS3WamNNwtbdSf0Is0qMVMxE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 18:08:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"XBAyAgpHBuWzN+SBQrg9db7LN+ohGc0QKC/l/alON84=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-XBAyAgpHBuWzN+SBQrg9db7LN+ohGc0QKC/l/alON84="
+        }
+      ]
+    },
+    {
+      "Route": "css/identity-pages.css",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\css\\identity-pages.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "8004"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"XBAyAgpHBuWzN+SBQrg9db7LN+ohGc0QKC/l/alON84=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 18:08:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-XBAyAgpHBuWzN+SBQrg9db7LN+ohGc0QKC/l/alON84="
+        }
+      ]
+    },
+    {
+      "Route": "css/identity-pages.css.gz",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\pa8d2ykpct-c2976stlh9.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1942"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"38p2fY2tYylbMbGxCHHyS3WamNNwtbdSf0Is0qMVMxE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 18:08:14 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-38p2fY2tYylbMbGxCHHyS3WamNNwtbdSf0Is0qMVMxE="
+        }
+      ]
+    },
+    {
+      "Route": "css/quantumdesk-theme.7dt9ds9uk4.css",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\ddf5z86wdo-7dt9ds9uk4.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000144759699"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "6907"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"uz7C/wogBVJA2ySl5gq6vQkAA6jsW28mLLyAG/TktsU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 22:13:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"FdYawx6sdnTy5CuxawPqk5fkBabDkjJSa9hSgBPN1lc=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "7dt9ds9uk4"
+        },
+        {
+          "Name": "label",
+          "Value": "css/quantumdesk-theme.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-FdYawx6sdnTy5CuxawPqk5fkBabDkjJSa9hSgBPN1lc="
+        }
+      ]
+    },
+    {
+      "Route": "css/quantumdesk-theme.7dt9ds9uk4.css",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\css\\quantumdesk-theme.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "40100"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"FdYawx6sdnTy5CuxawPqk5fkBabDkjJSa9hSgBPN1lc=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 22:13:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "7dt9ds9uk4"
+        },
+        {
+          "Name": "label",
+          "Value": "css/quantumdesk-theme.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-FdYawx6sdnTy5CuxawPqk5fkBabDkjJSa9hSgBPN1lc="
+        }
+      ]
+    },
+    {
+      "Route": "css/quantumdesk-theme.7dt9ds9uk4.css.gz",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\ddf5z86wdo-7dt9ds9uk4.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "6907"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"uz7C/wogBVJA2ySl5gq6vQkAA6jsW28mLLyAG/TktsU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 22:13:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "7dt9ds9uk4"
+        },
+        {
+          "Name": "label",
+          "Value": "css/quantumdesk-theme.css.gz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-uz7C/wogBVJA2ySl5gq6vQkAA6jsW28mLLyAG/TktsU="
+        }
+      ]
+    },
+    {
+      "Route": "css/quantumdesk-theme.css",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\ddf5z86wdo-7dt9ds9uk4.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000144759699"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "6907"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"uz7C/wogBVJA2ySl5gq6vQkAA6jsW28mLLyAG/TktsU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 22:13:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"FdYawx6sdnTy5CuxawPqk5fkBabDkjJSa9hSgBPN1lc=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-FdYawx6sdnTy5CuxawPqk5fkBabDkjJSa9hSgBPN1lc="
+        }
+      ]
+    },
+    {
+      "Route": "css/quantumdesk-theme.css",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\css\\quantumdesk-theme.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "40100"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"FdYawx6sdnTy5CuxawPqk5fkBabDkjJSa9hSgBPN1lc=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 22:13:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-FdYawx6sdnTy5CuxawPqk5fkBabDkjJSa9hSgBPN1lc="
+        }
+      ]
+    },
+    {
+      "Route": "css/quantumdesk-theme.css.gz",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\ddf5z86wdo-7dt9ds9uk4.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "6907"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"uz7C/wogBVJA2ySl5gq6vQkAA6jsW28mLLyAG/TktsU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 22:13:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-uz7C/wogBVJA2ySl5gq6vQkAA6jsW28mLLyAG/TktsU="
         }
       ]
     },
@@ -14764,6 +15528,602 @@
         {
           "Name": "integrity",
           "Value": "sha256-1HkjQSVuV0/ji/X/lGeDTHeagBS0BwopMrHDQuwqgtU="
+        }
+      ]
+    },
+    {
+      "Route": "js/identity-forms.js",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\peun5bw6bh-kh1sz1ubpy.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000195045836"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5126"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"tjBK8Wdx8MlJgTEBTjQ9ncyGhThhFeOoXrmIstFWmr0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 17:57:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"iD1xmpEhrxU6i3ZIFSN4Tl1oQQkFQY8Whm3q7U419rQ=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-iD1xmpEhrxU6i3ZIFSN4Tl1oQQkFQY8Whm3q7U419rQ="
+        }
+      ]
+    },
+    {
+      "Route": "js/identity-forms.js",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\js\\identity-forms.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "20623"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"iD1xmpEhrxU6i3ZIFSN4Tl1oQQkFQY8Whm3q7U419rQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 17:57:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-iD1xmpEhrxU6i3ZIFSN4Tl1oQQkFQY8Whm3q7U419rQ="
+        }
+      ]
+    },
+    {
+      "Route": "js/identity-forms.js.gz",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\peun5bw6bh-kh1sz1ubpy.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5126"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"tjBK8Wdx8MlJgTEBTjQ9ncyGhThhFeOoXrmIstFWmr0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 17:57:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-tjBK8Wdx8MlJgTEBTjQ9ncyGhThhFeOoXrmIstFWmr0="
+        }
+      ]
+    },
+    {
+      "Route": "js/identity-forms.kh1sz1ubpy.js",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\peun5bw6bh-kh1sz1ubpy.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000195045836"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5126"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"tjBK8Wdx8MlJgTEBTjQ9ncyGhThhFeOoXrmIstFWmr0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 17:57:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"iD1xmpEhrxU6i3ZIFSN4Tl1oQQkFQY8Whm3q7U419rQ=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "kh1sz1ubpy"
+        },
+        {
+          "Name": "label",
+          "Value": "js/identity-forms.js"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-iD1xmpEhrxU6i3ZIFSN4Tl1oQQkFQY8Whm3q7U419rQ="
+        }
+      ]
+    },
+    {
+      "Route": "js/identity-forms.kh1sz1ubpy.js",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\js\\identity-forms.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "20623"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"iD1xmpEhrxU6i3ZIFSN4Tl1oQQkFQY8Whm3q7U419rQ=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 17:57:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "kh1sz1ubpy"
+        },
+        {
+          "Name": "label",
+          "Value": "js/identity-forms.js"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-iD1xmpEhrxU6i3ZIFSN4Tl1oQQkFQY8Whm3q7U419rQ="
+        }
+      ]
+    },
+    {
+      "Route": "js/identity-forms.kh1sz1ubpy.js.gz",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\peun5bw6bh-kh1sz1ubpy.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "5126"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"tjBK8Wdx8MlJgTEBTjQ9ncyGhThhFeOoXrmIstFWmr0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 17:57:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "kh1sz1ubpy"
+        },
+        {
+          "Name": "label",
+          "Value": "js/identity-forms.js.gz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-tjBK8Wdx8MlJgTEBTjQ9ncyGhThhFeOoXrmIstFWmr0="
+        }
+      ]
+    },
+    {
+      "Route": "js/quantumdesk.js",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\qvxyg5w0bv-xpml26f6ph.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000242954325"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4115"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"k3Kdtu4VlRofwSygVmfhzKY5ifSWJZzkyXsGZaq+1J4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 17:55:21 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"uw8pK+bcE/jn0I6g85zgPkmJeVA2KxpQjBv/KPAu4a4=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-uw8pK+bcE/jn0I6g85zgPkmJeVA2KxpQjBv/KPAu4a4="
+        }
+      ]
+    },
+    {
+      "Route": "js/quantumdesk.js",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\js\\quantumdesk.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "17610"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"uw8pK+bcE/jn0I6g85zgPkmJeVA2KxpQjBv/KPAu4a4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 17:55:21 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-uw8pK+bcE/jn0I6g85zgPkmJeVA2KxpQjBv/KPAu4a4="
+        }
+      ]
+    },
+    {
+      "Route": "js/quantumdesk.js.gz",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\qvxyg5w0bv-xpml26f6ph.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4115"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"k3Kdtu4VlRofwSygVmfhzKY5ifSWJZzkyXsGZaq+1J4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 17:55:21 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-k3Kdtu4VlRofwSygVmfhzKY5ifSWJZzkyXsGZaq+1J4="
+        }
+      ]
+    },
+    {
+      "Route": "js/quantumdesk.xpml26f6ph.js",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\qvxyg5w0bv-xpml26f6ph.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.000242954325"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4115"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"k3Kdtu4VlRofwSygVmfhzKY5ifSWJZzkyXsGZaq+1J4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 17:55:21 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"uw8pK+bcE/jn0I6g85zgPkmJeVA2KxpQjBv/KPAu4a4=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "xpml26f6ph"
+        },
+        {
+          "Name": "label",
+          "Value": "js/quantumdesk.js"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-uw8pK+bcE/jn0I6g85zgPkmJeVA2KxpQjBv/KPAu4a4="
+        }
+      ]
+    },
+    {
+      "Route": "js/quantumdesk.xpml26f6ph.js",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\js\\quantumdesk.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "17610"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"uw8pK+bcE/jn0I6g85zgPkmJeVA2KxpQjBv/KPAu4a4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 17:55:21 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "xpml26f6ph"
+        },
+        {
+          "Name": "label",
+          "Value": "js/quantumdesk.js"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-uw8pK+bcE/jn0I6g85zgPkmJeVA2KxpQjBv/KPAu4a4="
+        }
+      ]
+    },
+    {
+      "Route": "js/quantumdesk.xpml26f6ph.js.gz",
+      "AssetFile": "C:\\Users\\elabd\\Desktop\\Ticketing System\\obj\\Debug\\net9.0\\compressed\\qvxyg5w0bv-xpml26f6ph.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4115"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"k3Kdtu4VlRofwSygVmfhzKY5ifSWJZzkyXsGZaq+1J4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 21 Apr 2025 17:55:21 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "xpml26f6ph"
+        },
+        {
+          "Name": "label",
+          "Value": "js/quantumdesk.js.gz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-k3Kdtu4VlRofwSygVmfhzKY5ifSWJZzkyXsGZaq+1J4="
         }
       ]
     },
@@ -34117,7 +35477,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Apr 2025 23:13:08 GMT"
+          "Value": "Mon, 21 Apr 2025 23:03:40 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -34170,7 +35530,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Apr 2025 23:13:08 GMT"
+          "Value": "Mon, 21 Apr 2025 23:03:40 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -34207,7 +35567,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Apr 2025 23:13:08 GMT"
+          "Value": "Mon, 21 Apr 2025 23:03:40 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -34254,7 +35614,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Apr 2025 23:13:08 GMT"
+          "Value": "Mon, 21 Apr 2025 23:03:40 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -34307,7 +35667,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Apr 2025 23:13:08 GMT"
+          "Value": "Mon, 21 Apr 2025 23:03:40 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -34344,7 +35704,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Apr 2025 23:13:08 GMT"
+          "Value": "Mon, 21 Apr 2025 23:03:40 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -34391,7 +35751,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Apr 2025 23:13:08 GMT"
+          "Value": "Mon, 21 Apr 2025 23:03:40 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -34452,7 +35812,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Apr 2025 23:13:08 GMT"
+          "Value": "Mon, 21 Apr 2025 23:03:40 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -34497,7 +35857,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Apr 2025 23:13:08 GMT"
+          "Value": "Mon, 21 Apr 2025 23:03:40 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -34552,7 +35912,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Apr 2025 23:13:08 GMT"
+          "Value": "Mon, 21 Apr 2025 23:03:40 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -34613,7 +35973,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Apr 2025 23:13:08 GMT"
+          "Value": "Mon, 21 Apr 2025 23:03:40 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -34658,7 +36018,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 19 Apr 2025 23:13:08 GMT"
+          "Value": "Mon, 21 Apr 2025 23:03:40 GMT"
         },
         {
           "Name": "Cache-Control",

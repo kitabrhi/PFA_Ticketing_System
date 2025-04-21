@@ -9,12 +9,28 @@
       "PackagePath": "staticwebassets\\Attachments\\2\\PFA_7e5d0c4e.txt"
     },
     {
+      "Id": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\css\\identity-pages.css",
+      "PackagePath": "staticwebassets\\css\\identity-pages.css"
+    },
+    {
+      "Id": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\css\\quantumdesk-theme.css",
+      "PackagePath": "staticwebassets\\css\\quantumdesk-theme.css"
+    },
+    {
       "Id": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },
     {
       "Id": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\favicon.ico",
       "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\js\\identity-forms.js",
+      "PackagePath": "staticwebassets\\js\\identity-forms.js"
+    },
+    {
+      "Id": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\js\\quantumdesk.js",
+      "PackagePath": "staticwebassets\\js\\quantumdesk.js"
     },
     {
       "Id": "C:\\Users\\elabd\\Desktop\\Ticketing System\\wwwroot\\js\\site.js",

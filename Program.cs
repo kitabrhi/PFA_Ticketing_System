@@ -4,9 +4,11 @@ using Ticketing_System;
 using Ticketing_System.Models;
 using Ticketing_System.Repository;
 using Ticketing_System.Repository.Interfaces;
+using Ticketing_System.Repository_Pattern.Interfaces;
 using Ticketing_System.Service_Layer;
 using Ticketing_System.Service_Layer.Interfaces;
 using Ticketing_System.Service_Layer.Service;
+using Ticketing_System.Service_Layer.Services;
 
 namespace Ticketing_System
 {
@@ -26,6 +28,7 @@ namespace Ticketing_System
             builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();
             builder.Services.AddScoped<ISupportTeamRepository, SupportTeamRepository>();
             builder.Services.AddScoped<INotificationRepository,NotificationRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
 
             //Service Layer
             builder.Services.AddScoped<ITicketService, TicketService>();
@@ -34,6 +37,7 @@ namespace Ticketing_System
             builder.Services.AddScoped<IAttachmentService, AttachmentService>();
             builder.Services.AddScoped<ISupportTeamService, SupportTeamService>();
             builder.Services.AddScoped<INotificationService,NotificationService>();
+            builder.Services.AddScoped<IUserService, UserService>();
 
 
 

@@ -23,6 +23,7 @@ C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\bootstrap\dist\css\bootstrap
 C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\bootstrap\dist\css\bootstrap.css.map
 C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css
 C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css.map
+C:\Users\elabd\Desktop\Ticketing System\wwwroot\css\quantumdesk-theme.css
 C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\jquery-validation\dist\additional-methods.js
 C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js
 C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css.map
@@ -48,8 +49,11 @@ C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\bootstrap\dist\css\bootstrap
 C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map
 C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map
 C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css.map
+C:\Users\elabd\Desktop\Ticketing System\wwwroot\css\identity-pages.css
+C:\Users\elabd\Desktop\Ticketing System\wwwroot\js\identity-forms.js
 C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css.map
 C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.rtl.css.map
+C:\Users\elabd\Desktop\Ticketing System\wwwroot\js\quantumdesk.js
 C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css
 C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt
 C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\jquery\dist\jquery.min.js
@@ -59,8 +63,12 @@ C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\jquery\dist\jquery.js
 C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css.map
 C:\Users\elabd\Desktop\Ticketing System\wwwroot\lib\jquery\dist\jquery.min.map
 wwwroot\Attachments\2\PFA_7e5d0c4e.txt
+wwwroot\css\identity-pages.css
+wwwroot\css\quantumdesk-theme.css
 wwwroot\css\site.css
 wwwroot\favicon.ico
+wwwroot\js\identity-forms.js
+wwwroot\js\quantumdesk.js
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap.css
 wwwroot\lib\bootstrap\dist\css\bootstrap.css.map

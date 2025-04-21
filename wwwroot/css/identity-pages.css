@@ -1,0 +1,350 @@
+/**
+ * QuantumDesk - Identity Pages Styles
+ * Ce fichier contient les styles spécifiques pour les pages d'authentification
+ * (Login, Register, Forgot Password, etc.)
+ */
+
+/* Conteneurs principaux pour les pages d'authentification */
+.identity-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 85vh;
+    padding: 2rem 0;
+}
+
+.identity-header-container {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.identity-brand-icon {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+/* Conteneurs spécifiques pour login et register */
+.login-container, 
+.register-container {
+    background-color: var(--quantum-light-text);
+    border-radius: 0.75rem;
+    box-shadow: 0 15px 35px rgba(26, 58, 95, 0.08);
+    padding: 2.5rem;
+    margin-top: 1rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-container:hover,
+.register-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(26, 58, 95, 0.12);
+}
+
+/* Barre latérale d'accent de couleur */
+.login-container::before, 
+.register-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--quantum-tertiary), var(--quantum-secondary));
+    border-radius: 4px 0 0 4px;
+}
+
+/* Titres des pages d'authentification */
+.login-title, 
+.register-title {
+    color: var(--quantum-primary);
+    font-weight: 700;
+    margin-bottom: 2rem;
+    position: relative;
+    display: inline-block;
+}
+
+.login-title::after, 
+.register-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(to right, var(--quantum-secondary), var(--quantum-tertiary));
+    border-radius: 3px;
+}
+
+/* Titres de section */
+.section-title {
+    color: var(--quantum-primary);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+/* Formulaires */
+.identity-form-floating {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.identity-form-floating > label {
+    color: var(--quantum-muted-text);
+}
+
+.identity-form-control:focus {
+    border-color: var(--quantum-secondary);
+    box-shadow: 0 0 0 0.25rem rgba(0, 167, 142, 0.25);
+}
+
+.form-check-input:checked {
+    background-color: var(--quantum-secondary);
+    border-color: var(--quantum-secondary);
+}
+
+/* Bouton principal pour les pages d'authentification */
+.btn-primary-quantum {
+    background: linear-gradient(135deg, var(--quantum-tertiary), var(--quantum-secondary));
+    border: none;
+    padding: 0.75rem 2rem;
+    font-weight: 500;
+    border-radius: 50rem;
+    box-shadow: 0 5px 15px rgba(123, 104, 238, 0.3);
+    transition: all 0.3s ease;
+    color: var(--quantum-light-text);
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.btn-primary-quantum:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.btn-success-quantum {
+    background: linear-gradient(135deg, var(--quantum-secondary), var(--quantum-secondary-dark));
+    border: none;
+    padding: 0.75rem 2rem;
+    font-weight: 500;
+    border-radius: 50rem;
+    box-shadow: 0 5px 15px rgba(0, 167, 142, 0.4);
+    transition: all 0.3s ease;
+    color: var(--quantum-light-text);
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.btn-success-quantum:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Liens spécifiques dans les pages d'authentification */
+.quantum-link {
+    color: var(--quantum-tertiary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.quantum-link:hover {
+    color: var(--quantum-secondary);
+    text-decoration: underline;
+}
+
+.help-links {
+    margin-top: 1.5rem;
+}
+
+.help-links p {
+    margin-bottom: 0.75rem;
+}
+
+/* Divider "ou" */
+.or-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1.5rem 0;
+    color: var(--quantum-muted-text);
+}
+
+.or-divider::before,
+.or-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #eee;
+}
+
+.or-divider::before {
+    margin-right: 1rem;
+}
+
+.or-divider::after {
+    margin-left: 1rem;
+}
+
+/* Conteneur latéral pour les informations complémentaires */
+.service-container {
+    background-color: var(--quantum-light-bg);
+    border-radius: 0.75rem;
+    padding: 2.5rem;
+    height: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(26, 58, 95, 0.1);
+}
+
+/* Boutons de connexion externe */
+.btn-external {
+    background-color: var(--quantum-light-bg);
+    color: var(--quantum-dark-text);
+    border: none;
+    padding: 0.6rem 1.2rem;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 50rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-external:hover {
+    background-color: var(--quantum-light-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-external i {
+    margin-right: 0.5rem;
+}
+
+.external-login-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Indicateur de force du mot de passe */
+.password-strength {
+    height: 5px;
+    background-color: #e9ecef;
+    border-radius: 50rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.password-strength-meter {
+    height: 100%;
+    border-radius: 50rem;
+    transition: width 0.3s ease;
+}
+
+.password-weak {
+    width: 25%;
+    background-color: var(--quantum-accent);
+}
+
+.password-medium {
+    width: 50%;
+    background-color: var(--quantum-warning);
+}
+
+.password-strong {
+    width: 75%;
+    background-color: #77c13a;
+}
+
+.password-very-strong {
+    width: 100%;
+    background-color: var(--quantum-secondary);
+}
+
+/* Liste de fonctionnalités */
+.identity-features-list {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 2rem;
+}
+
+.identity-features-list li {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: flex-start;
+}
+
+.feature-icon-small {
+    color: var(--quantum-secondary);
+    margin-right: 0.75rem;
+    min-width: 20px;
+    margin-top: 0.25rem;
+}
+
+/* Bloc de support */
+.support-block {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border-radius: var(--quantum-border-radius);
+    background-color: rgba(123, 104, 238, 0.05);
+}
+
+.support-icon {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, var(--quantum-secondary), var(--quantum-tertiary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+}
+
+/* Animations spécifiques aux pages d'identité */
+.identity-fade-in {
+    animation: identity-fade-in 0.6s ease-out forwards;
+}
+
+@keyframes identity-fade-in {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.identity-logo-pulse {
+    animation: identity-logo-pulse 2s ease-in-out infinite;
+}
+
+@keyframes identity-logo-pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Notification de confirmation */
+.identity-confirmation {
+    padding: 1rem;
+    border-radius: var(--quantum-border-radius);
+    margin-bottom: 1.5rem;
+    background-color: rgba(46, 204, 113, 0.1);
+    color: var(--quantum-success);
+    border-left: 4px solid var(--quantum-success);
+}

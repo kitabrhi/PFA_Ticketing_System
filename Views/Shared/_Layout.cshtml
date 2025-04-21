@@ -4,33 +4,46 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Ticketing_System</title>
+    
+    <!-- CSS files - removed duplicates -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/quantumdesk-theme.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Ticketing_System.styles.css" asp-append-version="true" />
-    <!-- Syncfusion ASP.NET MVC controls styles -->
-    <!-- Syncfusion ASP.NET Core controls styles -->
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Syncfusion styles -->
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/29.1.33/material.css" />
-    <!-- Syncfusion ASP.NET Core controls scripts -->
-    <script src="https://cdn.syncfusion.com/ej2/29.1.33/dist/ej2.min.js"></script>
+    
+    <!-- Styles spécifiques par section -->
+    @RenderSection("Styles", required: false)
 </head>
 <body>
-   
-    
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-       
+    <header>
+        <partial name="_Navbar" />
+    </header>
+    <main role="main">
+        @RenderBody()
+    </main>
+    <footer>
+        <partial name="_Footer" />
     </footer>
+
+
+    <!-- JavaScript files - removed duplicates -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/quantumdesk.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-    <!-- Syncfusion ASP.NET MVC Script Manager -->
+    
+    <!-- Syncfusion scripts -->
+    <script src="https://cdn.syncfusion.com/ej2/29.1.33/dist/ej2.min.js"></script>
     @Html.EJS().ScriptManager()
     
+    <!-- Scripts spécifiques par section -->
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

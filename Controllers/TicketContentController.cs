@@ -16,10 +16,7 @@ namespace Ticketing_System.Controllers
         private readonly ITicketCommentService _commentService;
         private readonly IAttachmentService _attachmentService;
 
-        public TicketContentController(
-            ITicketService ticketService,
-            ITicketCommentService commentService,
-            IAttachmentService attachmentService)
+        public TicketContentController(ITicketService ticketService,ITicketCommentService commentService,IAttachmentService attachmentService)
         {
             _ticketService = ticketService;
             _commentService = commentService;
