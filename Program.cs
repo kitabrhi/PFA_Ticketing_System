@@ -19,6 +19,10 @@ namespace Ticketing_System
             // Configuration de la chaîne de connexion SQL Server
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+
+
+        
+
             // Repository Pattern
             builder.Services.AddScoped<ITicketRepository, TicketRepository>();
             builder.Services.AddScoped<ITicketCommentRepository, TicketCommentRepository>();
@@ -34,6 +38,9 @@ namespace Ticketing_System
             builder.Services.AddScoped<IAttachmentService, AttachmentService>();
             builder.Services.AddScoped<ISupportTeamService, SupportTeamService>();
             builder.Services.AddScoped<INotificationService,NotificationService>();
+            builder.Services.AddScoped<ITeamMemberRepository, TeamMemberRepository>();
+            builder.Services.AddScoped<ITeamMemberService, TeamMemberService>();
+
 
 
 
@@ -45,17 +52,18 @@ namespace Ticketing_System
                 options.UseSqlServer(connectionString));
 
             builder.Services.AddDefaultIdentity<User>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = false;
-                options.Password.RequireDigit = false;
-                options.Password.RequiredLength = 6;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireLowercase = false;
-            })
-            .AddRoles<Role>()
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders();
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+                    options.Password.RequireDigit = false;
+                    options.Password.RequiredLength = 6;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireLowercase = false;
+                })
+                .AddRoles<Role>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
 
             // Ajout des services Razor Pages et MVC
             builder.Services.AddRazorPages(options =>

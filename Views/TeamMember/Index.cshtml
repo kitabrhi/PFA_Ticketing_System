@@ -1,0 +1,35 @@
+@model IEnumerable<Ticketing_System.Models.TeamMember>
+
+@{
+    ViewData["Title"] = "Liste des membres d'équipe";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<a asp-action="Create" class="btn btn-primary mb-3">➕ Ajouter un membre</a>
+
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Nom de l'utilisateur</th>
+            <th>Équipe</th>
+            <th>Date d'ajout</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>@user.TeamMemberID</td>
+            <td>@user.User?.UserName</td>
+            <td>@user.Team?.TeamName</td>
+            <td>@user.JoinDate.ToString("dd/MM/yyyy")</td>
+        <td>
+            <a asp-action="Delete" asp-route-id="@user.TeamMemberID" class="btn btn-danger">Supprimer</a>
+        </td>
+        </tr>
+    }
+    </tbody>
+</table>

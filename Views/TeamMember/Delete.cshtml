@@ -1,0 +1,20 @@
+@model Ticketing_System.Models.TeamMember
+
+@{
+    ViewData["Title"] = "Supprimer un membre";
+}
+
+<h2>Confirmer la suppression</h2>
+
+<div>
+    <h4>Êtes-vous sûr de vouloir retirer ce membre de l’équipe ?</h4>
+    <p><strong>Utilisateur :</strong> @Model.User?.UserName</p>
+    <p><strong>Équipe :</strong> @Model.Team?.TeamName</p>
+    <p><strong>Date d'ajout :</strong> @Model.JoinDate.ToString("dd/MM/yyyy")</p>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="TeamMemberID" />
+        <button type="submit" class="btn btn-danger">🗑️ Supprimer</button>
+        <a asp-action="Index" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>

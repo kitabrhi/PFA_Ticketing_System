@@ -1,0 +1,23 @@
+@model Ticketing_System.Models.TeamMember
+
+<h2>Associer un SupportAgent à une Équipe</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="UserId">SupportAgent</label>
+        <select asp-for="UserId" class="form-control" asp-items="ViewBag.Users"></select>
+        <span asp-validation-for="UserId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TeamID">Équipe</label>
+        <select asp-for="TeamID" class="form-control" asp-items="ViewBag.Teams"></select>
+        <span asp-validation-for="TeamID" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Associer</button>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
