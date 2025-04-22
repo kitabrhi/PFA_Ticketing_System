@@ -12,8 +12,8 @@ using Ticketing_System;
 namespace Ticketing_System.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250419165944_InitialMigra")]
-    partial class InitialMigra
+    [Migration("20250422085943_initiale")]
+    partial class initiale
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -389,6 +389,7 @@ namespace Ticketing_System.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("ManagerId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("TeamName")
@@ -544,7 +545,7 @@ namespace Ticketing_System.Migrations
 
                     b.Property<string>("ChangedByUserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("ChangedDate")
                         .HasColumnType("datetime2");
@@ -567,14 +568,11 @@ namespace Ticketing_System.Migrations
                     b.Property<int>("TicketID")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("TicketHistoryID");
 
-                    b.HasIndex("TicketID");
+                    b.HasIndex("ChangedByUserId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("TicketID");
 
                     b.ToTable("TicketHistories");
                 });
@@ -796,7 +794,8 @@ namespace Ticketing_System.Migrations
                     b.HasOne("Ticketing_System.Models.User", "Manager")
                         .WithMany("ManagedTeams")
                         .HasForeignKey("ManagerId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Manager");
                 });
@@ -866,15 +865,19 @@ namespace Ticketing_System.Migrations
 
             modelBuilder.Entity("Ticketing_System.Models.TicketHistory", b =>
                 {
+                    b.HasOne("Ticketing_System.Models.User", "ChangedByUser")
+                        .WithMany("TicketChanges")
+                        .HasForeignKey("ChangedByUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Ticketing_System.Models.Ticket", null)
                         .WithMany("TicketHistories")
                         .HasForeignKey("TicketID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Ticketing_System.Models.User", null)
-                        .WithMany("TicketChanges")
-                        .HasForeignKey("UserId");
+                    b.Navigation("ChangedByUser");
                 });
 
             modelBuilder.Entity("Ticketing_System.Models.SupportTeam", b =>
