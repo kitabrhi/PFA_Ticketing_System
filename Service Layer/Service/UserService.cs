@@ -38,6 +38,17 @@ namespace Ticketing_System.Service_Layer.Services
 
             return await _userRepository.UpdateUserInfoAsync(user);
         }
+        public async Task<bool> DeleteUserAsync(string userId)
+        {
+            if (string.IsNullOrEmpty(userId)) throw new ArgumentNullException(nameof(userId));
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"User with ID {userId} not found");
+            }
+            await _userRepository.DeleteAsync(user);
+            return true;
+        }
 
         public async Task<bool> DeactivateUserAsync(string userId)
         {

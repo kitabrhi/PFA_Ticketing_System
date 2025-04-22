@@ -134,7 +134,7 @@ namespace Ticketing_System.Controllers
         {
             try
             {
-                await _userService.DeactivateUserAsync(id);
+                await _userService.DeleteUserAsync(id);
                 TempData["SuccessMessage"] = "User deactivated successfully!";
                 return RedirectToAction(nameof(Users));
             }

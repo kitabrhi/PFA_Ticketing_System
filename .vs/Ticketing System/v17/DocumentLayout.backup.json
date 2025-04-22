@@ -7,16 +7,24 @@
       "RelativeMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|solutionrelative:controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|c:\\users\\elabd\\desktop\\ticketing system\\controllers\\profilecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|solutionrelative:controllers\\profilecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|c:\\users\\elabd\\desktop\\ticketing system\\views\\admin\\edituser.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|solutionrelative:views\\admin\\edituser.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|c:\\users\\elabd\\desktop\\ticketing system\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|c:\\users\\elabd\\desktop\\ticketing system\\service layer\\service\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|solutionrelative:service layer\\service\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|c:\\users\\elabd\\desktop\\ticketing system\\views\\profile\\changepassword.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|solutionrelative:views\\profile\\changepassword.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|c:\\users\\elabd\\desktop\\ticketing system\\repository pattern\\interfaces\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|solutionrelative:repository pattern\\interfaces\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|c:\\users\\elabd\\desktop\\ticketing system\\repository pattern\\interfaces\\iticketrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|solutionrelative:repository pattern\\interfaces\\iticketrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|c:\\users\\elabd\\desktop\\ticketing system\\service layer\\interfaces\\iticketservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|solutionrelative:service layer\\interfaces\\iticketservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|c:\\users\\elabd\\desktop\\ticketing system\\views\\profile\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -29,30 +37,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|c:\\users\\elabd\\desktop\\ticketing system\\views\\admin\\deleteuser.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|solutionrelative:views\\admin\\deleteuser.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|c:\\users\\elabd\\desktop\\ticketing system\\views\\admin\\edituser.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|solutionrelative:views\\admin\\edituser.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|c:\\users\\elabd\\desktop\\ticketing system\\views\\admin\\userdetails.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|solutionrelative:views\\admin\\userdetails.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|c:\\users\\elabd\\desktop\\ticketing system\\views\\admin\\createuser.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|solutionrelative:views\\admin\\createuser.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|c:\\users\\elabd\\desktop\\ticketing system\\views\\admin\\users.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|solutionrelative:views\\admin\\users.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|c:\\users\\elabd\\desktop\\ticketing system\\service layer\\service\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|solutionrelative:service layer\\service\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|c:\\users\\elabd\\desktop\\ticketing system\\service layer\\interfaces\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|solutionrelative:service layer\\interfaces\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{13A2617A-4A04-49A4-8BD7-8BFE12E03ED7}|Ticketing System.csproj|c:\\users\\elabd\\desktop\\ticketing system\\repository pattern\\repository\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -82,98 +66,46 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "IUserRepository.cs",
+              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Repository Pattern\\Interfaces\\IUserRepository.cs",
+              "RelativeDocumentMoniker": "Repository Pattern\\Interfaces\\IUserRepository.cs",
+              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Repository Pattern\\Interfaces\\IUserRepository.cs",
+              "RelativeToolTip": "Repository Pattern\\Interfaces\\IUserRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T07:36:22.75Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "Edit.cshtml",
-              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Profile\\Edit.cshtml",
-              "RelativeDocumentMoniker": "Views\\Profile\\Edit.cshtml",
-              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Profile\\Edit.cshtml",
-              "RelativeToolTip": "Views\\Profile\\Edit.cshtml",
-              "ViewState": "AgIAABsAAAAAAAAAAAAiwEcAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-21T22:40:16.402Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Profile\\Index.cshtml",
-              "RelativeDocumentMoniker": "Views\\Profile\\Index.cshtml",
-              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Profile\\Index.cshtml",
-              "RelativeToolTip": "Views\\Profile\\Index.cshtml",
-              "ViewState": "AgIAADYAAAAAAAAAAAAiwGAAAAAGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-21T22:39:51.064Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "DeleteUser.cshtml",
-              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Admin\\DeleteUser.cshtml",
-              "RelativeDocumentMoniker": "Views\\Admin\\DeleteUser.cshtml",
-              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Admin\\DeleteUser.cshtml",
-              "RelativeToolTip": "Views\\Admin\\DeleteUser.cshtml",
-              "ViewState": "AgIAABcAAAAAAAAAAAAiwEEAAAAGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-21T22:38:57.005Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ProfileController.cs",
-              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Controllers\\ProfileController.cs",
-              "RelativeDocumentMoniker": "Controllers\\ProfileController.cs",
-              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Controllers\\ProfileController.cs",
-              "RelativeToolTip": "Controllers\\ProfileController.cs",
-              "ViewState": "AgIAADsAAAAAAAAAAAAUwEwAAAAxAAAAAAAAAA==",
+              "Title": "ITicketRepository.cs",
+              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Repository Pattern\\Interfaces\\ITicketRepository.cs",
+              "RelativeDocumentMoniker": "Repository Pattern\\Interfaces\\ITicketRepository.cs",
+              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Repository Pattern\\Interfaces\\ITicketRepository.cs",
+              "RelativeToolTip": "Repository Pattern\\Interfaces\\ITicketRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-21T22:33:43.153Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "AdminController.cs",
-              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Controllers\\AdminController.cs",
-              "RelativeDocumentMoniker": "Controllers\\AdminController.cs",
-              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Controllers\\AdminController.cs*",
-              "RelativeToolTip": "Controllers\\AdminController.cs*",
-              "ViewState": "AgIAAHUAAAAAAAAAAAAiwJIAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-21T22:33:01.413Z",
+              "WhenOpened": "2025-04-22T07:36:22.012Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAlAAAAAAAAAA==",
+              "Title": "UserService.cs",
+              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Service Layer\\Service\\UserService.cs",
+              "RelativeDocumentMoniker": "Service Layer\\Service\\UserService.cs",
+              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Service Layer\\Service\\UserService.cs",
+              "RelativeToolTip": "Service Layer\\Service\\UserService.cs",
+              "ViewState": "AgIAAB0AAAAAAAAAAAAUwDoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-21T22:41:12.581Z",
+              "WhenOpened": "2025-04-22T07:35:51.202Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "ChangePassword.cshtml",
-              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Profile\\ChangePassword.cshtml",
-              "RelativeDocumentMoniker": "Views\\Profile\\ChangePassword.cshtml",
-              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Profile\\ChangePassword.cshtml",
-              "RelativeToolTip": "Views\\Profile\\ChangePassword.cshtml",
-              "ViewState": "AgIAABgAAAAAAAAAAAAiwDsAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-21T22:40:57.548Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 1,
               "Title": "EditUser.cshtml",
               "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Admin\\EditUser.cshtml",
               "RelativeDocumentMoniker": "Views\\Admin\\EditUser.cshtml",
@@ -186,72 +118,69 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "UserDetails.cshtml",
-              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Admin\\UserDetails.cshtml",
-              "RelativeDocumentMoniker": "Views\\Admin\\UserDetails.cshtml",
-              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Admin\\UserDetails.cshtml",
-              "RelativeToolTip": "Views\\Admin\\UserDetails.cshtml",
-              "ViewState": "AgIAACAAAAAAAAAAAAAiwEwAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-21T22:37:52.973Z",
+              "DocumentIndex": 0,
+              "Title": "AdminController.cs",
+              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Controllers\\AdminController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AdminController.cs",
+              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Controllers\\AdminController.cs",
+              "RelativeToolTip": "Controllers\\AdminController.cs",
+              "ViewState": "AgIAAHcAAAAAAAAAAAAmwIgAAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-21T22:33:01.413Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ITicketService.cs",
+              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Service Layer\\Interfaces\\ITicketService.cs",
+              "RelativeDocumentMoniker": "Service Layer\\Interfaces\\ITicketService.cs",
+              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Service Layer\\Interfaces\\ITicketService.cs",
+              "RelativeToolTip": "Service Layer\\Interfaces\\ITicketService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-22T07:35:08.548Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "DeleteUser.cshtml",
+              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Admin\\DeleteUser.cshtml",
+              "RelativeDocumentMoniker": "Views\\Admin\\DeleteUser.cshtml",
+              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Admin\\DeleteUser.cshtml",
+              "RelativeToolTip": "Views\\Admin\\DeleteUser.cshtml",
+              "ViewState": "AgIAABcAAAAAAAAAAAAiwEEAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-21T22:38:57.005Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Profile\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Profile\\Index.cshtml",
+              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Profile\\Index.cshtml",
+              "RelativeToolTip": "Views\\Profile\\Index.cshtml",
+              "ViewState": "AgIAADYAAAAAAAAAAAAiwGAAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-21T22:39:51.064Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Edit.cshtml",
+              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Profile\\Edit.cshtml",
+              "RelativeDocumentMoniker": "Views\\Profile\\Edit.cshtml",
+              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Profile\\Edit.cshtml",
+              "RelativeToolTip": "Views\\Profile\\Edit.cshtml",
+              "ViewState": "AgIAABsAAAAAAAAAAAAiwEcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-21T22:40:16.402Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 9,
-              "Title": "CreateUser.cshtml",
-              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Admin\\CreateUser.cshtml",
-              "RelativeDocumentMoniker": "Views\\Admin\\CreateUser.cshtml",
-              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Admin\\CreateUser.cshtml",
-              "RelativeToolTip": "Views\\Admin\\CreateUser.cshtml",
-              "ViewState": "AgIAACkAAAAAAAAAAAAiwEwAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-21T22:35:06.524Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Users.cshtml",
-              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Admin\\Users.cshtml",
-              "RelativeDocumentMoniker": "Views\\Admin\\Users.cshtml",
-              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Views\\Admin\\Users.cshtml",
-              "RelativeToolTip": "Views\\Admin\\Users.cshtml",
-              "ViewState": "AgIAAEsAAAAAAAAAAAAiwHUAAAAGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-21T22:34:41.971Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "UserService.cs",
-              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Service Layer\\Service\\UserService.cs",
-              "RelativeDocumentMoniker": "Service Layer\\Service\\UserService.cs",
-              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Service Layer\\Service\\UserService.cs",
-              "RelativeToolTip": "Service Layer\\Service\\UserService.cs",
-              "ViewState": "AgIAAFUAAAAAAAAAAAAmwHoAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-21T22:32:16.168Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "IUserService.cs",
-              "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Service Layer\\Interfaces\\IUserService.cs",
-              "RelativeDocumentMoniker": "Service Layer\\Interfaces\\IUserService.cs",
-              "ToolTip": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Service Layer\\Interfaces\\IUserService.cs",
-              "RelativeToolTip": "Service Layer\\Interfaces\\IUserService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-21T22:20:52.466Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
               "Title": "UserRepository.cs",
               "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Repository Pattern\\Repository\\UserRepository.cs",
               "RelativeDocumentMoniker": "Repository Pattern\\Repository\\UserRepository.cs",
@@ -259,12 +188,11 @@
               "RelativeToolTip": "Repository Pattern\\Repository\\UserRepository.cs",
               "ViewState": "AgIAAC0AAAAAAAAAAAAowDwAAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-21T22:19:11.893Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-21T22:19:11.893Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 10,
               "Title": "TicketRepository.cs",
               "DocumentMoniker": "C:\\Users\\elabd\\Desktop\\Ticketing System\\Repository Pattern\\Repository\\TicketRepository.cs",
               "RelativeDocumentMoniker": "Repository Pattern\\Repository\\TicketRepository.cs",
@@ -272,8 +200,7 @@
               "RelativeToolTip": "Repository Pattern\\Repository\\TicketRepository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-21T22:20:13.535Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-21T22:20:13.535Z"
             }
           ]
         }

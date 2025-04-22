@@ -10,6 +10,7 @@ namespace Ticketing_System.Service_Layer.Interfaces
         Task<User> GetUserByIdAsync(string userId);
         Task<IEnumerable<User>> GetUsersByRoleAsync(string roleName);
         Task<bool> UpdateUserAsync(User user);
+        Task<bool> DeleteUserAsync(string userId);
         Task<bool> DeactivateUserAsync(string userId);
         Task<bool> UpdateProfileAsync(User userProfile);
         Task<bool> ChangePasswordAsync(string userId, string currentPassword, string newPassword);
