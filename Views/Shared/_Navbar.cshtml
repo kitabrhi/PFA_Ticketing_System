@@ -1,73 +1,79 @@
-<nav class="navbar navbar-expand-lg quantum-navbar">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="/">
-            <i class="fas fa-ticket-alt quantum-logo-icon"></i>
-            <span class="quantum-logo-text">QuantumDesk</span>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3" style="z-index: 1050;">
+    <div class="container-fluid">
+        <!-- Logo -->
+        <a class="navbar-brand d-flex align-items-center fw-bold" href="/">
+            <i class="fas fa-ticket-alt text-primary me-2"></i> QuantumDesk
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+
+        <!-- Toggler for mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+
+        <!-- Navbar Links -->
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                @{
+                    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString() ?? "";
+                    var currentController = ViewContext.RouteData.Values["Controller"]?.ToString() ?? "";
+                }
+
                 <li class="nav-item">
-                    @{
-                        var currentAction = ViewContext.RouteData.Values["Action"]?.ToString() ?? "";
-                        var currentController = ViewContext.RouteData.Values["Controller"]?.ToString() ?? "";
-                    }
-                    <a class="nav-link quantum-nav-link @(currentController == "Home" && currentAction == "Index" ? "active" : "")" href="/">
+                    <a class="nav-link @(currentController == "Home" && currentAction == "Index" ? "active fw-bold text-primary" : "")" href="/">
                         <i class="fas fa-home me-1"></i> Accueil
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link quantum-nav-link @(currentController == "Home" && currentAction == "About" ? "active" : "")" href="/Home/About">
-                        <i class="fas fa-info-circle me-1"></i> À propos
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link quantum-nav-link @(currentController == "Home" && currentAction == "FAQ" ? "active" : "")" href="/Home/FAQ">
-                        <i class="fas fa-question-circle me-1"></i> FAQ
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link quantum-nav-link @(currentController == "Home" && currentAction == "Contact" ? "active" : "")" href="/Home/Contact">
-                        <i class="fas fa-envelope me-1"></i> Contact
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link text-dark" asp-controller="Notification" asp-action="Index">🔔 Notifications</a>
+                    <a class="nav-link @(currentController == "Home" && currentAction == "About" ? "active fw-bold text-primary" : "")" href="/Home/About">
+                        <i class="fas fa-info-circle me-1"></i> À propos
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(currentController == "Home" && currentAction == "FAQ" ? "active fw-bold text-primary" : "")" href="/Home/FAQ">
+                        <i class="fas fa-question-circle me-1"></i> FAQ
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(currentController == "Home" && currentAction == "Contact" ? "active fw-bold text-primary" : "")" href="/Home/Contact">
+                        <i class="fas fa-envelope me-1"></i> Contact
+                    </a>
                 </li>
 
                 @if (User.IsInRole("Admin"))
                 {
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="SupportTeam" asp-action="Index">👥 Équipes</a>
+                        <a class="nav-link @(currentController == "SupportTeam" ? "active fw-bold text-primary" : "")" asp-controller="SupportTeam" asp-action="Index">
+                            <i class="fas fa-users-cog me-1"></i> Équipes
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="TeamMember" asp-action="Index">👤 Membres</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="TeamMember" asp-action="AddAgent">➕ Ajouter SupportAgent</a>
+                        <a class="nav-link @(currentController == "TeamMember" ? "active fw-bold text-primary" : "")" asp-controller="TeamMember" asp-action="Index">
+                            <i class="fas fa-users me-1"></i> Membres
+                        </a>
                     </li>
                 }
-
-                
             </ul>
-            <div class="d-flex">
+
+            <!-- Right Side: Authentication -->
+            <div class="d-flex align-items-center gap-2">
                 @if (User?.Identity?.IsAuthenticated ?? false)
                 {
                     <div class="dropdown">
-                        <button class="btn quantum-btn quantum-btn-outline-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-circle me-1"></i> @(User.Identity.Name ?? "Utilisateur")
+                        <button class="btn btn-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i> @(User.Identity.Name ?? "Compte")
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="/Ticket/MyTickets"><i class="fas fa-ticket-alt me-2"></i>Mes tickets</a></li>
-                            <li><a class="dropdown-item" href="/Profile"><i class="fas fa-user-cog me-2"></i>Mon profil</a></li>
+                            <li><a class="dropdown-item" href="/Ticket/MyTickets"><i class="fas fa-ticket-alt me-2"></i> Mes Tickets</a></li>
+                            <li><a class="dropdown-item" href="/Profile"><i class="fas fa-user-cog me-2"></i> Mon Profil</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form class="dropdown-item p-0" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                                    <button type="submit" class="btn btn-link p-0 w-100 text-start" style="color: inherit;">
-                                        <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+                                    <button type="submit" class="btn btn-link p-0 w-100 text-start text-danger">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Déconnexion
                                     </button>
                                 </form>
                             </li>
@@ -76,10 +82,10 @@
                 }
                 else
                 {
-                    <a class="btn quantum-btn quantum-btn-primary me-2" asp-area="Identity" asp-page="/Account/Login">
+                    <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Login">
                         <i class="fas fa-sign-in-alt me-1"></i> Connexion
                     </a>
-                    <a class="btn quantum-btn quantum-btn-outline-secondary" asp-area="Identity" asp-page="/Account/Register">
+                    <a class="btn btn-outline-primary" asp-area="Identity" asp-page="/Account/Register">
                         <i class="fas fa-user-plus me-1"></i> Inscription
                     </a>
                 }

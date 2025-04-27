@@ -13,4 +13,11 @@ public interface ITicketRepository : IRepository<Ticket>
     Task<IEnumerable<Ticket>> SearchTicketsAsync(string searchTerm);
     
     Task<int> GetTicketCountByStatusAsync(TicketStatus status);
+
+
+        Task<IEnumerable<Ticket>> GetAllAsync();
+
+        IQueryable<Ticket> Query();
+
+
 }

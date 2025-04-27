@@ -1,46 +1,88 @@
+@{
+    Layout = User.IsInRole("Admin") ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
+}
+
 @model List<Ticketing_System.Models.Notification>
 
 @{
     ViewData["Title"] = "My Notifications";
 }
 
-<h2 class="mb-3">🔔 My Notifications</h2>
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold mb-0">🔔 My Notifications</h1>
+            <small class="text-muted">All your alerts and updates</small>
+        </div>
 
-<a asp-action="TestSend" class="btn btn-primary mb-3">📤 Tester Notification</a>
+        <a asp-action="TestSend" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm">
+            📤 Test Notification
+        </a>
+    </div>
 
-@if (TempData["Message"] != null)
-{
-    <div class="alert alert-success">@TempData["Message"]</div>
-}
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
 
-<table class="table table-bordered">
-    <thead class="table-dark">
-        <tr>
-            <th>Title</th>
-            <th>Message</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var notif in Model)
-        {
-            <tr class="@(notif.IsRead ? "" : "table-warning")">
-                <td>@notif.Title</td>
-                <td>@notif.Message</td>
-                <td>@notif.DateSent.ToString("g")</td>
-                <td>@(notif.IsRead ? "Read" : "Unread")</td>
-                <td>
-                    @if (!notif.IsRead)
-                    {
-                        <a asp-controller="Notification" asp-action="MarkAsRead" asp-route-id="@notif.NotificationId"
-                           class="btn btn-sm btn-success">
-                            Mark as Read
-                        </a>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="card shadow-sm rounded-4">
+        <div class="card-body p-4">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Title</th>
+                                <th>Message</th>
+                                <th>Date Sent</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var notif in Model)
+                            {
+                                <tr class="@(notif.IsRead ? "" : "table-warning")">
+                                    <td class="fw-semibold">@notif.Title</td>
+                                    <td>@notif.Message</td>
+                                    <td>@notif.DateSent.ToString("dd MMM yyyy HH:mm")</td>
+                                    <td>
+                                        @if (notif.IsRead)
+                                        {
+                                            <span class="badge bg-success">Read</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark">Unread</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!notif.IsRead)
+                                        {
+                                            <a asp-controller="Notification" asp-action="MarkAsRead" asp-route-id="@notif.NotificationId"
+                                               class="btn btn-outline-success btn-sm rounded-pill px-3">
+                                                ✅ Mark as Read
+                                            </a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-bell-slash fa-4x text-muted mb-3"></i>
+                    <h4 class="fw-bold">No Notifications</h4>
+                    <p class="text-muted">You're up to date!</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

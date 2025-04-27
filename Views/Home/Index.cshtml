@@ -314,17 +314,61 @@
 <section class="container mb-5">
     <div class="row justify-content-center quantum-animate-fade-in">
         <div class="col-lg-8 text-center">
-            <h2 class="mb-4">Prêt à transformer votre service client ?</h2>
-            <p class="lead mb-5">Rejoignez plus de 500 entreprises qui font confiance à QuantumDesk pour gérer leur support client</p>
-            <a href="#" class="quantum-btn quantum-btn-secondary quantum-btn-lg mx-2 mb-3">
-                <i class="fas fa-rocket me-2"></i>Démarrer l'essai gratuit
-            </a>
-            <a href="#" class="quantum-btn quantum-btn-outline quantum-btn-lg mx-2 mb-3">
-                <i class="fas fa-calendar me-2"></i>Demander une démo
-            </a>
+            <h2 class="quantum-section-title mb-4">Transformez votre service client avec QuantumDesk</h2>
+            <p class="lead quantum-text-muted mb-5">Rejoignez plus de 500 entreprises qui font confiance à QuantumDesk pour améliorer l'efficacité de leur support client.</p>
+
+           <div class="d-flex justify-content-center gap-4 mb-4">
+    <a href="#" class="quantum-btn quantum-btn-primary quantum-btn-lg px-4 py-3 quantum-animate-fade-in-up">
+        <i class="fas fa-rocket me-2"></i>Démarrer l'essai gratuit
+    </a>
+    <a href="#" class="quantum-btn quantum-btn-solid quantum-btn-lg px-4 py-3 quantum-animate-fade-in-up" style="animation-delay: 0.2s;">
+        <i class="fas fa-calendar me-2"></i>Demander une démo
+    </a>
+</div>
+
+<style>
+    /* Button Colors */
+    .quantum-btn-primary {
+        background: #4CAF50; /* Green color */
+        border: none;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .quantum-btn-solid {
+        background: #4CAF50; /* Green color */
+        border: none;
+        color: white;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    /* Button Hover Effects */
+    .quantum-btn-primary:hover, .quantum-btn-solid:hover {
+        background: #45a049; /* Darker Green on Hover */
+        color: white;
+    }
+
+    /* Buttons animation */
+    .quantum-btn-primary, .quantum-btn-solid {
+        transition: all 0.3s ease;
+    }
+
+    .quantum-btn-primary:hover, .quantum-btn-solid:hover {
+        transform: scale(1.05); /* Slight zoom effect */
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Adding a shadow */
+    }
+</style>
+
+
+
+            <div class="quantum-cta-text">
+                <p class="text-muted">Aucun engagement nécessaire. Testez la plateforme et voyez par vous-même comment elle peut améliorer votre service client.</p>
+            </div>
         </div>
     </div>
 </section>
+
 
 @section Scripts {
     <script src="~/js/quantumdesk.js"></script>

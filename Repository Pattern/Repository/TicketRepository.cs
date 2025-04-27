@@ -95,4 +95,10 @@ public class TicketRepository : Repository<Ticket>, ITicketRepository
             .Include(t => t.TicketAttachments)
             .FirstOrDefaultAsync(t => t.TicketID == id);
     }
+
+    public IQueryable<Ticket> Query()
+{
+    return _context.Tickets;
+}
+
 }

@@ -71,5 +71,11 @@ namespace Ticketing_System.Repository
             }
             return !await query.AnyAsync();
         }
+
+        // ✅ La méthode manquante pour corriger ton erreur :
+        public IQueryable<User> Query()
+        {
+            return _dbSet.AsQueryable();
+        }
     }
 }

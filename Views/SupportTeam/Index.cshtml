@@ -1,31 +1,78 @@
+@{
+    Layout = User.IsInRole("Admin") ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
+}
+
 @model List<Ticketing_System.Models.SupportTeam>
 
-<h2>Liste des Équipes</h2>
-
-@if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
-{
-    <a asp-action="Create" class="btn btn-success mb-3">Créer une nouvelle équipe</a>
+@{
+    ViewData["Title"] = "Support Teams";
 }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Nom</th>
-            <th>Description</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var team in Model)
-{
-    <tr>
-        <td>@team.TeamName</td>
-        <td>@team.Description</td>
-        <td>
-            <a asp-action="Edit" asp-route-id="@team.TeamID" class="btn btn-sm btn-warning">Modifier</a>
-            <a asp-action="Delete" asp-route-id="@team.TeamID" class="btn btn-sm btn-danger">Supprimer</a>
-        </td>
-    </tr>
-}
-    </tbody>
-</table>
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="fw-bold mb-0">Support Teams</h1>
+            <small class="text-muted">Manage your support teams easily</small>
+        </div>
+
+        @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+        {
+            <a asp-action="Create" class="btn btn-success rounded-pill px-4 py-2 shadow-sm">
+                ➕ Create New Team
+            </a>
+        }
+    </div>
+
+    <div class="card shadow-sm rounded-4">
+        <div class="card-body p-4">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Team Name</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var team in Model)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@team.TeamName</td>
+                                    <td>@team.Description</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="Edit" asp-route-id="@team.TeamID" class="btn btn-sm btn-outline-warning">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@team.TeamID" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-users-cog fa-4x text-muted mb-3"></i>
+                    <h4 class="fw-bold">No teams found</h4>
+                    <p class="text-muted">Create a new team to get started.</p>
+
+                    @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+                    {
+                        <a asp-action="Create" class="btn btn-primary rounded-pill mt-3 px-4 py-2">
+                            ➕ Create Your First Team
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

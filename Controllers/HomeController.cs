@@ -19,7 +19,12 @@ namespace Ticketing_System.Controllers
             return View();
         }
 
-        [Authorize] // Pour s'assurer que seuls les utilisateurs connectés puissent y accéder
+           public IActionResult About()
+    {
+        return View();
+    }
+
+        [Authorize] // Pour s'assurer que seuls les utilisateurs connectï¿½s puissent y accï¿½der
         public IActionResult Accueil()
         {
             return View();
