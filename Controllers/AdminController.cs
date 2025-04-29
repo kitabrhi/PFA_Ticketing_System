@@ -145,6 +145,48 @@ namespace Ticketing_System.Controllers
             }
         }
 
+
+       [HttpGet]
+public async Task<IActionResult> Dashboard()
+{
+    ViewBag.TotalUsers = await _userService.GetTotalUsersAsync();
+    ViewBag.OpenTickets = await _userService.GetTicketsByStatusAsync("Open");
+    ViewBag.ResolvedTickets = await _userService.GetTicketsByStatusAsync("Resolved");
+    ViewBag.ClosedTickets = await _userService.GetTicketsByStatusAsync("Closed");
+
+    ViewBag.HighPriorityTickets = await _userService.GetTicketsByPriorityAsync("High");
+    ViewBag.MediumPriorityTickets = await _userService.GetTicketsByPriorityAsync("Medium");
+    ViewBag.LowPriorityTickets = await _userService.GetTicketsByPriorityAsync("Low");
+
+    // 👇 Ajouter ces listes pour les graphiques
+    var ticketsStatus = new List<object>
+    {
+        new { Label = "Open", Value = ViewBag.OpenTickets },
+        new { Label = "Resolved", Value = ViewBag.ResolvedTickets },
+        new { Label = "Closed", Value = ViewBag.ClosedTickets }
+    };
+
+    var ticketsPriority = new List<object>
+    {
+        new { Label = "High", Value = ViewBag.HighPriorityTickets },
+        new { Label = "Medium", Value = ViewBag.MediumPriorityTickets },
+        new { Label = "Low", Value = ViewBag.LowPriorityTickets }
+    };
+
+    ViewBag.TicketsStatusData = ticketsStatus;
+    ViewBag.TicketsPriorityData = ticketsPriority;
+
+    return View();
+}
+
+
+
+
+
+
+
+
+
         // GET: Admin/CreateUser
         [HttpGet]
         public IActionResult CreateUser()
@@ -155,99 +197,46 @@ namespace Ticketing_System.Controllers
         }
 
         // POST: Admin/CreateUser
-[HttpPost]
-[ValidateAntiForgeryToken]
-public async Task<IActionResult> CreateUser(User user, string password, string[] selectedRoles)
-{
-    ModelState.Remove("Comments");
-    ModelState.Remove("Articles");
-    ModelState.Remove("Attachments");
-    ModelState.Remove("ManagedTeams");
-    ModelState.Remove("Notifications");
-    ModelState.Remove("TicketChanges");
-    ModelState.Remove("CreatedTickets");
-    ModelState.Remove("AssignedTickets");
-    ModelState.Remove("TeamMemberships");
-
-    if (ModelState.IsValid)
-    {
-        // Set default email and password if not provided
-        if (string.IsNullOrEmpty(user.Email))
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateUser(User user, string password, string[] selectedRoles)
         {
-            user.Email = "admin@gmail.com"; // Default Email
-        }
-
-        if (string.IsNullOrEmpty(password))
-        {
-            password = "Admin@1234"; // Default Password
-        }
-
-        user.UserName = user.Email;
-        user.CreatedDate = DateTime.Now;
-        user.IsActive = true;
-
-        // Create the user with the provided password (password will be hashed automatically)
-        var result = await _userManager.CreateAsync(user, password);
-
-        if (result.Succeeded)
-        {
-            // Assign roles if provided
-            if (selectedRoles != null && selectedRoles.Any())
+            ModelState.Remove("Comments");
+            ModelState.Remove("Articles");
+            ModelState.Remove("Attachments");
+            ModelState.Remove("ManagedTeams");
+            ModelState.Remove("Notifications");
+            ModelState.Remove("TicketChanges");
+            ModelState.Remove("CreatedTickets");
+            ModelState.Remove("AssignedTickets");
+            ModelState.Remove("TeamMemberships");
+            if (ModelState.IsValid)
             {
-                await _userManager.AddToRolesAsync(user, selectedRoles);
+                user.UserName = user.Email;
+                user.CreatedDate = DateTime.Now;
+                user.IsActive = true;
+
+                var result = await _userManager.CreateAsync(user, password);
+                if (result.Succeeded)
+                {
+                    if (selectedRoles != null && selectedRoles.Any())
+                    {
+                        await _userManager.AddToRolesAsync(user, selectedRoles);
+                    }
+
+                    TempData["SuccessMessage"] = "User created successfully!";
+                    return RedirectToAction(nameof(Users));
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
             }
 
-            TempData["SuccessMessage"] = "User created successfully!";
-            return RedirectToAction(nameof(Users));
-        }
-
-        foreach (var error in result.Errors)
-        {
-            ModelState.AddModelError("", error.Description);
-        }
-    }
-
-    var allRoles = _roleManager.Roles.Select(r => r.Name).ToList();
-    ViewBag.Roles = new MultiSelectList(allRoles, selectedRoles);
-    return View(user);
-}
-
-
-    
-
-
-        // GET: Admin/Dashboard
-        [HttpGet]
-        public async Task<IActionResult> Dashboard()
-        {
-            ViewBag.TotalUsers = await _userService.GetTotalUsersAsync();
-            ViewBag.OpenTickets = await _userService.GetTicketsByStatusAsync("Open");
-            ViewBag.ResolvedTickets = await _userService.GetTicketsByStatusAsync("Resolved");
-            ViewBag.ClosedTickets = await _userService.GetTicketsByStatusAsync("Closed");
-
-            ViewBag.HighPriorityTickets = await _userService.GetTicketsByPriorityAsync("High");
-            ViewBag.MediumPriorityTickets = await _userService.GetTicketsByPriorityAsync("Medium");
-            ViewBag.LowPriorityTickets = await _userService.GetTicketsByPriorityAsync("Low");
-
-            // 👇 Add these lists for the charts
-            var ticketsStatus = new List<object>
-            {
-                new { Label = "Open", Value = ViewBag.OpenTickets },
-                new { Label = "Resolved", Value = ViewBag.ResolvedTickets },
-                new { Label = "Closed", Value = ViewBag.ClosedTickets }
-            };
-
-            var ticketsPriority = new List<object>
-            {
-                new { Label = "High", Value = ViewBag.HighPriorityTickets },
-                new { Label = "Medium", Value = ViewBag.MediumPriorityTickets },
-                new { Label = "Low", Value = ViewBag.LowPriorityTickets }
-            };
-
-            ViewBag.TicketsStatusData = ticketsStatus;
-            ViewBag.TicketsPriorityData = ticketsPriority;
-
-            return View();
+            var allRoles = _roleManager.Roles.Select(r => r.Name).ToList();
+            ViewBag.Roles = new MultiSelectList(allRoles, selectedRoles);
+            return View(user);
         }
     }
 }

@@ -3,70 +3,223 @@
     ViewData["Title"] = "Accueil";
 }
 
+<style>
+:root {
+    --primary: #1a73e8;
+    --secondary: #34a853;
+    --accent: #fbbc05;
+    --bg: #f1f3f4;
+    --card: #ffffff;
+    --shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+body { background-color: var(--bg); }
+
+.hero-section {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: #fff;
+    padding: 3rem 1rem;
+    border-radius: 1rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
+    overflow: hidden;
+}
+.hero-section h1 {
+    font-size: 2.75rem;
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+.hero-section p.lead {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out 0.3s forwards;
+}
+
+.cards-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+.dashboard-card {
+    background: var(--card);
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+.dashboard-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+}
+.dashboard-card .card-body {
+    padding: 2rem;
+    text-align: center;
+}
+.dashboard-card .icon-wrapper {
+    font-size: 3rem;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    color: transparent;
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeIn 0.6s ease-out forwards;
+}
+.dashboard-card h5 {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out 0.2s forwards;
+}
+.dashboard-card p {
+    color: #666;
+    margin-bottom: 1.25rem;
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out 0.4s forwards;
+}
+.dashboard-card .btn {
+    border-radius: 50px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 500;
+    transition: background 0.3s ease;
+}
+.btn-primary {
+    background: var(--primary);
+    color: #fff;
+}
+.btn-primary:hover {
+    background: var(--secondary);
+}
+@@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+</style>
+
 <div class="container py-5">
-    <!-- Welcome Section -->
-    <div class="text-center mb-5">
-        <h1 class="fw-bold display-4 mb-3">Welcome to QuantumDesk, @User.Identity.Name!</h1>
-        <p class="lead text-muted">Manage your support tickets efficiently and easily.</p>
-        <div class="d-flex justify-content-center gap-3 mt-4">
-            <a asp-controller="Ticket" asp-action="Index" class="btn btn-primary btn-lg shadow-sm rounded-pill px-4">
-                <i class="fas fa-ticket-alt me-2"></i> View All Tickets
-            </a>
-            <a asp-controller="Ticket" asp-action="Create" class="btn btn-success btn-lg shadow-sm rounded-pill px-4">
-                <i class="fas fa-plus me-2"></i> Create New Ticket
-            </a>
-        </div>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        @if(User.IsInRole("Admin")) {
+            <h1>Welcome back, @User.Identity.Name!</h1>
+            <p class="lead">Use your admin tools to manage users, teams, and tickets.</p>
+        } else if(User.IsInRole("SupportAgent")) {
+            <h1>Hello, @User.Identity.Name!</h1>
+            <p class="lead">Here are your assigned tickets and team updates.</p>
+        } else {
+            <h1>Hi, @User.Identity.Name!</h1>
+            <p class="lead">Manage your tickets or create a new support request.</p>
+        }
     </div>
 
     <!-- Quick Access Cards -->
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 rounded-4 h-100">
-                <div class="card-body text-center p-4">
-                    <div class="text-primary mb-3">
-                        <i class="fas fa-list fa-3x"></i>
-                    </div>
-                    <h5 class="fw-bold mb-2">My Tickets</h5>
-                    <p class="text-muted mb-4">See the tickets you have created and their statuses.</p>
-                    <a asp-controller="Ticket" asp-action="MyTickets" class="btn btn-outline-primary rounded-pill px-4">
-                        <i class="fas fa-eye me-2"></i> View My Tickets
+    <div class="cards-row">
+        @* Admin cards *@
+        @if(User.IsInRole("Admin")) {
+            <div class="dashboard-card">
+                <div class="card-body">
+                    <div class="icon-wrapper"><i class="fas fa-users"></i></div>
+                    <h5>Manage Users</h5>
+                    <p>Create, edit, and deactivate users.</p>
+                    <a asp-controller="Admin" asp-action="Users" class="btn btn-primary">
+                        <i class="fas fa-user-cog me-2"></i>Users
                     </a>
                 </div>
             </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 rounded-4 h-100">
-                <div class="card-body text-center p-4">
-                    <div class="text-warning mb-3">
-                        <i class="fas fa-tasks fa-3x"></i>
-                    </div>
-                    <h5 class="fw-bold mb-2">Assigned Tickets</h5>
-                    <p class="text-muted mb-4">Manage the tickets assigned to you by the team.</p>
-                    <a asp-controller="Ticket" asp-action="AssignedTickets" class="btn btn-outline-warning rounded-pill px-4">
-                        <i class="fas fa-clipboard-list me-2"></i> Manage Assigned Tickets
+            <div class="dashboard-card">
+                <div class="card-body">
+                    <div class="icon-wrapper"><i class="fas fa-ticket-alt"></i></div>
+                    <h5>All Tickets</h5>
+                    <p>View and filter all tickets.</p>
+                    <a asp-controller="Ticket" asp-action="Index" class="btn btn-primary">
+                        <i class="fas fa-list me-2"></i>Tickets
                     </a>
                 </div>
             </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 rounded-4 h-100">
-                <div class="card-body text-center p-4">
-                    <div class="text-info mb-3">
-                        <i class="fas fa-book fa-3x"></i>
-                    </div>
-                    <h5 class="fw-bold mb-2">Knowledge Base</h5>
-                    <p class="text-muted mb-4">Access solutions and guides from our knowledge base.</p>
-                    <a href="#" class="btn btn-outline-info rounded-pill px-4">
-                        <i class="fas fa-book-open me-2"></i> Explore Knowledge Base
+            <div class="dashboard-card">
+                <div class="card-body">
+                    <div class="icon-wrapper"><i class="fas fa-users-cog"></i></div>
+                    <h5>Manage Teams</h5>
+                    <p>Organize support teams and members.</p>
+                    <a asp-controller="SupportTeam" asp-action="Index" class="btn btn-primary">
+                        <i class="fas fa-users me-2"></i>Teams
                     </a>
                 </div>
             </div>
-        </div>
+        }
+        @* Support Agent cards *@
+        else if(User.IsInRole("SupportAgent")) {
+            <div class="dashboard-card">
+                <div class="card-body">
+                    <div class="icon-wrapper"><i class="fas fa-inbox"></i></div>
+                    <h5>My Tickets</h5>
+                    <p>View tickets assigned to you.</p>
+                    <a asp-controller="Ticket" asp-action="AssignedTickets" class="btn btn-primary">
+                        <i class="fas fa-clipboard-list me-2"></i>Assigned
+                    </a>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <div class="card-body">
+                    <div class="icon-wrapper"><i class="fas fa-comments"></i></div>
+                    <h5>Team Inbox</h5>
+                    <p>See tickets for your support team.</p>
+                    <a asp-controller="TeamMember" asp-action="Index" class="btn btn-primary">
+                        <i class="fas fa-users me-2"></i>Team Tickets
+                    </a>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <div class="card-body">
+                    <div class="icon-wrapper"><i class="fas fa-bell"></i></div>
+                    <h5>Notifications</h5>
+                    <p>Check your latest alerts.</p>
+                    <a asp-controller="Notification" asp-action="Index" class="btn btn-primary">
+                        <i class="fas fa-bell me-2"></i>Alerts
+                    </a>
+                </div>
+            </div>
+        }
+        @* Regular User cards *@
+        else {
+            <div class="dashboard-card">
+                <div class="card-body">
+                    <div class="icon-wrapper"><i class="fas fa-ticket-alt"></i></div>
+                    <h5>My Tickets</h5>
+                    <p>View and manage your tickets.</p>
+                    <a asp-controller="Ticket" asp-action="MyTickets" class="btn btn-primary">
+                        <i class="fas fa-list me-2"></i>My Tickets
+                    </a>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <div class="card-body">
+                    <div class="icon-wrapper"><i class="fas fa-plus-circle"></i></div>
+                    <h5>Create Ticket</h5>
+                    <p>Submit a new support request.</p>
+                    <a asp-controller="Ticket" asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>New Ticket
+                    </a>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <div class="card-body">
+                    <div class="icon-wrapper"><i class="fas fa-book"></i></div>
+                    <h5>Knowledge Base</h5>
+                    <p>Browse help articles and FAQs.</p>
+                    <a href="/Home/FAQ" class="btn btn-primary">
+                        <i class="fas fa-book-open me-2"></i>Help
+                    </a>
+                </div>
+            </div>
+        }
     </div>
 </div>
 
 @section Scripts {
-    <!-- You can add dashboard-specific JS here if needed -->
+    <!-- No additional scripts needed -->
 }
