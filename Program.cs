@@ -9,6 +9,7 @@ using Ticketing_System.Service_Layer;
 using Ticketing_System.Service_Layer.Interfaces;
 using Ticketing_System.Service_Layer.Service;
 using Ticketing_System.Service_Layer.Services;
+using Ticketing_System.Services;
 
 namespace Ticketing_System
 {
@@ -33,6 +34,9 @@ namespace Ticketing_System
             builder.Services.AddScoped<ISupportTeamRepository, SupportTeamRepository>();
             builder.Services.AddScoped<INotificationRepository,NotificationRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<ITeamMemberRepository, TeamMemberRepository>();
+            builder.Services.AddScoped<IEscalationRuleRepository, EscalationRuleRepository>();
+            builder.Services.AddScoped<IAssignmentRuleRepository, AssignmentRuleRepository>();
 
             //Service Layer
             builder.Services.AddScoped<ITicketService, TicketService>();
@@ -44,6 +48,9 @@ namespace Ticketing_System
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<ITeamMemberRepository, TeamMemberRepository>();
             builder.Services.AddScoped<ITeamMemberService, TeamMemberService>();
+            builder.Services.AddScoped<IEscalationRuleService, EscalationRuleService>();
+            builder.Services.AddScoped<IAssignmentRuleService, AssignmentRuleService>();
+            builder.Services.AddScoped<EscalationBackgroundService>();
 
 
 

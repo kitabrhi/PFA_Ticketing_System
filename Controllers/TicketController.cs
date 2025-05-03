@@ -403,7 +403,7 @@ namespace Ticketing_System.Controllers
 
         // GET: Ticket/ChangeStatus/5?status=Resolved
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "Admin,SupportAgent")]
         public async Task<IActionResult> ChangeStatus(int id, TicketStatus status)
         {
             try
@@ -426,7 +426,7 @@ namespace Ticketing_System.Controllers
 
         // GET: Ticket/Assign/5
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "Admin,SupportAgent")]
         public async Task<IActionResult> Assign(int id)
         {
             try
@@ -446,7 +446,7 @@ namespace Ticketing_System.Controllers
 
         // POST: Ticket/Assign/5
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Admin,SupportAgent")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Assign(int id, string assignedToUserId)
         {

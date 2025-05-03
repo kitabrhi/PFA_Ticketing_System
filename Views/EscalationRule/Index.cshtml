@@ -1,0 +1,127 @@
+@model IEnumerable<Ticketing_System.Models.EscalationRule>
+@{
+    ViewData["Title"] = "Escalation Rules";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Escalation Rules</h1>
+        <div>
+            <a asp-action="TicketsNeedingEscalation" class="btn btn-warning me-2">
+                <i class="fas fa-exclamation-triangle"></i> Tickets Needing Escalation
+            </a>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> New Rule
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Rule Name</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Escalate After</th>
+                                <th>Escalate To</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var rule in Model)
+                            {
+                                <tr>
+                                    <td>@rule.RuleName</td>
+                                    <td>
+                                        @if (rule.Priority.HasValue)
+                                        {
+                                            <span class="badge bg-warning">@rule.Priority.Value.ToString()</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Any</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (rule.Status.HasValue)
+                                        {
+                                            <span class="badge bg-info">@rule.Status.Value.ToString()</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Any</span>
+                                        }
+                                    </td>
+                                    <td>@rule.EscalateAfterHours hours</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(rule.EscalateToUserID))
+                                        {
+                                            <span><i class="fas fa-user me-1"></i>@(rule.EscalateToUser?.FirstName + " " + rule.EscalateToUser?.LastName)</span>
+                                        }
+                                        else if (rule.EscalateToTeamID.HasValue)
+                                        {
+                                            <span><i class="fas fa-users me-1"></i>@rule.EscalateToTeam?.TeamName</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (rule.IsActive)
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a asp-action="Edit" asp-route-id="@rule.RuleID" class="btn btn-sm btn-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@rule.RuleID" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-arrow-up fa-4x text-muted mb-3"></i>
+                    <h4>No escalation rules defined</h4>
+                    <p class="text-muted">Create rules to automatically escalate tickets based on priority, status, and time limits.</p>
+                    <a asp-action="Create" class="btn btn-primary mt-3">
+                        Create Your First Rule
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
