@@ -1,13 +1,16 @@
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:openapi/src/screens/home_screen.dart';
+import 'package:openapi/src/screens/login_screen.dart';
+import 'package:openapi/src/screens/register_screen.dart';
 import 'package:openapi/src/screens/splash_screen.dart';
-import 'src/screens/onboarding_screen.dart';
+
 
 void main() {
   runApp(
     DevicePreview(
-      enabled: true,
+      enabled: !kReleaseMode,
       builder: (context) => const MyApp(),
     ),
   );
@@ -27,12 +30,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Arial',
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF00A78E)),
-        scaffoldBackgroundColor: Colors.grey.shade100,
+        scaffoldBackgroundColor: const Color.fromARGB(255, 255, 255, 255),
       ),
       initialRoute: '/',
       routes: {
         '/': (context) => const SplashScreen(),
-        '/home': (context) => const OnboardingScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
       },
     );
   }
