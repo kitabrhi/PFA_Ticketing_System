@@ -351,6 +351,51 @@
                         </div>
                     }
                 </div>
+                <!-- Add this to the ticket details section -->
+                <dt class="col-sm-4">Escalation Status</dt>
+                <dd class="col-sm-8">
+                    @if (Model.IsEscalated)
+                    {
+                        <span class="badge bg-danger">Escalated</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Normal</span>
+                    }
+                </dd>
+
+                <!-- Add this for admin users -->
+                @if (User.IsInRole("Admin") || User.IsInRole("SupportAgent"))
+                {
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h5 class="mb-0">Ticket Assignment & Escalation</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <form asp-controller="AssignmentRule" asp-action="ApplyToTicket" method="post">
+                                        <input type="hidden" name="ticketId" value="@Model.TicketID" />
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-random"></i> Apply Assignment Rules
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+                                    @if (!Model.IsEscalated)
+                                    {
+                                        <form asp-controller="EscalationRule" asp-action="EscalateTicket" method="post">
+                                            <input type="hidden" name="ticketId" value="@Model.TicketID" />
+                                            <button type="submit" class="btn btn-warning">
+                                                <i class="fas fa-arrow-up"></i> Escalate Ticket
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>

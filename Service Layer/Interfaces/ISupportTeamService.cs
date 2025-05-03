@@ -8,4 +8,6 @@ public interface ISupportTeamService
     Task AddAsync(SupportTeam team);
     Task UpdateAsync(SupportTeam team);
     Task DeleteAsync(int id);
+
+    Task<List<SupportTeam>> GetSupportTeamsAsync();
 }

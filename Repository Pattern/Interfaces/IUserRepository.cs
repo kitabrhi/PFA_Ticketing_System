@@ -11,6 +11,8 @@ namespace Ticketing_System.Repository_Pattern.Interfaces
         Task<bool> DeactivateUserAsync(string userId);
         Task<IEnumerable<User>> SearchUsersAsync(string searchTerm);
         Task<bool> IsEmailUniqueAsync(string email, string excludeUserId = null);
+        // Add this method to IUserRepository interface
+        Task<bool> UserExistsAsync(string userId);
     }
 }
    

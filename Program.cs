@@ -22,39 +22,32 @@ namespace Ticketing_System
             // Configuration de la chaîne de connexion SQL Server
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-
-
-        
-
             // Repository Pattern
             builder.Services.AddScoped<ITicketRepository, TicketRepository>();
             builder.Services.AddScoped<ITicketCommentRepository, TicketCommentRepository>();
             builder.Services.AddScoped<ITicketHistoryRepository, TicketHistoryRepository>();
             builder.Services.AddScoped<IAttachmentRepository, AttachmentRepository>();
             builder.Services.AddScoped<ISupportTeamRepository, SupportTeamRepository>();
-            builder.Services.AddScoped<INotificationRepository,NotificationRepository>();
+            builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ITeamMemberRepository, TeamMemberRepository>();
             builder.Services.AddScoped<IEscalationRuleRepository, EscalationRuleRepository>();
             builder.Services.AddScoped<IAssignmentRuleRepository, AssignmentRuleRepository>();
 
-            //Service Layer
+            // Service Layer
             builder.Services.AddScoped<ITicketService, TicketService>();
             builder.Services.AddScoped<ITicketCommentService, TicketCommentService>();
             builder.Services.AddScoped<ITicketHistoryService, TicketHistoryService>();
             builder.Services.AddScoped<IAttachmentService, AttachmentService>();
             builder.Services.AddScoped<ISupportTeamService, SupportTeamService>();
-            builder.Services.AddScoped<INotificationService,NotificationService>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddScoped<ITeamMemberRepository, TeamMemberRepository>();
             builder.Services.AddScoped<ITeamMemberService, TeamMemberService>();
             builder.Services.AddScoped<IEscalationRuleService, EscalationRuleService>();
             builder.Services.AddScoped<IAssignmentRuleService, AssignmentRuleService>();
-            builder.Services.AddScoped<EscalationBackgroundService>();
 
-
-
-
+            // Service d'arrière-plan pour les escalades automatiques
+            builder.Services.AddHostedService<EscalationBackgroundService>();
 
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
@@ -62,18 +55,17 @@ namespace Ticketing_System
                 options.UseSqlServer(connectionString));
 
             builder.Services.AddDefaultIdentity<User>(options =>
-                {
-                    options.SignIn.RequireConfirmedAccount = false;
-                    options.Password.RequireDigit = false;
-                    options.Password.RequiredLength = 6;
-                    options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequireUppercase = false;
-                    options.Password.RequireLowercase = false;
-                })
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+            })
                 .AddRoles<Role>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-
 
             // Ajout des services Razor Pages et MVC
             builder.Services.AddRazorPages(options =>
@@ -98,7 +90,6 @@ namespace Ticketing_System
 
             app.UseAuthentication();
             app.UseAuthorization();
-          
 
             app.MapRazorPages();
 
@@ -107,11 +98,17 @@ namespace Ticketing_System
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
+            // Initialisation de la base de données et création des rôles et utilisateurs
             using (var scope = app.Services.CreateScope())
             {
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
-                var roles = new[] { "Admin", "SupportAgent", "User" };
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                await dbContext.Database.MigrateAsync();
 
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+                // Création des rôles
+                var roles = new[] { "Admin", "SupportAgent", "User" };
                 foreach (var role in roles)
                 {
                     if (!await roleManager.RoleExistsAsync(role))
@@ -120,32 +117,132 @@ namespace Ticketing_System
                     }
                 }
 
-                using (var innerScope = app.Services.CreateScope())
+                // Création de l'utilisateur admin
+                string adminEmail = "admin@admin.com";
+                string adminPassword = "Admin@123";
+
+                if (await userManager.FindByEmailAsync(adminEmail) == null)
                 {
-                    var userManager = innerScope.ServiceProvider.GetRequiredService<UserManager<User>>();
-
-                    string email = "admin@admin.com";
-                    string password = "Admin@123";
-
-                    if (await userManager.FindByEmailAsync(email) == null)
+                    var adminUser = new User
                     {
-                        var user = new User
+                        UserName = adminEmail,
+                        Email = adminEmail,
+                        FirstName = "Admin",
+                        LastName = "User",
+                        EmailConfirmed = true,
+                        IsActive = true
+                    };
+
+                    var result = await userManager.CreateAsync(adminUser, adminPassword);
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(adminUser, "Admin");
+                    }
+                }
+
+                // Création d'un utilisateur système pour les opérations automatiques
+                string systemEmail = "system@quantumdesk.com";
+                string systemPassword = "SystemPassword123!";
+
+                if (await userManager.FindByEmailAsync(systemEmail) == null)
+                {
+                    var systemUser = new User
+                    {
+                        UserName = "system",
+                        Email = systemEmail,
+                        FirstName = "System",
+                        LastName = "Automated",
+                        EmailConfirmed = true,
+                        IsActive = true
+                    };
+
+                    var result = await userManager.CreateAsync(systemUser, systemPassword);
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(systemUser, "Admin");
+                    }
+                }
+
+                // Création d'un agent de support pour les tests
+                string agentEmail = "agent@quantumdesk.com";
+                string agentPassword = "Agent123!";
+
+                if (await userManager.FindByEmailAsync(agentEmail) == null)
+                {
+                    var agentUser = new User
+                    {
+                        UserName = agentEmail,
+                        Email = agentEmail,
+                        FirstName = "Support",
+                        LastName = "Agent",
+                        EmailConfirmed = true,
+                        IsActive = true
+                    };
+
+                    var result = await userManager.CreateAsync(agentUser, agentPassword);
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(agentUser, "SupportAgent");
+                    }
+                }
+
+                // Création d'une équipe de support par défaut si aucune n'existe
+                if (!await dbContext.SupportTeams.AnyAsync())
+                {
+                    var adminId = (await userManager.FindByEmailAsync(adminEmail))?.Id;
+                    if (!string.IsNullOrEmpty(adminId))
+                    {
+                        var defaultTeam = new SupportTeam
                         {
-                            UserName = email,
-                            Email = email,
-                            FirstName = "Admin",
-                            LastName = "User"
+                            TeamName = "Default Support Team",
+                            Description = "Default team handling all types of tickets",
+                            ManagerId = adminId
                         };
-                        var result = await userManager.CreateAsync(user, password);
-                        if (result.Succeeded)
+
+                        dbContext.SupportTeams.Add(defaultTeam);
+                        await dbContext.SaveChangesAsync();
+
+                        // Ajouter l'agent à l'équipe
+                        var agentId = (await userManager.FindByEmailAsync(agentEmail))?.Id;
+                        if (!string.IsNullOrEmpty(agentId))
                         {
-                            await userManager.AddToRoleAsync(user, "Admin");
+                            var teamMember = new TeamMember
+                            {
+                                TeamID = defaultTeam.TeamID,
+                                UserId = agentId,
+                                JoinDate = DateTime.Now
+                            };
+
+                            dbContext.TeamMembers.Add(teamMember);
+                            await dbContext.SaveChangesAsync();
                         }
                     }
                 }
 
-                app.Run();
+                // Création d'une règle d'assignation par défaut si aucune n'existe
+                if (!await dbContext.AssignmentRules.AnyAsync())
+                {
+                    var defaultTeam = await dbContext.SupportTeams.FirstOrDefaultAsync();
+                    if (defaultTeam != null)
+                    {
+                        var defaultRule = new AssignmentRule
+                        {
+                            RuleName = "Default Assignment Rule",
+                            Description = "Assigns all tickets to the default support team",
+                            Category = null, // Tous types de catégorie
+                            Priority = null, // Tous niveaux de priorité
+                            AssignToTeamID = defaultTeam.TeamID,
+                            IsActive = true,
+                            RuleOrder = 1
+                        };
+
+                        dbContext.AssignmentRules.Add(defaultRule);
+                        await dbContext.SaveChangesAsync();
+                    }
+                }
             }
+
+            app.Run();
         }
     }
 }
