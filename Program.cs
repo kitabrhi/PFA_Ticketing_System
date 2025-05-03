@@ -88,6 +88,14 @@ namespace Ticketing_System
             {
                 options.Conventions.AddPageRoute("/Identity/Account/Register", "/Register");
             });
+
+            services.AddControllers()
+    .AddJsonOptions(x =>
+    {
+        x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        x.JsonSerializerOptions.WriteIndented = true;
+    });
+
             services.AddControllersWithViews();
 
             // 2.7 Configuration de Swagger
