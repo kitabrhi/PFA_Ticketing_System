@@ -207,14 +207,28 @@ public async Task<IActionResult> DeleteConfirmed(int id)
 
     // Méthode utilitaire pour charger les listes
     private async Task RemplirViewBags(string? managerId = null, List<string>? selectedMembers = null, List<int>? selectedTickets = null)
-    {
-        var users = await _userManager.Users.ToListAsync();
-        var tickets = await _context.Tickets.ToListAsync();
+{
+    var users = await _userManager.Users.ToListAsync();
 
-        ViewBag.Users = new SelectList(users, "Id", "UserName", managerId);
-        ViewBag.TeamMembers = new MultiSelectList(users, "Id", "UserName", selectedMembers);
-        ViewBag.AssignedTickets = new MultiSelectList(tickets, "TicketID", "Title", selectedTickets);
+    var supportAgents = new List<User>();
+    var normalUsers = new List<User>();
+
+    foreach (var user in users)
+    {
+        if (await _userManager.IsInRoleAsync(user, "SupportAgent"))
+            supportAgents.Add(user);
+
+        if (await _userManager.IsInRoleAsync(user, "User"))
+            normalUsers.Add(user);
     }
+
+    var tickets = await _context.Tickets.ToListAsync();
+
+    ViewBag.Users = new SelectList(supportAgents, "Id", "UserName", managerId);
+    ViewBag.TeamMembers = new MultiSelectList(normalUsers, "Id", "UserName", selectedMembers);
+    ViewBag.AssignedTickets = new MultiSelectList(tickets, "TicketID", "Title", selectedTickets);
+}
+
 
     
 }

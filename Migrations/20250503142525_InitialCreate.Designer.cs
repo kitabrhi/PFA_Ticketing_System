@@ -12,8 +12,8 @@ using Ticketing_System;
 namespace Ticketing_System.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250422085943_initiale")]
-    partial class initiale
+    [Migration("20250503142525_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,52 +24,6 @@ namespace Ticketing_System.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("AssignmentRule", b =>
-                {
-                    b.Property<int>("RuleID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RuleID"));
-
-                    b.Property<int?>("AssignToTeamID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("AssignToUserID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("Category")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("Priority")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RuleName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("RuleOrder")
-                        .HasColumnType("int");
-
-                    b.HasKey("RuleID");
-
-                    b.HasIndex("AssignToTeamID");
-
-                    b.HasIndex("AssignToUserID");
-
-                    b.ToTable("AssignmentRules");
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
@@ -179,6 +133,52 @@ namespace Ticketing_System.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Ticketing_System.Models.AssignmentRule", b =>
+                {
+                    b.Property<int>("RuleID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RuleID"));
+
+                    b.Property<int?>("AssignToTeamID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AssignToUserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RuleName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("RuleOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("RuleID");
+
+                    b.HasIndex("AssignToTeamID");
+
+                    b.HasIndex("AssignToUserID");
+
+                    b.ToTable("AssignmentRules");
                 });
 
             modelBuilder.Entity("Ticketing_System.Models.Attachment", b =>
@@ -661,24 +661,6 @@ namespace Ticketing_System.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("AssignmentRule", b =>
-                {
-                    b.HasOne("Ticketing_System.Models.SupportTeam", "AssignToTeam")
-                        .WithMany()
-                        .HasForeignKey("AssignToTeamID")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("Ticketing_System.Models.User", "AssignToUser")
-                        .WithMany()
-                        .HasForeignKey("AssignToUserID")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("AssignToTeam");
-
-                    b.Navigation("AssignToUser");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Ticketing_System.Models.Role", null)
@@ -728,6 +710,24 @@ namespace Ticketing_System.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Ticketing_System.Models.AssignmentRule", b =>
+                {
+                    b.HasOne("Ticketing_System.Models.SupportTeam", "AssignToTeam")
+                        .WithMany()
+                        .HasForeignKey("AssignToTeamID")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Ticketing_System.Models.User", "AssignToUser")
+                        .WithMany()
+                        .HasForeignKey("AssignToUserID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("AssignToTeam");
+
+                    b.Navigation("AssignToUser");
                 });
 
             modelBuilder.Entity("Ticketing_System.Models.Attachment", b =>

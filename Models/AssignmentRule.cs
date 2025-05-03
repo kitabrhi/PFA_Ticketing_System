@@ -21,7 +21,7 @@ namespace Ticketing_System.Models
 
         // Référence d'assignation à une équipe ou à un utilisateur.
         public int? AssignToTeamID { get; set; }
-        public string AssignToUserID { get; set; }
+        public string? AssignToUserID { get; set; }
 
         [Required]
         public bool IsActive { get; set; } = true;
