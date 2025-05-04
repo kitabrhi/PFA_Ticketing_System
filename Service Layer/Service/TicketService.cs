@@ -1,16 +1,19 @@
 ﻿using Ticketing_System.Models;
 using Ticketing_System.Repository.Interfaces;
+using Ticketing_System.Repository_Pattern.Interfaces;
 using Ticketing_System.Service_Layer.Interfaces;
 
 public class TicketService : ITicketService
 {
     private readonly ITicketRepository _ticketRepository;
     private readonly ITicketHistoryService _historyService;
+    private readonly IUserRepository _userRepository;
 
-    public TicketService(ITicketRepository ticketRepository, ITicketHistoryService historyService)
+    public TicketService(ITicketRepository ticketRepository, ITicketHistoryService historyService, IUserRepository userRepository)
     {
         _ticketRepository = ticketRepository;
         _historyService = historyService;
+        _userRepository=userRepository;
     }
 
     // Méthodes de base CRUD
@@ -48,11 +51,21 @@ public class TicketService : ITicketService
         // Créer le ticket
         var createdTicket = await _ticketRepository.AddAsync(ticket);
 
+        // MODIFICATION ICI: S'assurer que l'ID utilisateur existe
+        string changedByUserId = ticket.CreatedByUserId;
+        var userExists = await _userRepository.UserExistsAsync(changedByUserId);
+
+        if (!userExists)
+        {
+            // Utiliser un ID utilisateur système si l'utilisateur n'existe pas
+            changedByUserId = "system"; // Assurez-vous que cet ID existe dans AspNetUsers
+        }
+
         // Ajouter une entrée d'historique pour la création
         var history = new TicketHistory
         {
             TicketID = createdTicket.TicketID,
-            ChangedByUserId = createdTicket.CreatedByUserId,
+            ChangedByUserId = changedByUserId, // Utiliser l'ID validé
             FieldName = "Status",
             OldValue = "",
             NewValue = "Created",

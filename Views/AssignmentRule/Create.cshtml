@@ -1,0 +1,137 @@
+@model Ticketing_System.Models.AssignmentRule
+@{
+    ViewData["Title"] = "Create Assignment Rule";
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Assignment Rules</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Create</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h4 class="mb-0">Create New Assignment Rule</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="RuleName" class="form-label">Rule Name</label>
+                            <input asp-for="RuleName" class="form-control" placeholder="e.g., Critical Network Issues Assignment" />
+                            <span asp-validation-for="RuleName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="RuleOrder" class="form-label">Rule Order</label>
+                            <input asp-for="RuleOrder" type="number" class="form-control" />
+                            <span asp-validation-for="RuleOrder" class="text-danger"></span>
+                            <small class="form-text text-muted">Lower numbers have higher priority</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="3"
+                              placeholder="Describe when this rule should be applied"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Category" class="form-label">Category</label>
+                            <select asp-for="Category" class="form-select" asp-items="ViewBag.Categories">
+                                <option value="">Any Category</option>
+                            </select>
+                            <span asp-validation-for="Category" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Priority" class="form-label">Priority</label>
+                            <select asp-for="Priority" class="form-select" asp-items="ViewBag.Priorities">
+                                <option value="">Any Priority</option>
+                            </select>
+                            <span asp-validation-for="Priority" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Assignment Target</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="AssignToUserID" class="form-label">Assign to User</label>
+                                    <select asp-for="AssignToUserID" class="form-select" asp-items="ViewBag.SupportAgents">
+                                        <option value="">Select a user...</option>
+                                    </select>
+                                    <span asp-validation-for="AssignToUserID" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="AssignToTeamID" class="form-label">Assign to Team</label>
+                                    <select asp-for="AssignToTeamID" class="form-select" asp-items="ViewBag.Teams">
+                                        <option value="">Select a team...</option>
+                                    </select>
+                                    <span asp-validation-for="AssignToTeamID" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <small class="form-text text-muted">Choose either a user or a team for assignment</small>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" asp-for="IsActive" />
+                        <label class="form-check-label" asp-for="IsActive">
+                            Active (Enable this rule immediately)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a asp-action="Index" class="btn btn-secondary me-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Create Rule
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Empêcher la sélection simultanée d'un utilisateur et d'une équipe
+        $(document).ready(function() {
+            $('#AssignToUserID').change(function() {
+                if ($(this).val()) {
+                    $('#AssignToTeamID').val('');
+                }
+            });
+
+            $('#AssignToTeamID').change(function() {
+                if ($(this).val()) {
+                    $('#AssignToUserID').val('');
+                }
+            });
+        });
+    </script>
+}

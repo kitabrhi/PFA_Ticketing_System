@@ -76,6 +76,12 @@ namespace Ticketing_System.Repository
         public IQueryable<User> Query()
         {
             return _dbSet.AsQueryable();
+        public async Task<bool> UserExistsAsync(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                return false;
+
+            return await _dbSet.AnyAsync(u => u.Id == userId);
         }
     }
 }

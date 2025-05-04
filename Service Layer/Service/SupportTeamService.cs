@@ -11,4 +11,6 @@ public class SupportTeamService : ISupportTeamService
     public Task AddAsync(SupportTeam team) => _repo.AddAsync(team);
     public Task UpdateAsync(SupportTeam team) => _repo.UpdateAsync(team);
     public Task DeleteAsync(int id) => _repo.DeleteAsync(id);
-}
+    public Task<List<SupportTeam>> GetSupportTeamsAsync() => _repo.GetAllAsync();
+}  
+

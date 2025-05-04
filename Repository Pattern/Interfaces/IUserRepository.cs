@@ -14,5 +14,7 @@ namespace Ticketing_System.Repository_Pattern.Interfaces
 
         // ✅ Ajoute cette ligne :
         IQueryable<User> Query();
+        // Add this method to IUserRepository interface
+        Task<bool> UserExistsAsync(string userId);
     }
 }
