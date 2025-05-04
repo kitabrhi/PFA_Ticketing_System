@@ -24,6 +24,7 @@ namespace Ticketing_System
 
             // 2. Configuration des services
             ConfigureServices(builder.Services, connectionString, builder.Configuration);
+            
 
             var app = builder.Build();
 
@@ -61,6 +62,14 @@ namespace Ticketing_System
             services.AddScoped<ITeamMemberService, TeamMemberService>();
             services.AddScoped<IEscalationRuleService, EscalationRuleService>();
             services.AddScoped<IAssignmentRuleService, AssignmentRuleService>();
+            services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+    });
+});
+
 
             // 2.3 Services d'arrière-plan
             services.AddHostedService<EscalationBackgroundService>();
@@ -129,10 +138,11 @@ namespace Ticketing_System
             }
 
             // 3.2 Middleware HTTP
-            app.UseHttpsRedirection();
+            
             app.UseStaticFiles();
 
             // 3.3 Middleware de routage
+            app.UseCors("AllowAll");
             app.UseRouting();
 
             // 3.4 Middleware d'authentification et d'autorisation
