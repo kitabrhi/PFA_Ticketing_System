@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../constants/colors.dart'; // Assure-toi que quantumTertiary et quantumSecondary sont bien définies
+import '../constants/colors.dart';
+import 'package:openapi/src/screens/admin_dashboard.dart';
+ // Assure-toi que quantumTertiary et quantumSecondary sont bien définies
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -73,7 +75,13 @@ class LoginScreen extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => const AdminDashboardScreen()),
+  );
+},
+
                     child: const Text(
                       'Forgot password?',
                       style: TextStyle(color: Colors.grey),

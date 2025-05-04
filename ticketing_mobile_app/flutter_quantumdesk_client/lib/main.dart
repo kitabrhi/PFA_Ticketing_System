@@ -1,10 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:openapi/src/screens/admin_dashboard.dart';
+import 'package:openapi/src/screens/equipe_screen.dart';
 import 'package:openapi/src/screens/home_screen.dart';
 import 'package:openapi/src/screens/login_screen.dart';
 import 'package:openapi/src/screens/register_screen.dart';
 import 'package:openapi/src/screens/splash_screen.dart';
+import 'package:openapi/src/screens/support_agent_screen.dart';
+import 'package:openapi/src/screens/ticket_screen.dart';
 
 
 void main() {
@@ -38,6 +42,10 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomeScreen(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
+        '/dashboardadmin': (context) => const AdminDashboardScreen(),
+        '/equipe': (context) => const EquipeScreen(),
+        '/ticket' : (context) => const TicketScreen(),
+        '/supportagent' : (context) => const SupportAgentScreen(),
       },
     );
   }
