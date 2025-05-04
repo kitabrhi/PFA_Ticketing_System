@@ -72,6 +72,10 @@ namespace Ticketing_System.Repository
             return !await query.AnyAsync();
         }
 
+        // ✅ La méthode manquante pour corriger ton erreur :
+        public IQueryable<User> Query()
+        {
+            return _dbSet.AsQueryable();
         public async Task<bool> UserExistsAsync(string userId)
         {
             if (string.IsNullOrEmpty(userId))

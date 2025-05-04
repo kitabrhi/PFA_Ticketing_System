@@ -1,0 +1,222 @@
+@{
+    Layout = User.IsInRole("Admin") ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container-fluid px-5 py-4" style="background-color: #f5f7fa; min-height: 100vh;">
+    <h2 class="fw-bold mb-5 text-center" style="color: #333;">Admin Dashboard</h2>
+
+    <!-- Quick Stats Cards -->
+    <div class="row g-4 mb-5">
+        <!-- Total Users Card -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card border-0 rounded-4 shadow-sm p-4 card-hover" style="background: #ffffff;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <small class="text-muted">Total Users</small>
+                        <h3 class="fw-bold mt-1 text-primary">@ViewBag.TotalUsers</h3>
+                    </div>
+                    <div>
+                        <i class="fas fa-users fa-2x text-primary"></i>
+                    </div>
+                </div>
+                <canvas id="miniChartUsers" height="50"></canvas>
+            </div>
+        </div>
+
+        <!-- Open Tickets Card -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card border-0 rounded-4 shadow-sm p-4 card-hover" style="background: #ffffff;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <small class="text-muted">Open Tickets</small>
+                        <h3 class="fw-bold mt-1 text-warning">@ViewBag.OpenTickets</h3>
+                    </div>
+                    <div>
+                        <i class="fas fa-ticket-alt fa-2x text-warning"></i>
+                    </div>
+                </div>
+                <canvas id="miniChartOpen" height="50"></canvas>
+            </div>
+        </div>
+
+        <!-- Resolved Tickets Card -->
+        <div class="col-lg-4 col-md-6">
+            <div class="card border-0 rounded-4 shadow-sm p-4 card-hover" style="background: #ffffff;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <small class="text-muted">Resolved Tickets</small>
+                        <h3 class="fw-bold mt-1 text-success">@ViewBag.ResolvedTickets</h3>
+                    </div>
+                    <div>
+                        <i class="fas fa-check-circle fa-2x text-success"></i>
+                    </div>
+                </div>
+                <canvas id="miniChartResolved" height="50"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Charts Section -->
+    <div class="row g-4">
+        <!-- Tickets by Status Chart -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 card-hover" style="background: #ffffff;">
+                <h6 class="fw-bold mb-4 text-center">Tickets by Status</h6>
+                <canvas id="statusChart" height="250"></canvas>
+            </div>
+        </div>
+
+        <!-- Tickets by Priority Chart -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 card-hover" style="background: #ffffff;">
+                <h6 class="fw-bold mb-4 text-center">Tickets by Priority</h6>
+                <canvas id="priorityChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 12px;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+    .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .card-hover {
+        cursor: pointer;
+    }
+
+    .card i {
+        transition: color 0.3s ease-in-out;
+    }
+
+    .card-hover:hover i {
+        color: #00a78e;
+    }
+
+    /* Mini chart styles */
+    .card i {
+        transition: color 0.3s ease;
+    }
+
+    .card-body canvas {
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .container-fluid {
+        padding: 0 50px;
+    }
+
+    .card-header {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+</style>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Chart.js global default settings
+        Chart.defaults.font.family = "'Poppins', sans-serif";
+        Chart.defaults.font.size = 13;
+        Chart.defaults.color = '#6c757d';
+
+        // Mini Sparkline Chart (User Stats)
+        const miniChart = (ctx, color) => {
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ["", "", "", "", "", "", ""],
+                    datasets: [{
+                        data: [5, 6, 7, 6, 8, 9, 10],
+                        fill: true,
+                        backgroundColor: color + '20',
+                        borderColor: color,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    plugins: { legend: { display: false } },
+                    scales: { x: { display: false }, y: { display: false } }
+                }
+            });
+        }
+
+        miniChart(document.getElementById('miniChartUsers'), '#3498db');
+        miniChart(document.getElementById('miniChartOpen'), '#f1c40f');
+        miniChart(document.getElementById('miniChartResolved'), '#2ecc71');
+
+        // Doughnut Chart - Tickets by Status
+        new Chart(document.getElementById('statusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Open', 'Resolved', 'Closed'],
+                datasets: [{
+                    data: [
+                        @ViewBag.OpenTickets,
+                        @ViewBag.ResolvedTickets,
+                        @ViewBag.ClosedTickets
+                    ],
+                    backgroundColor: ['#3B82F6', '#10B981', '#EF4444'],
+                    borderWidth: 3,
+                    borderColor: '#ffffff',
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                cutout: '70%',
+                plugins: {
+                    legend: { position: 'bottom' }
+                },
+                animation: {
+                    duration: 1000,
+                    easing: 'easeOutBounce'
+                }
+            }
+        });
+
+        // Bar Chart - Tickets by Priority
+        new Chart(document.getElementById('priorityChart'), {
+            type: 'bar',
+            data: {
+                labels: ['High', 'Medium', 'Low'],
+                datasets: [{
+                    label: 'Priority',
+                    data: [
+                        @ViewBag.HighPriorityTickets,
+                        @ViewBag.MediumPriorityTickets,
+                        @ViewBag.LowPriorityTickets
+                    ],
+                    backgroundColor: ['#EF4444', '#F59E0B', '#10B981'],
+                    borderRadius: 10,
+                    barThickness: 30
+                }]
+            },
+            options: {
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#9ca3af' } },
+                    y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { beginAtZero: true } }
+                },
+                plugins: {
+                    legend: { display: false }
+                },
+                animation: {
+                    duration: 1200,
+                    easing: 'easeInOutQuart'
+                }
+            }
+        });
+    </script>
+}

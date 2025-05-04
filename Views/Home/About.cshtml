@@ -1,0 +1,101 @@
+@{
+    ViewData["Title"] = "About Us";
+}
+
+<div class="container mt-5">
+    <!-- Section Title -->
+    <div class="text-center mb-5 quantum-animate-fade-in">
+        <h1 class="quantum-section-title mb-4">@ViewData["Title"]</h1>
+        <p class="lead quantum-text-muted">Welcome to the About page of QuantumDesk. Here, you can learn more about our support platform and the features that make it the best choice for your team.</p>
+    </div>
+
+    <!-- What We Do and Our Mission -->
+    <div class="row justify-content-center quantum-animate-slide-up">
+        <div class="col-md-5 mb-4 mb-md-0">
+            <h4 class="quantum-subtitle">What We Do</h4>
+            <p class="text-muted">QuantumDesk is a modern ticketing system designed to streamline customer support processes. It helps you manage, track, and resolve customer issues efficiently.</p>
+        </div>
+        <div class="col-md-5">
+            <h4 class="quantum-subtitle">Our Mission</h4>
+            <p class="text-muted">Our mission is to help businesses provide excellent customer service by providing tools that make customer support easier, faster, and more effective.</p>
+        </div>
+    </div>
+
+    <!-- CTA Button -->
+    <div class="text-center mt-5 quantum-animate-fade-in">
+        <a href="/" class="quantum-btn quantum-btn-primary quantum-btn-lg mb-3">
+            <i class="fas fa-home me-2"></i>Back to Home
+        </a>
+    </div>
+</div>
+
+<!-- Add Custom Styles -->
+<style>
+    /* Section Title and Subtitle */
+    .quantum-section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #333;
+        letter-spacing: 1px;
+    }
+    .quantum-subtitle {
+        font-size: 1.5rem;
+        color: #333;
+        font-weight: 600;
+    }
+
+    /* Subtle Animations */
+    .quantum-animate-fade-in {
+        animation: fadeIn 1s ease-out;
+    }
+    .quantum-animate-slide-up {
+        animation: slideUp 1s ease-out;
+    }
+
+    /* Fade-in Animation */
+    @@keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    /* Slide-up Animation */
+    @@keyframes slideUp {
+        0% {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+        100% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Button Styles */
+    .quantum-btn {
+        border-radius: 30px;
+        font-weight: 600;
+        padding: 12px 30px;
+        transition: background 0.3s ease, transform 0.2s ease-in-out;
+    }
+
+    .quantum-btn-primary {
+        background-color: #00a78e;
+        color: white;
+        border: none;
+    }
+
+    .quantum-btn-primary:hover {
+        background-color: #007b6f;
+        transform: translateY(-3px);
+    }
+
+    /* Text Muted */
+    .quantum-text-muted {
+        color: #6c757d;
+    }
+</style>
+

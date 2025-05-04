@@ -146,6 +146,47 @@ namespace Ticketing_System.Controllers
         }
 
 
+       [HttpGet]
+public async Task<IActionResult> Dashboard()
+{
+    ViewBag.TotalUsers = await _userService.GetTotalUsersAsync();
+    ViewBag.OpenTickets = await _userService.GetTicketsByStatusAsync("Open");
+    ViewBag.ResolvedTickets = await _userService.GetTicketsByStatusAsync("Resolved");
+    ViewBag.ClosedTickets = await _userService.GetTicketsByStatusAsync("Closed");
+
+    ViewBag.HighPriorityTickets = await _userService.GetTicketsByPriorityAsync("High");
+    ViewBag.MediumPriorityTickets = await _userService.GetTicketsByPriorityAsync("Medium");
+    ViewBag.LowPriorityTickets = await _userService.GetTicketsByPriorityAsync("Low");
+
+    // 👇 Ajouter ces listes pour les graphiques
+    var ticketsStatus = new List<object>
+    {
+        new { Label = "Open", Value = ViewBag.OpenTickets },
+        new { Label = "Resolved", Value = ViewBag.ResolvedTickets },
+        new { Label = "Closed", Value = ViewBag.ClosedTickets }
+    };
+
+    var ticketsPriority = new List<object>
+    {
+        new { Label = "High", Value = ViewBag.HighPriorityTickets },
+        new { Label = "Medium", Value = ViewBag.MediumPriorityTickets },
+        new { Label = "Low", Value = ViewBag.LowPriorityTickets }
+    };
+
+    ViewBag.TicketsStatusData = ticketsStatus;
+    ViewBag.TicketsPriorityData = ticketsPriority;
+
+    return View();
+}
+
+
+
+
+
+
+
+
+
         // GET: Admin/CreateUser
         [HttpGet]
         public IActionResult CreateUser()

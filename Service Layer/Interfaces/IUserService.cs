@@ -18,5 +18,10 @@ namespace Ticketing_System.Service_Layer.Interfaces
         Task<bool> IsEmailUniqueAsync(string email, string excludeUserId = null);
         Task<IEnumerable<string>> GetUserRolesAsync(string userId);
         Task<bool> UpdateUserRolesAsync(string userId, IEnumerable<string> roles);
+
+        Task<int> GetTotalUsersAsync();
+Task<int> GetTicketsByStatusAsync(string status);
+Task<int> GetTicketsByPriorityAsync(string priority);
+
     }
 }

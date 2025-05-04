@@ -1,36 +1,44 @@
-﻿```html
+﻿@{
+    Layout = User.IsInRole("Admin") ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
+}
+
 @model IEnumerable<Ticketing_System.Models.Ticket>
 @{
     ViewData["Title"] = "All Tickets";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>All Tickets</h1>
+<div class="container py-5">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
         <div>
-            <a asp-action="Create" class="btn btn-primary">
-                <i class="fas fa-plus"></i> New Ticket
-            </a>
+            <h1 class="fw-bold mb-0">All Tickets</h1>
+            <small class="text-muted">Manage and view all tickets from the system</small>
         </div>
+        <a asp-action="Create" class="btn btn-success rounded-pill px-4 py-2 shadow-sm">
+            <i class="fas fa-plus me-2"></i> New Ticket
+        </a>
     </div>
 
     @if (ViewData["CurrentFilter"] != null)
     {
-        <div class="alert alert-info">
-            <i class="fas fa-filter"></i> Filtering by: @ViewData["CurrentFilter"]
-            <a asp-action="Index" class="float-end">Clear Filter</a>
+        <div class="alert alert-info d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-filter me-2"></i> Filtering by: <strong>@ViewData["CurrentFilter"]</strong>
+            </div>
+            <a asp-action="Index" class="btn btn-sm btn-light">Clear Filter</a>
         </div>
     }
 
-    <div class="card shadow-sm">
-        <div class="card-body">
+    <!-- Ticket Table -->
+    <div class="card shadow-sm rounded-4">
+        <div class="card-body p-4">
             @if (Model.Any())
             {
                 <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
                             <tr>
-                                <th>ID</th>
+                                <th>#</th>
                                 <th>Title</th>
                                 <th>Category</th>
                                 <th>Priority</th>
@@ -44,20 +52,20 @@
                             @foreach (var ticket in Model)
                             {
                                 <tr>
-                                    <td>@ticket.TicketID</td>
+                                    <td class="fw-bold">@ticket.TicketID</td>
                                     <td>@ticket.Title</td>
                                     <td>
-                                        <a asp-action="FilterByCategory" asp-route-category="@ticket.Category">
+                                        <a asp-action="FilterByCategory" asp-route-category="@ticket.Category" class="badge bg-primary text-decoration-none">
                                             @ticket.Category
                                         </a>
                                     </td>
                                     <td>
-                                        <a asp-action="FilterByPriority" asp-route-priority="@ticket.Priority">
+                                        <a asp-action="FilterByPriority" asp-route-priority="@ticket.Priority" class="badge bg-warning text-dark text-decoration-none">
                                             @ticket.Priority
                                         </a>
                                     </td>
                                     <td>
-                                        <a asp-action="FilterByStatus" asp-route-status="@ticket.Status">
+                                        <a asp-action="FilterByStatus" asp-route-status="@ticket.Status" class="badge bg-info text-decoration-none">
                                             @ticket.Status
                                         </a>
                                     </td>
@@ -65,15 +73,15 @@
                                     <td>@ticket.CreatedDate.ToString("dd MMM yyyy")</td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <a asp-action="Details" asp-route-id="@ticket.TicketID" class="btn btn-sm btn-info">
+                                            <a asp-action="Details" asp-route-id="@ticket.TicketID" class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a asp-action="Edit" asp-route-id="@ticket.TicketID" class="btn btn-sm btn-warning">
+                                            <a asp-action="Edit" asp-route-id="@ticket.TicketID" class="btn btn-sm btn-outline-warning">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             @if (User.IsInRole("Admin"))
                                             {
-                                                <a asp-action="Delete" asp-route-id="@ticket.TicketID" class="btn btn-sm btn-danger">
+                                                <a asp-action="Delete" asp-route-id="@ticket.TicketID" class="btn btn-sm btn-outline-danger">
                                                     <i class="fas fa-trash"></i>
                                                 </a>
                                             }
@@ -87,14 +95,15 @@
             }
             else
             {
-                <div class="text-center py-4">
-                    <i class="fas fa-ticket-alt fa-3x text-muted mb-3"></i>
-                    <h4>No tickets found</h4>
-                    <p class="text-muted">There are no tickets matching your criteria.</p>
-                    <a asp-action="Create" class="btn btn-primary mt-2">Create New Ticket</a>
+                <div class="text-center py-5">
+                    <i class="fas fa-ticket-alt fa-4x text-muted mb-3"></i>
+                    <h4 class="fw-bold">No tickets found</h4>
+                    <p class="text-muted">There are currently no tickets available. You can create a new one!</p>
+                    <a asp-action="Create" class="btn btn-primary rounded-pill mt-3 px-4 py-2">
+                        <i class="fas fa-plus me-2"></i> Create New Ticket
+                    </a>
                 </div>
             }
         </div>
     </div>
 </div>
-```

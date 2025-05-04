@@ -43,6 +43,7 @@ namespace Ticketing_System.Controllers
 
         // GET: Ticket
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var tickets = await _ticketService.GetAllTicketsAsync();
