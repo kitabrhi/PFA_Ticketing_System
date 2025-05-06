@@ -73,9 +73,11 @@ namespace Ticketing_System.Repository
         }
 
         // ✅ La méthode manquante pour corriger ton erreur :
-        public IQueryable<User> Query()
+                public IQueryable<User> Query()
         {
             return _dbSet.AsQueryable();
+        }
+
         public async Task<bool> UserExistsAsync(string userId)
         {
             if (string.IsNullOrEmpty(userId))
@@ -84,4 +86,5 @@ namespace Ticketing_System.Repository
             return await _dbSet.AnyAsync(u => u.Id == userId);
         }
     }
+
 }
