@@ -1,0 +1,47 @@
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+
+<div class="container mt-4">
+    <h2 class="mb-4">Mes Statistiques</h2>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h5>Par Statut</h5>
+            <ul class="list-group">
+                @foreach (var item in ViewBag.ByStatus)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>@item.Status</span>
+                        <span class="badge bg-secondary">@item.Count</span>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="col-md-4">
+            <h5>Par Priorité</h5>
+            <ul class="list-group">
+                @foreach (var item in ViewBag.ByPriority)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>@item.Priority</span>
+                        <span class="badge bg-warning text-dark">@item.Count</span>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="col-md-4">
+            <h5>Par Catégorie</h5>
+            <ul class="list-group">
+                @foreach (var item in ViewBag.ByCategory)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>@item.Category</span>
+                        <span class="badge bg-info text-white">@item.Count</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>

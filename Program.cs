@@ -156,8 +156,13 @@ namespace Ticketing_System
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-        }
+        
+        app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Dashboard}/{action=Index}/{id?}");
 
+        }
+        
         private static async Task InitializeDatabaseAsync(WebApplication app)
         {
             using var scope = app.Services.CreateScope();

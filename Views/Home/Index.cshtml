@@ -1,6 +1,24 @@
 ﻿@{
     ViewData["Title"] = "Accueil";
 }
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    var currentUser = await UserManager.GetUserAsync(User);
+    var roles = await UserManager.GetRolesAsync(currentUser);
+
+    if (roles.Contains("Admin") || roles.Contains("SupportAgent") || roles.Contains("User"))
+    {
+        <div class="d-flex justify-content-center mt-4">
+            <a href="@Url.Action("Index", "Dashboard")" class="quantum-btn quantum-btn-primary quantum-btn-lg px-4 py-3">
+                <i class="fas fa-tachometer-alt me-2"></i>Accéder au Dashboard
+            </a>
+        </div>
+    }
+}
 
 <!-- Hero Section -->
 <section class="quantum-hero quantum-animate-fade-in mb-5">

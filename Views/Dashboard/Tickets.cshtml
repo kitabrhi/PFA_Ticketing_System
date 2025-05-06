@@ -1,0 +1,85 @@
+@model IEnumerable<Ticketing_System.Models.Ticket>
+
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+}
+
+
+<div class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark mb-0">🎫 Mes Tickets</h2>
+        <a asp-controller="Ticket" asp-action="Create" class="btn btn-success rounded-pill px-4 shadow-sm">
+            <i class="fas fa-plus me-2"></i> Nouveau Ticket
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table table-borderless align-middle">
+                    <thead class="text-secondary text-uppercase fw-bold small border-bottom">
+                        <tr>
+                            <th>#</th>
+                            <th>Titre</th>
+                            <th>Statut</th>
+                            <th>Priorité</th>
+                            <th>Date</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ticket in Model)
+                        {
+                            var statusClass = ticket.Status switch
+                            {
+                                Ticketing_System.Models.TicketStatus.New => "bg-gradient-primary",
+                                Ticketing_System.Models.TicketStatus.InProgress => "bg-gradient-warning text-dark",
+                                Ticketing_System.Models.TicketStatus.Resolved => "bg-gradient-success",
+                                Ticketing_System.Models.TicketStatus.Closed => "bg-gradient-secondary",
+                                _ => "bg-gradient-light text-dark"
+                            };
+
+                            var priorityClass = ticket.Priority switch
+                            {
+                                Ticketing_System.Models.TicketPriority.Low => "badge text-bg-info",
+                                Ticketing_System.Models.TicketPriority.Medium => "badge text-bg-warning",
+                                Ticketing_System.Models.TicketPriority.High => "badge text-bg-danger",
+                                Ticketing_System.Models.TicketPriority.Critical => "badge text-bg-dark",
+                                _ => "badge text-bg-secondary"
+                            };
+
+                            <tr class="border-bottom">
+                                <td class="text-muted">@ticket.TicketID</td>
+                                <td class="fw-semibold">@ticket.Title</td>
+                                <td>
+                                    <span class="badge rounded-pill @statusClass px-3 py-2">
+                                        @ticket.Status.ToString().Replace("InProgress", "En Cours")
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="@priorityClass px-3 py-2 rounded-pill">
+                                        @ticket.Priority
+                                    </span>
+                                </td>
+                                <td class="text-muted">@ticket.CreatedDate.ToString("dd MMM yyyy")</td>
+                                <td class="text-center">
+                                    <a asp-controller="Ticket" asp-action="Details" asp-route-id="@ticket.TicketID"
+                                       class="btn btn-outline-primary btn-sm rounded-pill shadow-sm">
+                                        <i class="fas fa-eye"></i> Voir
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (!Model.Any())
+            {
+                <div class="alert alert-light text-center mt-4">
+                    <i class="fas fa-info-circle me-2"></i> Aucun ticket disponible.
+                </div>
+            }
+        </div>
+    </div>
+</div>
