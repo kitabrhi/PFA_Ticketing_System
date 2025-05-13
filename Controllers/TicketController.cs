@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Ticketing_System.Models;
 using Ticketing_System.Service_Layer.Interfaces;
+using Ticketing_System.Service_Layer;
 
 namespace Ticketing_System.Controllers
 {
@@ -19,6 +20,7 @@ namespace Ticketing_System.Controllers
         private readonly ITicketHistoryService _historyService;
         private readonly IAttachmentService _attachmentService;
         private readonly UserManager<User> _userManager;
+        private NotificationService _notificationService;
         private readonly IAssignmentRuleService _assignmentRuleService;
         private readonly IEscalationRuleService _escalationRuleService;
         private readonly ISupportTeamService _supportTeamService;
@@ -141,63 +143,76 @@ namespace Ticketing_System.Controllers
         }
 
         [HttpPost]
-        [Authorize]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Ticket ticket)
+[Authorize]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Create(Ticket ticket)
+{
+    // Injecter l'ID du user connecté
+    string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    ticket.CreatedByUserId = userId;
+
+    // Supprimer les validations des propriétés navigation
+    ModelState.Remove(nameof(ticket.CreatedByUserId));
+    ModelState.Remove("CreatedByUser");
+    ModelState.Remove("AssignedToUser");
+    ModelState.Remove("AssignedToTeam");
+    ModelState.Remove("TicketComments");
+    ModelState.Remove("TicketHistories");
+    ModelState.Remove("TicketAttachments");
+
+    if (ModelState.IsValid)
+    {
+        try
         {
-            // Injecter l'ID du user connecté
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            ticket.CreatedByUserId = userId;
-            ModelState.Remove(nameof(ticket.CreatedByUserId));
+            // 1. Création du ticket
+            var createdTicket = await _ticketService.CreateTicketAsync(ticket);
 
-            // navigation suppression 
-            ModelState.Remove("CreatedByUser");
-            ModelState.Remove("AssignedToUser");
-            ModelState.Remove("AssignedToTeam");
-            ModelState.Remove("TicketComments");
-            ModelState.Remove("TicketHistories");
-            ModelState.Remove("TicketAttachments");
+            // 2. Application des règles d'assignation automatique
+            await _assignmentRuleService.ApplyRuleToTicketAsync(createdTicket.TicketID);
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    // Create the ticket
-                    var createdTicket = await _ticketService.CreateTicketAsync(ticket);
+            // 3. Récupération de l'utilisateur connecté
+            var user = await _userManager.GetUserAsync(User);
 
-                    // Apply assignment rules automatically
-                    await _assignmentRuleService.ApplyRuleToTicketAsync(createdTicket.TicketID);
+            // 4. Création de la notification
+            await _notificationService.CreateNotificationAsync(
+                user.Id,
+                "🎫 Nouveau Ticket Créé",
+                $"Le ticket \"{ticket.Title}\" a été créé avec succès et assigné automatiquement."
+            );
 
-                    TempData["SuccessMessage"] = "Ticket created successfully and automatically assigned according to rules!";
-                    return RedirectToAction(nameof(MyTickets));
-                }
-                catch (Exception ex)
-                {
-                    var sqlError = ex.InnerException?.Message;
-                    ModelState.AddModelError("",
-                        $"Impossible de créer le ticket : {ex.Message} - Détail : {sqlError}");
-                }
-            }
+            // 5. Message flash pour confirmation visuelle
+            TempData["SuccessMessage"] = "✅ Ticket créé et notification envoyée.";
 
-            // En cas d'erreur, recréer les listes déroulantes
-            ViewBag.Categories = Enum.GetValues(typeof(TicketCategory))
-                .Cast<TicketCategory>()
-                .Select(c => new SelectListItem
-                {
-                    Value = c.ToString(),
-                    Text = c.ToString()
-                }).ToList();
-
-            ViewBag.Priorities = Enum.GetValues(typeof(TicketPriority))
-                .Cast<TicketPriority>()
-                .Select(p => new SelectListItem
-                {
-                    Value = p.ToString(),
-                    Text = p.ToString()
-                }).ToList();
-
-            return View(ticket);
+            return RedirectToAction(nameof(MyTickets));
         }
+        catch (Exception ex)
+        {
+            var sqlError = ex.InnerException?.Message;
+            ModelState.AddModelError("",
+                $"❌ Erreur lors de la création du ticket : {ex.Message} - Détail : {sqlError}");
+        }
+    }
+
+    // En cas d'erreur, recharger les listes
+    ViewBag.Categories = Enum.GetValues(typeof(TicketCategory))
+        .Cast<TicketCategory>()
+        .Select(c => new SelectListItem
+        {
+            Value = c.ToString(),
+            Text = c.ToString()
+        }).ToList();
+
+    ViewBag.Priorities = Enum.GetValues(typeof(TicketPriority))
+        .Cast<TicketPriority>()
+        .Select(p => new SelectListItem
+        {
+            Value = p.ToString(),
+            Text = p.ToString()
+        }).ToList();
+
+    return View(ticket);
+}
+
 
         // GET: Ticket/Edit/5
         [HttpGet]

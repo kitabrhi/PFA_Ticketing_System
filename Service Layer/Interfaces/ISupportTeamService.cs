@@ -10,4 +10,6 @@ public interface ISupportTeamService
     Task DeleteAsync(int id);
 
     Task<List<SupportTeam>> GetSupportTeamsAsync();
+Task<SupportTeam> CreateSupportTeamAsync(SupportTeam team, List<string> memberIds, List<int> ticketIds);
+
 }

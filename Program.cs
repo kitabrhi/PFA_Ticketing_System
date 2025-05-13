@@ -19,6 +19,9 @@ namespace Ticketing_System
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            
+            
+
             // 1. Configuration de la chaîne de connexion SQL Server
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -36,6 +39,8 @@ namespace Ticketing_System
 
             app.Run();
         }
+
+        
 
         private static void ConfigureServices(IServiceCollection services, string connectionString, IConfiguration configuration)
         {
@@ -121,6 +126,8 @@ namespace Ticketing_System
 
             // 2.8 Configuration générale
             services.AddSingleton<IConfiguration>(configuration);
+
+            
         }
 
         private static void ConfigureMiddleware(WebApplication app)

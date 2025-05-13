@@ -7,24 +7,15 @@ namespace Ticketing_System.Service_Layer
     public class NotificationService : INotificationService
     {
         private readonly INotificationRepository _repository;
+        private readonly ApplicationDbContext _context;
 
-        public NotificationService(INotificationRepository repository)
+
+        public NotificationService(INotificationRepository repository, ApplicationDbContext context)
         {
             _repository = repository;
+            _context = context;
         }
 
-        public async Task CreateNotificationAsync(string userId, string title, string message)
-        {
-            var notification = new Notification
-            {
-                UserId = userId,
-                Title = title,
-                Message = message
-            };
-
-            await _repository.AddAsync(notification);
-            await _repository.SaveChangesAsync();
-        }
 
         public async Task<List<Notification>> GetUserNotificationsAsync(string userId)
         {
@@ -40,5 +31,21 @@ namespace Ticketing_System.Service_Layer
                 await _repository.SaveChangesAsync();
             }
         }
+        public async Task CreateNotificationAsync(string userId, string title, string message)
+{
+    var notification = new Notification
+    {
+        UserId = userId,
+        Title = title,
+        Message = message,
+        IsRead = false,
+        DateSent = DateTime.Now
+    };
+
+    _context.Notifications.Add(notification);
+    await _context.SaveChangesAsync();
+}
     }
+
+
 }

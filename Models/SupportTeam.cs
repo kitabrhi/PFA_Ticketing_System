@@ -15,13 +15,11 @@ namespace Ticketing_System.Models
         [MaxLength(255)]
         public string Description { get; set; }
 
-        // Manager de l’équipe (utilisateur Identity) – facultatif
         public string ManagerId { get; set; }
 
         [ForeignKey("ManagerId")]
         public virtual User Manager { get; set; }
 
-        // Collection des membres de l’équipe (relation many-to-many gérée via TeamMember)
         public virtual ICollection<TeamMember> TeamMembers { get; set; }
 
         // Tickets assignés à l’équipe
