@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Ticketing_System.Models;
 using Ticketing_System.Service_Layer.Interfaces;
+using Ticketing_System.Service_Layer;
 
 namespace Ticketing_System.Controllers
 {
@@ -19,6 +20,7 @@ namespace Ticketing_System.Controllers
         private readonly ITicketHistoryService _historyService;
         private readonly IAttachmentService _attachmentService;
         private readonly UserManager<User> _userManager;
+        private NotificationService _notificationService;
         private readonly IAssignmentRuleService _assignmentRuleService;
         private readonly IEscalationRuleService _escalationRuleService;
         private readonly ISupportTeamService _supportTeamService;
@@ -175,6 +177,7 @@ public async Task<IActionResult> Create(Ticket ticket)
     ModelState.Remove(nameof(ticket.TicketComments));
     ModelState.Remove(nameof(ticket.TicketHistories));
     ModelState.Remove(nameof(ticket.TicketAttachments));
+=
 
     if (ModelState.IsValid)
     {

@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Ticketing_System;
 using Ticketing_System.Models;
 using Ticketing_System.Service_Layer.Interfaces;
+using Ticketing_System.Service_Layer;
+
 
 [Authorize(Roles = "Admin")]
 public class SupportTeamController : Controller
@@ -13,14 +15,18 @@ public class SupportTeamController : Controller
     private readonly ISupportTeamService _service;
     private readonly UserManager<User> _userManager;
     private readonly ApplicationDbContext _context;
+    private INotificationService _notificationService;
+    private ISupportTeamService _supportTeamService;
 
     public SupportTeamController(
         ISupportTeamService service,
         UserManager<User> userManager,
+        INotificationService notificationService,
         ApplicationDbContext context)
     {
         _service = service;
         _userManager = userManager;
+        _notificationService = notificationService;
         _context = context;
     }
 
@@ -46,66 +52,71 @@ public class SupportTeamController : Controller
     }
 
     // POST: Création d’une équipe
-    [HttpPost]
-    public async Task<IActionResult> Create(SupportTeam team)
-    {
-        var selectedMemberIds = Request.Form["TeamMembersIds"].ToList();
-        var selectedTicketIds = Request.Form["AssignedTicketsIds"].Select(int.Parse).ToList();
-
-        ModelState.Remove("Manager");
-        ModelState.Remove("TeamMembers");
-        ModelState.Remove("AssignedTickets");
-
-        if (string.IsNullOrEmpty(team.ManagerId))
-            ModelState.AddModelError("ManagerId", "Le manager est obligatoire.");
-
-        if (!selectedMemberIds.Any())
-            ModelState.AddModelError("TeamMembers", "Veuillez sélectionner au moins un membre.");
-
-        if (!selectedTicketIds.Any())
-            ModelState.AddModelError("AssignedTickets", "Veuillez sélectionner au moins un ticket.");
-
-        if (!ModelState.IsValid)
+[HttpPost]
+[Authorize]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Create(SupportTeam team)
 {
-    Console.WriteLine("❌ Formulaire invalide. Détails des erreurs :");
-    foreach (var kvp in ModelState)
+    var selectedMemberIds = Request.Form["TeamMembersIds"].ToList();
+    var selectedTicketIds = Request.Form["AssignedTicketsIds"].Select(int.Parse).ToList();
+
+    // Supprimer la validation automatique sur les propriétés de navigation
+    ModelState.Remove("Manager");
+    ModelState.Remove("TeamMembers");
+    ModelState.Remove("AssignedTickets");
+
+    // Validations personnalisées
+    if (string.IsNullOrEmpty(team.ManagerId))
+        ModelState.AddModelError("ManagerId", "Le manager est obligatoire.");
+
+    if (!selectedMemberIds.Any())
+        ModelState.AddModelError("TeamMembers", "Veuillez sélectionner au moins un membre.");
+
+    if (!selectedTicketIds.Any())
+        ModelState.AddModelError("AssignedTickets", "Veuillez sélectionner au moins un ticket.");
+
+    // Si erreurs de validation
+    if (!ModelState.IsValid)
     {
-        foreach (var error in kvp.Value.Errors)
+        Console.WriteLine("❌ Formulaire invalide. Détails des erreurs :");
+        foreach (var kvp in ModelState)
         {
-            Console.WriteLine($"Champ : {kvp.Key} - Erreur : {error.ErrorMessage}");
+            foreach (var error in kvp.Value.Errors)
+            {
+                Console.WriteLine($"Champ : {kvp.Key} - Erreur : {error.ErrorMessage}");
+            }
         }
+
+        await RemplirViewBags(team.ManagerId, selectedMemberIds, selectedTicketIds);
+        return View(team);
     }
 
-    await RemplirViewBags(team.ManagerId, selectedMemberIds, selectedTicketIds);
-    return View(team);
+    try
+    {
+        // ✅ Création de l’équipe (via service)
+        var createdTeam = await _service.CreateSupportTeamAsync(team, selectedMemberIds, selectedTicketIds);
+
+        // ✅ Récupération de l'utilisateur connecté
+        var user = await _userManager.GetUserAsync(User);
+
+        // ✅ Création d'une notification pour l'utilisateur
+        await _notificationService.CreateNotificationAsync(
+            user.Id,
+            "👥 Nouvelle Équipe Créée",
+            $"L’équipe \"{createdTeam.TeamName}\" a été créée avec succès."
+        );
+
+        TempData["SuccessMessage"] = "✅ Équipe créée avec succès.";
+        return RedirectToAction("Index");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"❌ Erreur lors de la création de l’équipe : {ex.Message}");
+        ModelState.AddModelError("", "Une erreur s’est produite lors de la création de l’équipe.");
+        await RemplirViewBags(team.ManagerId, selectedMemberIds, selectedTicketIds);
+        return View(team);
+    }
 }
-
-
-        // 🔹 Étape 1 : ajouter les membres (relation manuelle)
-        team.TeamMembers = selectedMemberIds.Select(userId => new TeamMember
-        {
-            UserId = userId,
-            JoinDate = DateTime.Now
-        }).ToList();
-
-        // 🔹 Ajouter l’équipe
-        await _service.AddAsync(team); // inclut SaveChangesAsync dans le repository
-        Console.WriteLine("✅ TeamID généré : " + team.TeamID);
-
-        // 🔹 Étape 2 : assigner les tickets maintenant que le TeamID est généré
-        var ticketsToAssign = await _context.Tickets
-            .Where(t => selectedTicketIds.Contains(t.TicketID))
-            .ToListAsync();
-
-        foreach (var ticket in ticketsToAssign)
-        {
-            ticket.AssignedToTeamID = team.TeamID;
-        }
-
-        await _context.SaveChangesAsync(); // appliquer la liaison des tickets
-
-        return RedirectToAction(nameof(Index));
-    }
 
 
 

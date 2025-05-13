@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Ticketing_System.Models;
 using Ticketing_System.Service_Layer.Interfaces;
+using Ticketing_System.Service_Layer;
 
 namespace Ticketing_System.Controllers
 {
@@ -14,18 +15,22 @@ namespace Ticketing_System.Controllers
         private readonly ITeamMemberService _service;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly INotificationService _notificationService;
+
         private readonly RoleManager<Role> _roleManager;
 
         public TeamMemberController(
             ITeamMemberService service,
             ApplicationDbContext context,
             UserManager<User> userManager,
+            INotificationService notificationService,
             RoleManager<Role> roleManager)
         {
             _service = service;
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
+            _notificationService = notificationService;
         }
 
         // 🔹 Affiche la liste des membres
@@ -44,20 +49,37 @@ namespace Ticketing_System.Controllers
 
         // 🔹 Soumission formulaire d’ajout
         [HttpPost]
-        public async Task<IActionResult> Create(TeamMember member)
-        {
-            ModelState.Remove("Team");
-            ModelState.Remove("User");
+public async Task<IActionResult> Create(TeamMember member)
+{
+    ModelState.Remove("Team");
+    ModelState.Remove("User");
 
-            if (!ModelState.IsValid)
-            {
-                await LoadDropdowns(member.TeamID, member.UserId);
-                return View(member);
-            }
+    if (!ModelState.IsValid)
+    {
+        await LoadDropdowns(member.TeamID, member.UserId);
+        return View(member);
+    }
 
-            await _service.AddAsync(member);
-            return RedirectToAction(nameof(Index));
-        }
+    await _service.AddAsync(member);
+
+    // 🔔 Créer une notification pour l’admin (ou celui qui est connecté)
+    var user = await _userManager.GetUserAsync(User);
+    var addedUser = await _userManager.FindByIdAsync(member.UserId);
+    var team = await _context.SupportTeams.FindAsync(member.TeamID);
+
+    if (user != null && addedUser != null && team != null)
+    {
+        await _notificationService.CreateNotificationAsync(
+            user.Id,
+            "👤 Nouveau Membre d’Équipe",
+            $"L’utilisateur {addedUser.FirstName} {addedUser.LastName} a été ajouté à l’équipe \"{team.TeamName}\"."
+        );
+    }
+
+    TempData["SuccessMessage"] = "✅ Membre ajouté et notification envoyée.";
+    return RedirectToAction(nameof(Index));
+}
+
 
     // GET: Confirmation de suppression d’un TeamMember
 public async Task<IActionResult> Delete(int id)

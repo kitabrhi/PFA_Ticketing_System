@@ -57,8 +57,8 @@ namespace Ticketing_System.Repository
         {
             return await _dbSet
                 .Where(u => u.Email.Contains(searchTerm) ||
-                           u.FirstName.Contains(searchTerm) ||
-                           u.LastName.Contains(searchTerm))
+                            u.FirstName.Contains(searchTerm) ||
+                            u.LastName.Contains(searchTerm))
                 .ToListAsync();
         }
 
@@ -72,8 +72,9 @@ namespace Ticketing_System.Repository
             return !await query.AnyAsync();
         }
 
-        // ✅ La méthode manquante pour corriger ton erreur :
-                public IQueryable<User> Query()
+
+        // ✅ Ajout correct de Query()
+        public IQueryable<User> Query()
         {
             return _dbSet.AsQueryable();
         }
