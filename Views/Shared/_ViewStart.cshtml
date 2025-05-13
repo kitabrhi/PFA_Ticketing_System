@@ -1,0 +1,25 @@
+@using System.Security.Claims
+
+@{
+    var user = Context.User;
+
+    if (user.Identity?.IsAuthenticated ?? false)
+    {
+        if (user.IsInRole("Admin") || user.IsInRole("SuperAdmin"))
+        {
+            Layout = "~/Views/Shared/_AdminLayout.cshtml";
+        }
+        else if (user.IsInRole("SupportAgent"))
+        {
+            Layout = "~/Views/Shared/_SupportAgentLayout.cshtml";
+        }
+        else
+        {
+            Layout = "~/Views/Shared/_UserLayout.cshtml";
+        }
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+}

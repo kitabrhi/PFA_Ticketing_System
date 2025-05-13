@@ -49,11 +49,18 @@ namespace Ticketing_System.Controllers
             return RedirectToAction("Contact");
         }
 
-        [Authorize] // Pour s'assurer que seuls les utilisateurs connect�s puissent y acc�der
-        public IActionResult Accueil()
-        {
-            return View();
-        }
+        [Authorize]
+public IActionResult Accueil()
+{
+    if (User.IsInRole("Admin") || User.IsInRole("SupportAgent"))
+    {
+        return View(); // View par défaut: Views/Home/Accueil.cshtml
+    }
+
+    // Redirige les utilisateurs normaux vers la vue utilisateur
+    return RedirectToAction("Dashboard", "User");
+}
+
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

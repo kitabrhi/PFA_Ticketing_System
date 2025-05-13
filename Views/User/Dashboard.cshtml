@@ -1,0 +1,62 @@
+@{
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    ViewData["Title"] = "User Dashboard";
+}
+
+<div class="container py-5">
+    <h2 class="mb-4 text-primary fw-bold">Welcome, @User.Identity.Name!</h2>
+
+    <!-- Stat Cards -->
+    <div class="row text-center mb-5">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-left-primary">
+                <div class="card-body">
+                    <h5>Total Tickets</h5>
+                    <h2 class="text-primary">@ViewBag.TotalTickets</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-left-success">
+                <div class="card-body">
+                    <h5>Resolved</h5>
+                    <h2 class="text-success">@ViewBag.TicketsResolved</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-left-warning">
+                <div class="card-body">
+                    <h5>Open / New</h5>
+                    <h2 class="text-warning">@ViewBag.TicketsOpen</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="mb-4 text-center">Ticket Overview</h5>
+            <canvas id="ticketChart" width="400" height="150"></canvas>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('ticketChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Total', 'Resolved', 'Open/New'],
+                datasets: [{
+                    label: 'Ticket Count',
+                    data: [@ViewBag.TotalTickets, @ViewBag.TicketsResolved, @ViewBag.TicketsOpen],
+                    backgroundColor: ['#1a73e8', '#34a853', '#fbbc05']
+                }]
+            }
+        });
+    </script>
+}

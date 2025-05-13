@@ -43,7 +43,7 @@ namespace Ticketing_System.Controllers
 
         // GET: Ticket
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var tickets = await _ticketService.GetAllTicketsAsync();
@@ -115,89 +115,152 @@ namespace Ticketing_System.Controllers
             }
         }
 
-        // GET: Ticket/Create
-        [HttpGet]
-        [Authorize]
-        public IActionResult Create()
+       [HttpGet]
+[Authorize]
+public IActionResult Create()
+{
+    // ✅ Liste des catégories
+    ViewBag.Categories = Enum.GetValues(typeof(TicketCategory))
+        .Cast<TicketCategory>()
+        .Select(c => new SelectListItem
         {
-            // Préparer les listes déroulantes pour le formulaire
-            ViewBag.Categories = Enum.GetValues(typeof(TicketCategory))
-                .Cast<TicketCategory>()
-                .Select(c => new SelectListItem
-                {
-                    Value = c.ToString(),
-                    Text = c.ToString()
-                }).ToList();
+            Value = c.ToString(),
+            Text = c.ToString()
+        }).ToList();
 
-            ViewBag.Priorities = Enum.GetValues(typeof(TicketPriority))
-                .Cast<TicketPriority>()
-                .Select(p => new SelectListItem
-                {
-                    Value = p.ToString(),
-                    Text = p.ToString()
-                }).ToList();
+    // ✅ Liste des priorités
+    ViewBag.Priorities = Enum.GetValues(typeof(TicketPriority))
+        .Cast<TicketPriority>()
+        .Select(p => new SelectListItem
+        {
+            Value = p.ToString(),
+            Text = p.ToString()
+        }).ToList();
 
-            return View();
-        }
+    // ✅ Liste des statuts (optionnel, utile si le champ est modifiable à la création)
+    ViewBag.Statuses = Enum.GetValues(typeof(TicketStatus))
+        .Cast<TicketStatus>()
+        .Select(s => new SelectListItem
+        {
+            Value = s.ToString(),
+            Text = s.ToString()
+        }).ToList();
+
+    // ⚠️ Par sécurité, initialiser ViewBag.Attachments pour ne pas planter la vue
+    ViewBag.Attachments = new List<Attachment>();
+
+    // ✅ On retourne un objet Ticket avec statut initial par défaut
+    return View(new Ticket
+    {
+        Status = TicketStatus.New,
+        Source = "Web"
+    });
+}
 
         [HttpPost]
-        [Authorize]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Ticket ticket)
+[Authorize]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Create(Ticket ticket)
+{
+    string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    ticket.CreatedByUserId = userId;
+    ticket.CreatedDate = DateTime.Now;
+    ticket.UpdatedDate = DateTime.Now;
+
+    // 🔍 Supprimer les erreurs sur les relations non postées
+    ModelState.Remove(nameof(ticket.CreatedByUserId));
+    ModelState.Remove(nameof(ticket.CreatedByUser));
+    ModelState.Remove(nameof(ticket.AssignedToUser));
+    ModelState.Remove(nameof(ticket.AssignedToTeam));
+    ModelState.Remove(nameof(ticket.TicketComments));
+    ModelState.Remove(nameof(ticket.TicketHistories));
+    ModelState.Remove(nameof(ticket.TicketAttachments));
+
+    if (ModelState.IsValid)
+    {
+        try
         {
-            // Injecter l'ID du user connecté
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            ticket.CreatedByUserId = userId;
-            ModelState.Remove(nameof(ticket.CreatedByUserId));
+            // 🔹 1. Enregistrer le ticket
+            var createdTicket = await _ticketService.CreateTicketAsync(ticket);
 
-            // navigation suppression 
-            ModelState.Remove("CreatedByUser");
-            ModelState.Remove("AssignedToUser");
-            ModelState.Remove("AssignedToTeam");
-            ModelState.Remove("TicketComments");
-            ModelState.Remove("TicketHistories");
-            ModelState.Remove("TicketAttachments");
-
-            if (ModelState.IsValid)
+            // 🔹 2. Commentaire initial
+            var commentText = Request.Form["InitialComment"];
+            if (!string.IsNullOrWhiteSpace(commentText))
             {
-                try
+                var comment = new TicketComment
                 {
-                    // Create the ticket
-                    var createdTicket = await _ticketService.CreateTicketAsync(ticket);
-
-                    // Apply assignment rules automatically
-                    await _assignmentRuleService.ApplyRuleToTicketAsync(createdTicket.TicketID);
-
-                    TempData["SuccessMessage"] = "Ticket created successfully and automatically assigned according to rules!";
-                    return RedirectToAction(nameof(MyTickets));
-                }
-                catch (Exception ex)
-                {
-                    var sqlError = ex.InnerException?.Message;
-                    ModelState.AddModelError("",
-                        $"Impossible de créer le ticket : {ex.Message} - Détail : {sqlError}");
-                }
+                    TicketID = createdTicket.TicketID,
+                    UserId = userId,
+                    CommentText = commentText,
+                    IsInternal = false,
+                    CreatedDate = DateTime.Now
+                };
+                await _commentService.AddCommentAsync(comment);
             }
 
-            // En cas d'erreur, recréer les listes déroulantes
-            ViewBag.Categories = Enum.GetValues(typeof(TicketCategory))
-                .Cast<TicketCategory>()
-                .Select(c => new SelectListItem
+            // 🔹 3. Ajouter pièce jointe
+            var file = Request.Form.Files.FirstOrDefault();
+            if (file != null && file.Length > 0)
+            {
+                var attachment = new Attachment
                 {
-                    Value = c.ToString(),
-                    Text = c.ToString()
-                }).ToList();
+                    TicketID = createdTicket.TicketID,
+                    FileName = Path.GetFileName(file.FileName),
+                    UploaderUserId = userId,
+                    UploadedDate = DateTime.Now
+                };
 
-            ViewBag.Priorities = Enum.GetValues(typeof(TicketPriority))
-                .Cast<TicketPriority>()
-                .Select(p => new SelectListItem
-                {
-                    Value = p.ToString(),
-                    Text = p.ToString()
-                }).ToList();
+                using var memoryStream = new MemoryStream();
+                await file.CopyToAsync(memoryStream);
+                memoryStream.Position = 0;
+                await _attachmentService.AddAttachmentAsync(attachment, memoryStream);
+            }
 
-            return View(ticket);
+            // 🔹 4. Appliquer règle d’assignation
+            await _assignmentRuleService.ApplyRuleToTicketAsync(createdTicket.TicketID);
+
+            TempData["SuccessMessage"] = "✅ Ticket créé avec succès !";
+            return RedirectToAction(nameof(MyTickets));
         }
+        catch (Exception ex)
+        {
+            var message = ex.InnerException?.Message ?? ex.Message;
+            ModelState.AddModelError("", $"❌ Erreur lors de la création : {message}");
+        }
+    }
+    else
+    {
+        // 🔍 Debug ModelState si invalid
+        Console.WriteLine("⚠️ ModelState invalid:");
+        foreach (var key in ModelState.Keys)
+        {
+            var state = ModelState[key];
+            foreach (var err in state.Errors)
+            {
+                Console.WriteLine($"Champ: {key} ➤ Erreur: {err.ErrorMessage}");
+            }
+        }
+    }
+
+    // ❗ Recharger dropdowns si erreur
+    ViewBag.Categories = Enum.GetValues(typeof(TicketCategory))
+        .Cast<TicketCategory>()
+        .Select(c => new SelectListItem { Value = c.ToString(), Text = c.ToString() })
+        .ToList();
+
+    ViewBag.Priorities = Enum.GetValues(typeof(TicketPriority))
+        .Cast<TicketPriority>()
+        .Select(p => new SelectListItem { Value = p.ToString(), Text = p.ToString() })
+        .ToList();
+
+    ViewBag.Statuses = Enum.GetValues(typeof(TicketStatus))
+        .Cast<TicketStatus>()
+        .Select(s => new SelectListItem { Value = s.ToString(), Text = s.ToString() })
+        .ToList();
+
+    return View(ticket);
+}
+
 
         // GET: Ticket/Edit/5
         [HttpGet]
