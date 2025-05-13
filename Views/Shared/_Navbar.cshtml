@@ -1,3 +1,8 @@
+@{
+    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString() ?? "";
+    var currentController = ViewContext.RouteData.Values["Controller"]?.ToString() ?? "";
+}
+
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3" style="z-index: 1050;">
     <div class="container-fluid">
         <!-- Logo -->
@@ -6,7 +11,7 @@
         </a>
 
         <!-- Toggler for mobile -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -14,16 +19,38 @@
         <!-- Navbar Links -->
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                @{
-                    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString() ?? "";
-                    var currentController = ViewContext.RouteData.Values["Controller"]?.ToString() ?? "";
+
+                <!-- 👇 DASHBOARD Dynamique -->
+                @if (User.IsInRole("Admin"))
+                {
+                    <li class="nav-item">
+        <a class="nav-link @(currentController == "Home" && currentAction == "Accueil" ? "active fw-bold text-primary" : "")"
+           asp-controller="Home" asp-action="Accueil">
+            <i class="fas fa-chart-line me-1"></i> Dashboard Admin
+        </a>
+    </li>
+                }
+                else if (User.IsInRole("SupportAgent"))
+                {
+                   <li class="nav-item">
+            <a class="nav-link @(currentController == "SupportAgent" && currentAction == "Dashboard" ? "active fw-bold text-primary" : "")"
+               asp-controller="SupportAgent" asp-action="Dashboard">
+                <i class="fas fa-tools me-1"></i> Dashboard Support
+            </a>
+        </li>
+                }
+                else if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link @(currentController == "Ticket" && currentAction == "MyTickets" ? "active fw-bold text-primary" : "")"
+                           asp-controller="Ticket" asp-action="MyTickets">
+                            <i class="fas fa-user me-1"></i> Dashboard Utilisateur
+                        </a>
+                    </li>
                 }
 
-                <li class="nav-item">
-                    <a class="nav-link @(currentController == "Home" && currentAction == "Index" ? "active fw-bold text-primary" : "")" href="/">
-                        <i class="fas fa-home me-1"></i> Accueil
-                    </a>
-                </li>
+                <!-- Autres liens -->
+               
 
                 <li class="nav-item">
                     <a class="nav-link @(currentController == "Home" && currentAction == "About" ? "active fw-bold text-primary" : "")" href="/Home/About">
@@ -58,7 +85,7 @@
                 }
             </ul>
 
-            <!-- Right Side: Authentication -->
+            <!-- Authentification -->
             <div class="d-flex align-items-center gap-2">
                 @if (User?.Identity?.IsAuthenticated ?? false)
                 {

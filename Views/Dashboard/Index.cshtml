@@ -1,0 +1,104 @@
+@model Ticketing_System.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Tableau de bord";
+    Layout = "_DashboardLayout";
+}
+
+<div class="row g-4">
+  <div class="col-sm-6 col-lg-3">
+    <div class="card card-kpi text-center p-3">
+      <i class="icon fa fa-ticket-simple mb-2"></i>
+      <h5>Total Tickets</h5>
+      <h2>@Model.TotalTickets</h2>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card card-kpi text-center p-3">
+      <i class="icon fa fa-circle-info mb-2"></i>
+      <h5>Nouveaux</h5>
+      <h2>@Model.NewTickets</h2>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card card-kpi text-center p-3">
+      <i class="icon fa fa-spinner mb-2"></i>
+      <h5>En cours</h5>
+      <h2>@Model.InProgressTickets</h2>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card card-kpi text-center p-3">
+      <i class="icon fa fa-check-circle mb-2"></i>
+      <h5>Résolus</h5>
+      <h2>@Model.ResolvedTickets</h2>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-5">
+  <div class="col-lg-5">
+    <div class="card">
+      <div class="card-header bg-white">Statuts</div>
+      <div class="card-body">
+        <canvas id="statusChart" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header bg-white">Derniers tickets</div>
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>#</th><th>Titre</th><th>Date</th><th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach(var t in Model.RecentTickets) {
+              <tr>
+                <td>@t.TicketID</td>
+                <td>
+                  <a asp-controller="Tickets" asp-action="Details" asp-route-id="@t.TicketID">
+                    @t.Title
+                  </a>
+                </td>
+                <td>@t.CreatedDate:dd/MM/yyyy</td>
+                <td>
+                  <span class="badge 
+                    @(t.Status==TicketStatus.New? "bg-info":
+                      t.Status==TicketStatus.InProgress? "bg-warning text-dark":
+                      t.Status==TicketStatus.Resolved? "bg-success":
+                      "bg-secondary")">
+                    @t.Status
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+  <script>
+    new Chart(document.getElementById('statusChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Nouveaux','En cours','Résolus','Fermés'],
+        datasets: [{
+          data:[
+            @Model.NewTickets,
+            @Model.InProgressTickets,
+            @Model.ResolvedTickets,
+            @Model.ClosedTickets
+          ],
+          backgroundColor:['#17a2b8','#ffc107','#28a745','#6c757d']
+        }]
+      },
+      options:{plugins:{legend:{position:'bottom'}}}
+    });
+  </script>
+}

@@ -16,6 +16,7 @@ namespace Ticketing_System.Models
         Resolved,
 
         [Description("Closed")]
-        Closed
+        Closed,
+        New
     }
 }

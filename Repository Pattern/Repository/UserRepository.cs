@@ -72,6 +72,7 @@ namespace Ticketing_System.Repository
             return !await query.AnyAsync();
         }
 
+
         // ✅ Ajout correct de Query()
         public IQueryable<User> Query()
         {
@@ -86,4 +87,5 @@ namespace Ticketing_System.Repository
             return await _dbSet.AnyAsync(u => u.Id == userId);
         }
     }
+
 }

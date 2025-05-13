@@ -1,0 +1,44 @@
+@model IEnumerable<Ticketing_System.Models.TeamMember>
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewData["Title"] = "Membres d’équipe";
+}
+
+<div class="main-content">
+    <h2 class="mb-4">Membres de l’équipe</h2>
+
+    <a class="btn btn-success mb-3" asp-controller="TeamMember" asp-action="Create">
+        <i class="bi bi-plus-circle"></i> Ajouter un membre
+    </a>
+
+    <table class="table table-bordered table-hover bg-white shadow-sm rounded">
+        <thead class="table-dark text-center">
+            <tr>
+                <th>#</th>
+                <th>Nom complet</th>
+                <th>Email</th>
+                <th>Équipe</th>
+                <th>Date d’adhésion</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var m in Model)
+        {
+            <tr class="text-center align-middle">
+                <td>@m.TeamMemberID</td>
+                <td>@(m.User?.FirstName) @(m.User?.LastName)</td>
+                <td>@m.User?.Email</td>
+                <td>@m.Team?.TeamName</td>
+                <td>@m.JoinDate.ToShortDateString()</td>
+                <td>
+                    <a asp-controller="TeamMember" asp-action="Delete" asp-route-id="@m.TeamMemberID"
+                       class="btn btn-sm btn-outline-danger">
+                        Supprimer
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,179 @@
+@using Newtonsoft.Json
+@{
+    ViewData["Title"] = "Support Agent Dashboard";
+    Layout = "~/Views/Shared/_SupportAgentLayout.cshtml";
+
+    var statusData = (ViewBag.TicketsParStatut as IEnumerable<dynamic>) ?? new List<dynamic>();
+    var trendData = (ViewBag.TicketsParJour as IEnumerable<dynamic>) ?? new List<dynamic>();
+
+    var statusLabels = statusData.Select(s => s.Status.ToString()).ToList();
+    var statusValues = statusData.Select(s => (int)s.Count).ToList();
+    var trendLabels = trendData.Select(t => (string)t.Day).ToList();
+    var trendValues = trendData.Select(t => (int)t.Count).ToList();
+
+    int totalAssignedTickets = statusValues.Sum();
+}
+
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+<style>
+    body {
+        background: #f4f6fa;
+    }
+
+    .dashboard-card {
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0 20px rgba(0,0,0,0.08);
+    }
+
+    .chart-container {
+        position: relative;
+        height: 300px;
+    }
+
+    .gradient-bg {
+        background: linear-gradient(135deg, #00a78e, #007f73);
+        color: white;
+    }
+
+    .text-shadow {
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .card-header i {
+        color: #00a78e;
+    }
+</style>
+
+<div class="container-fluid mt-4 px-4">
+    <!-- Welcome -->
+    <div class="card shadow-sm mb-5 gradient-bg rounded-4 text-center" data-aos="fade-down">
+        <div class="card-body py-5">
+            <h2 class="fw-bold text-shadow">Welcome, @User.Identity.Name!</h2>
+            <p class="fs-5 text-light text-shadow">Monitor your team performance and ticket stats below.</p>
+        </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="card dashboard-card border-0 shadow-sm rounded-4 text-center">
+                <div class="card-body py-4">
+                    <i class="fas fa-ticket-alt fa-2x text-primary mb-3"></i>
+                    <h6 class="fw-semibold mb-1">Assigned Tickets</h6>
+                    <h2 class="fw-bold text-primary">@totalAssignedTickets</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="card dashboard-card border-0 shadow-sm rounded-4 text-center">
+                <div class="card-body py-4">
+                    <i class="fas fa-users fa-2x text-success mb-3"></i>
+                    <h6 class="fw-semibold mb-1">Team Members</h6>
+                    <h2 class="fw-bold text-success">6</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="card dashboard-card border-0 shadow-sm rounded-4 text-center">
+                <div class="card-body py-4">
+                    <i class="fas fa-bell fa-2x text-warning mb-3"></i>
+                    <h6 class="fw-semibold mb-1">New Notifications</h6>
+                    <h2 class="fw-bold text-warning">3</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row g-4">
+        <div class="col-lg-6" data-aos="zoom-in" data-aos-delay="200">
+            <div class="card dashboard-card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-header bg-white fw-bold text-secondary">
+                    <i class="fas fa-chart-pie me-2"></i> Tickets by Status
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6" data-aos="zoom-in" data-aos-delay="300">
+            <div class="card dashboard-card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-header bg-white fw-bold text-secondary">
+                    <i class="fas fa-chart-line me-2"></i> Tickets Over Time
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000 });
+
+        const statusLabels = @Html.Raw(JsonConvert.SerializeObject(statusLabels));
+        const statusValues = @Html.Raw(JsonConvert.SerializeObject(statusValues));
+
+        const trendLabels = @Html.Raw(JsonConvert.SerializeObject(trendLabels));
+        const trendValues = @Html.Raw(JsonConvert.SerializeObject(trendValues));
+
+        new Chart(document.getElementById("statusChart").getContext("2d"), {
+            type: 'doughnut',
+            data: {
+                labels: statusLabels,
+                datasets: [{
+                    label: "Tickets",
+                    data: statusValues,
+                    backgroundColor: ['#007bff', '#ffc107', '#28a745'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                cutout: '70%',
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        const ctxTrend = document.getElementById("trendChart").getContext("2d");
+        const gradient = ctxTrend.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, 'rgba(0,167,142,0.4)');
+        gradient.addColorStop(1, 'rgba(0,167,142,0)');
+
+        new Chart(ctxTrend, {
+            type: 'line',
+            data: {
+                labels: trendLabels,
+                datasets: [{
+                    label: "Tickets",
+                    data: trendValues,
+                    fill: true,
+                    backgroundColor: gradient,
+                    borderColor: "#00a78e",
+                    pointBackgroundColor: "#00a78e",
+                    tension: 0.4
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { display: true, position: 'top' }
+                }
+            }
+        });
+    </script>
+}

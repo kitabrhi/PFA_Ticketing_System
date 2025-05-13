@@ -1,6 +1,11 @@
 ﻿@{
     ViewData["Title"] = "Accueil";
 }
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+
 
 <!-- Hero Section -->
 <section class="quantum-hero quantum-animate-fade-in mb-5">

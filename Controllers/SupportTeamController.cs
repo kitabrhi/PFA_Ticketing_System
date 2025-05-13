@@ -30,6 +30,13 @@ public class SupportTeamController : Controller
         _context = context;
     }
 
+
+    public IActionResult Dashboard()
+        {
+            return View();
+        }
+
+
     // GET: Liste des équipes
     public async Task<IActionResult> Index()
     {
