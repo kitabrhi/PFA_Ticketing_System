@@ -177,7 +177,7 @@ public async Task<IActionResult> Create(Ticket ticket)
     ModelState.Remove(nameof(ticket.TicketComments));
     ModelState.Remove(nameof(ticket.TicketHistories));
     ModelState.Remove(nameof(ticket.TicketAttachments));
-=
+
 
     if (ModelState.IsValid)
     {
