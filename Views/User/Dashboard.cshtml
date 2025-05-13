@@ -1,61 +1,154 @@
+@using Newtonsoft.Json
 @{
-    Layout = "~/Views/Shared/_UserLayout.cshtml";
     ViewData["Title"] = "User Dashboard";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+
+    var total = ViewBag.TotalTickets ?? 0;
+    var resolved = ViewBag.TicketsResolved ?? 0;
+    var open = ViewBag.TicketsOpen ?? 0;
+
+    var categoryLabels = new List<string> { "Bug", "Feature", "Support" };
+    var categoryValues = new List<int> { 4, 2, 3 };
 }
 
-<div class="container py-5">
-    <h2 class="mb-4 text-primary fw-bold">Welcome, @User.Identity.Name!</h2>
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+<style>
+    body {
+        background-color: #f4f6fa;
+    }
 
-    <!-- Stat Cards -->
-    <div class="row text-center mb-5">
-        <div class="col-md-4">
-            <div class="card shadow-sm border-left-primary">
-                <div class="card-body">
-                    <h5>Total Tickets</h5>
-                    <h2 class="text-primary">@ViewBag.TotalTickets</h2>
-                </div>
+    .dashboard-card {
+        border-radius: 1.2rem;
+        padding: 2rem 1.5rem;
+        background-color: #ffffff;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        text-align: center;
+        border-left: 6px solid #e0e0e0;
+    }
+
+    .dashboard-card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-icon {
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .chart-box {
+        background: #ffffff;
+        padding: 2rem;
+        border-radius: 1.2rem;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+        height: 360px;
+    }
+
+    .chart-container canvas {
+        max-height: 220px !important;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-primary mb-1">Welcome, @User.Identity.Name!</h2>
+        <p class="text-muted fs-5">Here’s a quick overview of your ticket activity.</p>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4" data-aos="zoom-in">
+            <div class="dashboard-card border-start border-primary border-4">
+                <div class="dashboard-icon text-primary"><i class="fas fa-ticket-alt"></i></div>
+                <p class="text-muted mb-1">Total Tickets</p>
+                <h3 class="fw-bold text-primary">@total</h3>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm border-left-success">
-                <div class="card-body">
-                    <h5>Resolved</h5>
-                    <h2 class="text-success">@ViewBag.TicketsResolved</h2>
-                </div>
+        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="150">
+            <div class="dashboard-card border-start border-success border-4">
+                <div class="dashboard-icon text-success"><i class="fas fa-check-circle"></i></div>
+                <p class="text-muted mb-1">Resolved</p>
+                <h3 class="fw-bold text-success">@resolved</h3>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm border-left-warning">
-                <div class="card-body">
-                    <h5>Open / New</h5>
-                    <h2 class="text-warning">@ViewBag.TicketsOpen</h2>
-                </div>
+        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="300">
+            <div class="dashboard-card border-start border-warning border-4">
+                <div class="dashboard-icon text-warning"><i class="fas fa-envelope-open-text"></i></div>
+                <p class="text-muted mb-1">Open / New</p>
+                <h3 class="fw-bold text-warning">@open</h3>
             </div>
         </div>
     </div>
 
-    <!-- Chart.js -->
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <h5 class="mb-4 text-center">Ticket Overview</h5>
-            <canvas id="ticketChart" width="400" height="150"></canvas>
+    <div class="row g-4">
+        <div class="col-lg-6" data-aos="fade-up">
+            <div class="chart-box">
+                <h6 class="mb-3 fw-bold text-secondary text-center">
+                    <i class="fas fa-chart-bar me-1"></i> Tickets Overview
+                </h6>
+                <canvas id="ticketChart"></canvas>
+            </div>
+        </div>
+        <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="chart-box">
+                <h6 class="mb-3 fw-bold text-secondary text-center">
+                    <i class="fas fa-chart-pie me-1"></i> Tickets by Category
+                </h6>
+                <canvas id="categoryChart"></canvas>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        const ctx = document.getElementById('ticketChart').getContext('2d');
-        const chart = new Chart(ctx, {
+        AOS.init({ duration: 800 });
+
+        new Chart(document.getElementById("ticketChart").getContext("2d"), {
             type: 'bar',
             data: {
-                labels: ['Total', 'Resolved', 'Open/New'],
+                labels: ['Total', 'Resolved', 'Open'],
                 datasets: [{
-                    label: 'Ticket Count',
-                    data: [@ViewBag.TotalTickets, @ViewBag.TicketsResolved, @ViewBag.TicketsOpen],
-                    backgroundColor: ['#1a73e8', '#34a853', '#fbbc05']
+                    label: 'Tickets',
+                    data: [@total, @resolved, @open],
+                    backgroundColor: ['#1a73e8', '#34a853', '#fbbc05'],
+                    borderRadius: 10
                 }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        new Chart(document.getElementById("categoryChart").getContext("2d"), {
+            type: 'doughnut',
+            data: {
+                labels: @Html.Raw(JsonConvert.SerializeObject(categoryLabels)),
+                datasets: [{
+                    label: 'Tickets',
+                    data: @Html.Raw(JsonConvert.SerializeObject(categoryValues)),
+                    backgroundColor: ['#00a78e', '#ff6b6b', '#ffa502'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: "75%",
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 14,
+                            font: {
+                                size: 13
+                            }
+                        }
+                    }
+                }
             }
         });
     </script>
