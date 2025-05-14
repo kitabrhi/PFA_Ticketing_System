@@ -38,50 +38,9 @@ namespace Ticketing_System.Controllers.API
             return Ok(team);
         }
 
-        // POST: api/SupportTeams
-        [HttpPost]
-        public async Task<ActionResult<SupportTeam>> CreateTeam(SupportTeam team)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+       
 
-            try
-            {
-                await _teamService.AddAsync(team);
-                return CreatedAtAction(nameof(GetTeam), new { id = team.TeamID }, team);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
-
-        // PUT: api/SupportTeams/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTeam(int id, SupportTeam team)
-        {
-            if (id != team.TeamID)
-            {
-                return BadRequest();
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            try
-            {
-                await _teamService.UpdateAsync(team);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
+       
 
         // DELETE: api/SupportTeams/5
         [HttpDelete("{id}")]

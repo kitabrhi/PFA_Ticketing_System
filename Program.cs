@@ -10,6 +10,7 @@ using Ticketing_System.Service_Layer.Interfaces;
 using Ticketing_System.Service_Layer.Service;
 using Ticketing_System.Service_Layer.Services;
 using Ticketing_System.Services;
+using Microsoft.Extensions.Logging;
 
 namespace Ticketing_System
 {
@@ -19,15 +20,11 @@ namespace Ticketing_System
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            
-            
-
             // 1. Configuration de la chaîne de connexion SQL Server
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
             // 2. Configuration des services
             ConfigureServices(builder.Services, connectionString, builder.Configuration);
-            
 
             var app = builder.Build();
 
@@ -39,8 +36,6 @@ namespace Ticketing_System
 
             app.Run();
         }
-
-        
 
         private static void ConfigureServices(IServiceCollection services, string connectionString, IConfiguration configuration)
         {
@@ -67,14 +62,21 @@ namespace Ticketing_System
             services.AddScoped<ITeamMemberService, TeamMemberService>();
             services.AddScoped<IEscalationRuleService, EscalationRuleService>();
             services.AddScoped<IAssignmentRuleService, AssignmentRuleService>();
-            services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-    });
-});
 
+            // Enregistrement des services de logging
+            services.AddLogging(configure =>
+            {
+                configure.AddConsole();
+                configure.AddDebug();
+            });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                });
+            });
 
             // 2.3 Services d'arrière-plan
             services.AddHostedService<EscalationBackgroundService>();
@@ -104,11 +106,11 @@ namespace Ticketing_System
             });
 
             services.AddControllers()
-    .AddJsonOptions(x =>
-    {
-        x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-        x.JsonSerializerOptions.WriteIndented = true;
-    });
+                .AddJsonOptions(x =>
+                {
+                    x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                    x.JsonSerializerOptions.WriteIndented = true;
+                });
 
             services.AddControllersWithViews();
 
@@ -126,8 +128,6 @@ namespace Ticketing_System
 
             // 2.8 Configuration générale
             services.AddSingleton<IConfiguration>(configuration);
-
-            
         }
 
         private static void ConfigureMiddleware(WebApplication app)
@@ -145,7 +145,6 @@ namespace Ticketing_System
             }
 
             // 3.2 Middleware HTTP
-            
             app.UseStaticFiles();
 
             // 3.3 Middleware de routage
@@ -157,19 +156,13 @@ namespace Ticketing_System
             app.UseAuthorization();
 
             // 3.5 Mapping des routes
-            // Ajoutez mapControllers avant mapRazorPages
             app.MapControllers();
             app.MapRazorPages();
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-        
-        app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Dashboard}/{action=Index}/{id?}");
-
         }
-        
+
         private static async Task InitializeDatabaseAsync(WebApplication app)
         {
             using var scope = app.Services.CreateScope();

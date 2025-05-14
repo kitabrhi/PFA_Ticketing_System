@@ -1,15 +1,18 @@
 using Ticketing_System.Models;
-using Ticketing_System.Service_Layer.Interfaces;
 
-public interface ISupportTeamService
+namespace Ticketing_System.Service_Layer.Interfaces
 {
-    Task<List<SupportTeam>> GetAllAsync();
-    Task<SupportTeam> GetByIdAsync(int id);
-    Task AddAsync(SupportTeam team);
-    Task UpdateAsync(SupportTeam team);
-    Task DeleteAsync(int id);
-
-    Task<List<SupportTeam>> GetSupportTeamsAsync();
-Task<SupportTeam> CreateSupportTeamAsync(SupportTeam team, List<string> memberIds, List<int> ticketIds);
-
+    public interface ISupportTeamService
+    {
+        Task<List<SupportTeam>> GetAllAsync();
+        Task<SupportTeam> GetByIdAsync(int id);
+        Task<SupportTeam> GetByIdWithDetailsAsync(int id);
+        Task<List<SupportTeam>> GetTeamsByManagerIdAsync(string managerId);
+        Task<SupportTeam> CreateTeamAsync(SupportTeam team, List<string> memberIds);
+        Task UpdateTeamAsync(SupportTeam team, List<string> memberIds);
+        Task DeleteAsync(int id);
+        Task AssignManagerAsync(int teamId, string managerId);
+        Task<int> GetTicketCountAsync(int teamId);
+        Task<bool> HasActiveAgentsAsync(int teamId);
+    }
 }

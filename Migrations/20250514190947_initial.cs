@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Ticketing_System.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -240,7 +240,7 @@ namespace Ticketing_System.Migrations
                     Category = table.Column<int>(type: "int", nullable: true),
                     Priority = table.Column<int>(type: "int", nullable: true),
                     AssignToTeamID = table.Column<int>(type: "int", nullable: true),
-                    AssignToUserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AssignToUserID = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     RuleOrder = table.Column<int>(type: "int", nullable: false)
                 },

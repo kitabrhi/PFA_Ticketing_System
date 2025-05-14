@@ -1,26 +1,39 @@
+@model IEnumerable<Ticketing_System.Models.TeamMember>
 @{
     Layout = User.IsInRole("Admin") ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
-}
-
-@model IEnumerable<Ticketing_System.Models.TeamMember>
-
-@{
-    ViewData["Title"] = "Team Members List";
+    ViewData["Title"] = "Team Members";
 }
 
 <div class="container py-5">
-    <!-- Header -->
+    <!-- Header with title and create button -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="fw-bold mb-0">Team Members</h1>
-            <small class="text-muted">Manage the assignment of users to teams</small>
+            <p class="text-muted">Manage users assigned to support teams</p>
         </div>
         <a asp-action="Create" class="btn btn-success rounded-pill px-4 py-2 shadow-sm">
-            <i class="fas fa-user-plus me-2"></i> Add Member
+            <i class="fas fa-user-plus me-2"></i> Add Team Member
         </a>
     </div>
 
-    <!-- Table -->
+    <!-- Alert messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-4">
+            <i class="fas fa-check-circle me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mb-4">
+            <i class="fas fa-exclamation-circle me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Team Members Table -->
     <div class="card shadow-sm rounded-4">
         <div class="card-body p-4">
             @if (Model.Any())
@@ -29,9 +42,10 @@
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th>#ID</th>
-                                <th>User Name</th>
-                                <th>Team Name</th>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Team</th>
                                 <th>Joined Date</th>
                                 <th>Actions</th>
                             </tr>
@@ -40,15 +54,36 @@
                             @foreach (var member in Model)
                             {
                                 <tr>
-                                    <td class="fw-bold">@member.TeamMemberID</td>
-                                    <td>@member.User?.UserName</td>
-                                    <td>@member.Team?.TeamName</td>
+                                    <td>@member.TeamMemberID</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <span class="me-2">
+                                                <img src="https://ui-avatars.com/api/?name=@member.User.FirstName+@member.User.LastName&background=random"
+                                                     class="rounded-circle" width="36" height="36" alt="User avatar" />
+                                            </span>
+                                            <div>
+                                                <div class="fw-semibold">@member.User.FirstName @member.User.LastName</div>
+                                                <small class="text-muted">@(member.User.IsActive ? "Active" : "Inactive")</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>@member.User.Email</td>
+                                    <td>
+                                        <a asp-controller="SupportTeam" asp-action="Details" asp-route-id="@member.TeamID"
+                                           class="text-decoration-none">
+                                            @member.Team.TeamName
+                                        </a>
+                                    </td>
                                     <td>@member.JoinDate.ToString("dd MMM yyyy")</td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <a asp-action="Delete" asp-route-id="@member.TeamMemberID" 
-                                               class="btn btn-sm btn-outline-danger rounded-pill">
-                                                <i class="fas fa-trash-alt"></i> Remove
+                                            <a asp-controller="TeamMember" asp-action="TeamsByUser" asp-route-userId="@member.UserId"
+                                               class="btn btn-sm btn-outline-info">
+                                                <i class="fas fa-users"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@member.TeamMemberID"
+                                               class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-user-minus"></i>
                                             </a>
                                         </div>
                                     </td>
@@ -61,23 +96,40 @@
             else
             {
                 <div class="text-center py-5">
-                    <i class="fas fa-users fa-4x text-muted mb-3"></i>
-                    <h4 class="fw-bold">No team members found</h4>
-                    <p class="text-muted">Start by adding users to teams.</p>
-                    <a asp-action="Create" class="btn btn-primary rounded-pill mt-3 px-4 py-2">
-                        <i class="fas fa-user-plus me-2"></i> Add First Member
+                    <i class="fas fa-users-slash fa-4x text-muted mb-3"></i>
+                    <h4>No Team Members Found</h4>
+                    <p class="text-muted">No users have been assigned to any teams yet.</p>
+                    <a asp-action="Create" class="btn btn-primary mt-2">
+                        <i class="fas fa-user-plus me-2"></i> Add First Team Member
                     </a>
                 </div>
             }
-
-            @if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-        @TempData["SuccessMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
     </div>
-}
 
+    <!-- Quick Actions Card -->
+    <div class="card shadow-sm rounded-4 mt-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+        </div>
+        <div class="card-body">
+            <div class="row text-center">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <a asp-action="Create" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-user-plus me-2"></i> Add Team Member
+                    </a>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <a asp-action="CreateAgent" class="btn btn-outline-success w-100">
+                        <i class="fas fa-user-shield me-2"></i> Create Support Agent
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a asp-controller="SupportTeam" asp-action="Index" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-users-cog me-2"></i> Manage Teams
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>

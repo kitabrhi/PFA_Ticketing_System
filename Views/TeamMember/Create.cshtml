@@ -1,30 +1,69 @@
+@model Ticketing_System.Models.TeamMember
 @{
     Layout = User.IsInRole("Admin") ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Add Team Member";
 }
 
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Team Members</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Add Member</li>
+        </ol>
+    </nav>
 
-@model Ticketing_System.Models.TeamMember
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm rounded-4">
+                <div class="card-header bg-primary text-white rounded-top-4">
+                    <h4 class="mb-0"><i class="fas fa-user-plus me-2"></i>Add Team Member</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
+                        <div class="mb-4">
+                            <label asp-for="UserId" class="form-label">Select User</label>
+                            <select asp-for="UserId" class="form-select" asp-items="ViewBag.Users" required>
+                                <option value="">-- Select User --</option>
+                            </select>
+                            <span asp-validation-for="UserId" class="text-danger"></span>
+                            <div class="form-text">Choose the user to add to a team</div>
+                        </div>
 
+                        <div class="mb-4">
+                            <label asp-for="TeamID" class="form-label">Select Team</label>
+                            <select asp-for="TeamID" class="form-select" asp-items="ViewBag.Teams" required>
+                                <option value="">-- Select Team --</option>
+                            </select>
+                            <span asp-validation-for="TeamID" class="text-danger"></span>
+                            <div class="form-text">Choose the team to assign the user to</div>
+                        </div>
 
-<h2>Associer un SupportAgent à une Équipe</h2>
+                        <div class="d-flex justify-content-end">
+                            <a asp-action="Index" class="btn btn-secondary me-2">
+                                <i class="fas fa-times me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-user-plus me-1"></i> Add Team Member
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-<form asp-action="Create" method="post">
-    <div class="form-group">
-        <label asp-for="UserId">SupportAgent</label>
-        <select asp-for="UserId" class="form-control" asp-items="ViewBag.Users"></select>
-        <span asp-validation-for="UserId" class="text-danger"></span>
+            <div class="text-center mt-4">
+                <p class="text-muted">Need to create a new support agent?</p>
+                <a asp-action="CreateAgent" class="btn btn-outline-primary">
+                    <i class="fas fa-user-shield me-1"></i> Create New Support Agent
+                </a>
+            </div>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label asp-for="TeamID">Équipe</label>
-        <select asp-for="TeamID" class="form-control" asp-items="ViewBag.Teams"></select>
-        <span asp-validation-for="TeamID" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Associer</button>
-</form>
+</div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

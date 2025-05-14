@@ -1,0 +1,66 @@
+﻿@{
+    Layout = User.IsInRole("Admin") ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Add User to Team";
+}
+
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Team Members</a></li>
+            <li class="breadcrumb-item"><a asp-controller="SupportTeam" asp-action="Details" asp-route-id="@ViewBag.Team.TeamID">@ViewBag.Team.TeamName</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Add Member</li>
+        </ol>
+    </nav>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mb-4">
+            <i class="fas fa-exclamation-circle me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm rounded-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center rounded-top-4">
+                    <h4 class="mb-0"><i class="fas fa-user-plus me-2"></i>Add Member to @ViewBag.Team.TeamName</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="AddMemberToTeam" method="post">
+                        <input type="hidden" name="teamId" value="@ViewBag.Team.TeamID" />
+
+                        <div class="mb-4">
+                            <label for="userId" class="form-label">Select User</label>
+                            <select name="userId" id="userId" class="form-select" required>
+                                <option value="">-- Select User --</option>
+                                @foreach (var item in ViewBag.Users)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                            <div class="form-text">Choose a user to add to this team</div>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <a asp-controller="SupportTeam" asp-action="Details" asp-route-id="@ViewBag.Team.TeamID"
+                               class="btn btn-secondary me-2">
+                                <i class="fas fa-times me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-user-plus me-1"></i> Add to Team
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="mt-4 text-center">
+                <p class="text-muted">Need to create a new support agent?</p>
+                <a asp-action="CreateAgent" asp-route-teamId="@ViewBag.Team.TeamID" class="btn btn-outline-primary">
+                    <i class="fas fa-user-shield me-1"></i> Create New Support Agent
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

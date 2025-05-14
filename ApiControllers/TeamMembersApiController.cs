@@ -59,29 +59,7 @@ namespace Ticketing_System.Controllers.API
         }
 
         // PUT: api/TeamMembers/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTeamMember(int id, TeamMember member)
-        {
-            if (id != member.TeamMemberID)
-            {
-                return BadRequest();
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            try
-            {
-                await _teamMemberService.UpdateAsync(member);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
+      
 
         // DELETE: api/TeamMembers/5
         [HttpDelete("{id}")]

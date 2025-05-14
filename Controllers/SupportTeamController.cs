@@ -3,250 +3,230 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Ticketing_System;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Ticketing_System.Models;
-using Ticketing_System.Service_Layer.Interfaces;
 using Ticketing_System.Service_Layer;
+using Ticketing_System.Service_Layer.Interfaces;
 
-
-[Authorize(Roles = "Admin")]
-public class SupportTeamController : Controller
+namespace Ticketing_System.Controllers
 {
-    private readonly ISupportTeamService _service;
-    private readonly UserManager<User> _userManager;
-    private readonly ApplicationDbContext _context;
-    private INotificationService _notificationService;
-    private ISupportTeamService _supportTeamService;
-
-    public SupportTeamController(
-        ISupportTeamService service,
-        UserManager<User> userManager,
-        INotificationService notificationService,
-        ApplicationDbContext context)
+    [Authorize(Roles = "Admin")]
+    public class SupportTeamController : Controller
     {
-        _service = service;
-        _userManager = userManager;
-        _notificationService = notificationService;
-        _context = context;
-    }
+        private readonly ISupportTeamService _teamService;
+        private readonly ITeamMemberService _memberService;
+        private readonly UserManager<User> _userManager;
+        private readonly INotificationService _notificationService;
+        private readonly ITicketService _ticketService;
 
-
-    public IActionResult Dashboard()
+        public SupportTeamController(
+            ISupportTeamService teamService,
+            ITeamMemberService memberService,
+            UserManager<User> userManager,
+            INotificationService notificationService,
+            ITicketService ticketService)
         {
-            return View();
+            _teamService = teamService;
+            _memberService = memberService;
+            _userManager = userManager;
+            _notificationService = notificationService;
+            _ticketService = ticketService;
         }
 
-
-    // GET: Liste des équipes
-    public async Task<IActionResult> Index()
-    {
-        var teams = await _service.GetAllAsync();
-        return View(teams);
-    }
-
-    // GET: Formulaire de création
-    public async Task<IActionResult> Create()
-    {
-        await RemplirViewBags();
-        return View();
-    }
-
-    // POST: Création d’une équipe
-[HttpPost]
-[Authorize]
-[ValidateAntiForgeryToken]
-public async Task<IActionResult> Create(SupportTeam team)
-{
-    var selectedMemberIds = Request.Form["TeamMembersIds"].ToList();
-    var selectedTicketIds = Request.Form["AssignedTicketsIds"].Select(int.Parse).ToList();
-
-    // Supprimer la validation automatique sur les propriétés de navigation
-    ModelState.Remove("Manager");
-    ModelState.Remove("TeamMembers");
-    ModelState.Remove("AssignedTickets");
-
-    // Validations personnalisées
-    if (string.IsNullOrEmpty(team.ManagerId))
-        ModelState.AddModelError("ManagerId", "Le manager est obligatoire.");
-
-    if (!selectedMemberIds.Any())
-        ModelState.AddModelError("TeamMembers", "Veuillez sélectionner au moins un membre.");
-
-    if (!selectedTicketIds.Any())
-        ModelState.AddModelError("AssignedTickets", "Veuillez sélectionner au moins un ticket.");
-
-    // Si erreurs de validation
-    if (!ModelState.IsValid)
-    {
-        Console.WriteLine("❌ Formulaire invalide. Détails des erreurs :");
-        foreach (var kvp in ModelState)
+        // GET: SupportTeam
+        public async Task<IActionResult> Index()
         {
-            foreach (var error in kvp.Value.Errors)
-            {
-                Console.WriteLine($"Champ : {kvp.Key} - Erreur : {error.ErrorMessage}");
-            }
+            var teams = await _teamService.GetAllAsync();
+            return View(teams);
         }
 
-        await RemplirViewBags(team.ManagerId, selectedMemberIds, selectedTicketIds);
-        return View(team);
-    }
-
-    try
-    {
-        // ✅ Création de l’équipe (via service)
-        var createdTeam = await _service.CreateSupportTeamAsync(team, selectedMemberIds, selectedTicketIds);
-
-        // ✅ Récupération de l'utilisateur connecté
-        var user = await _userManager.GetUserAsync(User);
-
-        // ✅ Création d'une notification pour l'utilisateur
-        await _notificationService.CreateNotificationAsync(
-            user.Id,
-            "👥 Nouvelle Équipe Créée",
-            $"L’équipe \"{createdTeam.TeamName}\" a été créée avec succès."
-        );
-
-        TempData["SuccessMessage"] = "✅ Équipe créée avec succès.";
-        return RedirectToAction("Index");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"❌ Erreur lors de la création de l’équipe : {ex.Message}");
-        ModelState.AddModelError("", "Une erreur s’est produite lors de la création de l’équipe.");
-        await RemplirViewBags(team.ManagerId, selectedMemberIds, selectedTicketIds);
-        return View(team);
-    }
-}
-
-
-
-    //Edit
-
-    [HttpPost]
-    public async Task<IActionResult> Edit(SupportTeam team)
-    {
-        var selectedMemberIds = Request.Form["TeamMembersIds"].ToList();
-        var selectedTicketIds = Request.Form["AssignedTicketsIds"].Select(int.Parse).ToList();
-
-        ModelState.Remove("Manager");
-        ModelState.Remove("TeamMembers");
-        ModelState.Remove("AssignedTickets");
-
-        if (string.IsNullOrEmpty(team.ManagerId))
-            ModelState.AddModelError("ManagerId", "Le manager est obligatoire.");
-
-        if (!selectedMemberIds.Any())
-            ModelState.AddModelError("TeamMembers", "Veuillez sélectionner au moins un membre.");
-
-        if (!selectedTicketIds.Any())
-            ModelState.AddModelError("AssignedTickets", "Veuillez sélectionner au moins un ticket.");
-
-        if (!ModelState.IsValid)
+        // GET: SupportTeam/Details/5
+        public async Task<IActionResult> Details(int id)
         {
-            await RemplirViewBags(team.ManagerId, selectedMemberIds, selectedTicketIds);
+            var team = await _teamService.GetByIdAsync(id);
+            if (team == null)
+                return NotFound();
+
+            ViewBag.Members = await _memberService.GetMembersByTeamIdAsync(id);
+            ViewBag.TicketCount = await _teamService.GetTicketCountAsync(id);
+            ViewBag.HasActiveAgents = await _teamService.HasActiveAgentsAsync(id);
+
             return View(team);
         }
 
-        // Charger l’équipe existante
-        var existingTeam = await _context.SupportTeams
-            .Include(t => t.TeamMembers)
-            .Include(t => t.AssignedTickets)
-            .FirstOrDefaultAsync(t => t.TeamID == team.TeamID);
-
-        if (existingTeam == null) return NotFound();
-
-        // Mettre à jour les infos de base
-        existingTeam.TeamName = team.TeamName;
-        existingTeam.Description = team.Description;
-        existingTeam.ManagerId = team.ManagerId;
-
-        // ⚠️ MAJ des membres
-        _context.TeamMembers.RemoveRange(existingTeam.TeamMembers);
-
-        existingTeam.TeamMembers = selectedMemberIds.Select(userId => new TeamMember
+        // GET: SupportTeam/Create
+        public async Task<IActionResult> Create()
         {
-            UserId = userId,
-            TeamID = existingTeam.TeamID,
-            JoinDate = DateTime.Now
-        }).ToList();
+            await LoadViewBagDataAsync();
+            return View();
+        }
 
-        // ⚠️ MAJ des tickets assignés
-        var oldTickets = await _context.Tickets
-            .Where(t => t.AssignedToTeamID == existingTeam.TeamID)
-            .ToListAsync();
+        // POST: SupportTeam/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(SupportTeam team)
+        {
+            var selectedMemberIds = Request.Form["MemberIds"].ToList();
 
-        foreach (var ticket in oldTickets)
-            ticket.AssignedToTeamID = null;
+            // Validation
+            ModelState.Remove("Manager");
+            ModelState.Remove("TeamMembers");
+            ModelState.Remove("AssignedTickets");
 
-        var newTickets = await _context.Tickets
-            .Where(t => selectedTicketIds.Contains(t.TicketID))
-            .ToListAsync();
+            if (string.IsNullOrEmpty(team.ManagerId))
+                ModelState.AddModelError("ManagerId", "Manager is required");
 
-        foreach (var ticket in newTickets)
-            ticket.AssignedToTeamID = existingTeam.TeamID;
+            if (!ModelState.IsValid)
+            {
+                await LoadViewBagDataAsync(team.ManagerId, selectedMemberIds);
+                return View(team);
+            }
 
-        await _context.SaveChangesAsync();
+            try
+            {
+                await _teamService.CreateTeamAsync(team, selectedMemberIds);
+                TempData["SuccessMessage"] = "Team created successfully";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Error creating team: {ex.Message}");
+                await LoadViewBagDataAsync(team.ManagerId, selectedMemberIds);
+                return View(team);
+            }
+        }
 
-        return RedirectToAction(nameof(Index));
-    }
+        // GET: SupportTeam/Edit/5
+        public async Task<IActionResult> Edit(int id)
+        {
+            var team = await _teamService.GetByIdAsync(id);
+            if (team == null)
+                return NotFound();
 
-    public async Task<IActionResult> Edit(int id)
-{
-    var team = await _service.GetByIdAsync(id);
-    if (team == null) return NotFound();
+            var members = await _memberService.GetMembersByTeamIdAsync(id);
+            var memberIds = members.Select(m => m.UserId).ToList();
 
-    var users = await _userManager.Users.ToListAsync();
-    var tickets = await _context.Tickets.ToListAsync();
+            await LoadViewBagDataAsync(team.ManagerId, memberIds);
+            return View(team);
+        }
 
-    ViewBag.Users = new SelectList(users, "Id", "UserName", team.ManagerId);
-    ViewBag.TeamMembers = new MultiSelectList(users, "Id", "UserName", team.TeamMembers?.Select(tm => tm.UserId) ?? new List<string>());
-    ViewBag.AssignedTickets = new MultiSelectList(tickets, "TicketID", "Title", team.AssignedTickets?.Select(t => t.TicketID) ?? new List<int>());
+        // POST: SupportTeam/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, SupportTeam team)
+        {
+            if (id != team.TeamID)
+                return BadRequest();
 
-    return View(team);
-}
+            var selectedMemberIds = Request.Form["MemberIds"].ToList();
 
+            // Validation
+            ModelState.Remove("Manager");
+            ModelState.Remove("TeamMembers");
+            ModelState.Remove("AssignedTickets");
 
+            if (string.IsNullOrEmpty(team.ManagerId))
+                ModelState.AddModelError("ManagerId", "Manager is required");
+
+            if (!ModelState.IsValid)
+            {
+                await LoadViewBagDataAsync(team.ManagerId, selectedMemberIds);
+                return View(team);
+            }
+
+            try
+            {
+                await _teamService.UpdateTeamAsync(team, selectedMemberIds);
+                TempData["SuccessMessage"] = "Team updated successfully";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Error updating team: {ex.Message}");
+                await LoadViewBagDataAsync(team.ManagerId, selectedMemberIds);
+                return View(team);
+            }
+        }
+
+        // GET: SupportTeam/Delete/5
         public async Task<IActionResult> Delete(int id)
-{
-    var team = await _service.GetByIdAsync(id);
-    if (team == null) return NotFound();
-    return View(team);
-}
+        {
+            var team = await _teamService.GetByIdAsync(id);
+            if (team == null)
+                return NotFound();
 
+            ViewBag.Members = await _memberService.GetMembersByTeamIdAsync(id);
+            ViewBag.TicketCount = await _teamService.GetTicketCountAsync(id);
 
-[HttpPost, ActionName("Delete")]
-public async Task<IActionResult> DeleteConfirmed(int id)
-{
-    await _service.DeleteAsync(id);
-    return RedirectToAction(nameof(Index));
-}
+            return View(team);
+        }
 
+        // POST: SupportTeam/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            try
+            {
+                await _teamService.DeleteAsync(id);
+                TempData["SuccessMessage"] = "Team deleted successfully";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error deleting team: {ex.Message}";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+        }
 
+        // POST: SupportTeam/AssignManager/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignManager(int teamId, string managerId)
+        {
+            try
+            {
+                await _teamService.AssignManagerAsync(teamId, managerId);
+                TempData["SuccessMessage"] = "Manager assigned successfully";
+                return RedirectToAction(nameof(Details), new { id = teamId });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error assigning manager: {ex.Message}";
+                return RedirectToAction(nameof(Details), new { id = teamId });
+            }
+        }
 
-    // Méthode utilitaire pour charger les listes
-    private async Task RemplirViewBags(string? managerId = null, List<string>? selectedMembers = null, List<int>? selectedTickets = null)
-{
-    var users = await _userManager.Users.ToListAsync();
+        // GET: SupportTeam/TeamTickets/5
+        public async Task<IActionResult> TeamTickets(int id)
+        {
+            var team = await _teamService.GetByIdAsync(id);
+            if (team == null)
+                return NotFound();
 
-    var supportAgents = new List<User>();
-    var normalUsers = new List<User>();
+            var tickets = await _ticketService.GetTicketsByAssignedTeamIdAsync(id);
+            ViewBag.TeamName = team.TeamName;
+            ViewBag.TeamId = id;
 
-    foreach (var user in users)
-    {
-        if (await _userManager.IsInRoleAsync(user, "SupportAgent"))
-            supportAgents.Add(user);
+            return View(tickets);
+        }
 
-        if (await _userManager.IsInRoleAsync(user, "User"))
-            normalUsers.Add(user);
+        // Helper methods
+        private async Task LoadViewBagDataAsync(string selectedManagerId = null, List<string> selectedMemberIds = null)
+        {
+            // Get available managers (admin and support agents)
+            var admins = await _userManager.GetUsersInRoleAsync("Admin");
+            var supportAgents = await _userManager.GetUsersInRoleAsync("SupportAgent");
+            var managers = admins.Union(supportAgents).OrderBy(u => u.LastName).ThenBy(u => u.FirstName);
+
+            // Get potential members (all active users)
+            var allUsers = await _userManager.Users.Where(u => u.IsActive).ToListAsync();
+
+            ViewBag.Managers = new SelectList(managers, "Id", "Email", selectedManagerId);
+            ViewBag.AllUsers = new MultiSelectList(allUsers, "Id", "Email", selectedMemberIds);
+        }
     }
-
-    var tickets = await _context.Tickets.ToListAsync();
-
-    ViewBag.Users = new SelectList(supportAgents, "Id", "UserName", managerId);
-    ViewBag.TeamMembers = new MultiSelectList(normalUsers, "Id", "UserName", selectedMembers);
-    ViewBag.AssignedTickets = new MultiSelectList(tickets, "TicketID", "Title", selectedTickets);
-}
-
-
-    
 }

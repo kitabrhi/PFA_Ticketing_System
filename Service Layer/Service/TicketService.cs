@@ -2,18 +2,20 @@
 using Ticketing_System.Repository.Interfaces;
 using Ticketing_System.Repository_Pattern.Interfaces;
 using Ticketing_System.Service_Layer.Interfaces;
+using Ticketing_System.Service_Layer.Service;
 
 public class TicketService : ITicketService
 {
     private readonly ITicketRepository _ticketRepository;
     private readonly ITicketHistoryService _historyService;
     private readonly IUserRepository _userRepository;
-
-    public TicketService(ITicketRepository ticketRepository, ITicketHistoryService historyService, IUserRepository userRepository)
+    private readonly IAssignmentRuleService _assignmentRuleService;
+    public TicketService(ITicketRepository ticketRepository, ITicketHistoryService historyService, IUserRepository userRepository, IAssignmentRuleService assignmentRuleService)
     {
         _ticketRepository = ticketRepository;
         _historyService = historyService;
         _userRepository=userRepository;
+        _assignmentRuleService=assignmentRuleService;
     }
 
     // Méthodes de base CRUD
@@ -60,6 +62,7 @@ public class TicketService : ITicketService
             // Utiliser un ID utilisateur système si l'utilisateur n'existe pas
             changedByUserId = "system"; // Assurez-vous que cet ID existe dans AspNetUsers
         }
+        await _assignmentRuleService.ApplyRuleToTicketAsync(createdTicket.TicketID);
 
         // Ajouter une entrée d'historique pour la création
         var history = new TicketHistory

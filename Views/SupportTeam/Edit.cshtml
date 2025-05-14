@@ -1,60 +1,69 @@
+@model Ticketing_System.Models.SupportTeam
 @{
+    ViewData["Title"] = "Modifier l'Équipe";
     Layout = User.IsInRole("Admin") ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
 }
 
+<div class="container py-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Équipes</a></li>
+            <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.TeamID">@Model.TeamName</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Modifier</li>
+        </ol>
+    </nav>
 
-@model Ticketing_System.Models.SupportTeam
+    <div class="card shadow-sm rounded-4">
+        <div class="card-header bg-warning text-dark py-3">
+            <h4 class="mb-0"><i class="fas fa-edit me-2"></i>Modifier l'Équipe</h4>
+        </div>
+        <div class="card-body p-4">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="TeamID" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-@{
-    ViewData["Title"] = "Modifier l'équipe";
-}
+                <div class="mb-3">
+                    <label asp-for="TeamName" class="form-label">Nom de l'équipe <span class="text-danger">*</span></label>
+                    <input asp-for="TeamName" class="form-control" required />
+                    <span asp-validation-for="TeamName" class="text-danger"></span>
+                </div>
 
-<h2>@ViewData["Title"]</h2>
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
 
-@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="mb-4">
+                    <label asp-for="ManagerId" class="form-label">Manager <span class="text-danger">*</span></label>
+                    <select asp-for="ManagerId" class="form-select" asp-items="ViewBag.Managers" required>
+                        <option value="">-- Sélectionner un manager --</option>
+                    </select>
+                    <span asp-validation-for="ManagerId" class="text-danger"></span>
+                </div>
 
-<form asp-action="Edit" method="post">
-    @* Clé primaire cachée *@
-    <input type="hidden" asp-for="TeamID" />
+                <div class="mb-4">
+                    <label class="form-label">Membres de l'équipe</label>
+                    <select name="MemberIds" class="form-select" multiple asp-items="ViewBag.AllUsers" size="5">
+                    </select>
+                    <small class="form-text text-muted">Seuls les agents de support peuvent être ajoutés comme membres</small>
+                </div>
 
-    <div class="form-group">
-        <label asp-for="TeamName"></label>
-        <input asp-for="TeamName" class="form-control" />
-        <span asp-validation-for="TeamName" class="text-danger"></span>
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Details" asp-route-id="@Model.TeamID" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Annuler
+                    </a>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label asp-for="Description"></label>
-        <input asp-for="Description" class="form-control" />
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="ManagerId">Manager</label>
-        <select asp-for="ManagerId" class="form-control" asp-items="ViewBag.Users">
-            <option value="">-- Sélectionner un manager --</option>
-        </select>
-        <span asp-validation-for="ManagerId" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label>Membres de l’équipe</label>
-        <select name="TeamMembersIds" class="form-control" multiple asp-items="ViewBag.TeamMembers">
-        </select>
-        <span class="text-danger">@Html.ValidationMessage("TeamMembers")</span>
-    </div>
-
-    <div class="form-group">
-        <label>Tickets assignés à l’équipe</label>
-        <select name="AssignedTicketsIds" class="form-control" multiple asp-items="ViewBag.AssignedTickets">
-        </select>
-        <span class="text-danger">@Html.ValidationMessage("AssignedTickets")</span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Enregistrer</button>
-    <a asp-action="Index" class="btn btn-secondary">Annuler</a>
-</form>
+</div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

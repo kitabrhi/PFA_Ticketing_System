@@ -1,34 +1,75 @@
-
+@model Ticketing_System.Models.SupportTeam
 @{
+    ViewData["Title"] = "Supprimer l'Équipe";
     Layout = User.IsInRole("Admin") ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
 }
 
+<div class="container py-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Équipes</a></li>
+            <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.TeamID">@Model.TeamName</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Supprimer</li>
+        </ol>
+    </nav>
 
-@model Ticketing_System.Models.SupportTeam
+    <div class="card shadow-sm rounded-4 border-danger">
+        <div class="card-header bg-danger text-white py-3">
+            <h4 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Confirmation de suppression</h4>
+        </div>
+        <div class="card-body p-4">
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Attention:</strong> Êtes-vous sûr de vouloir supprimer cette équipe? Cette action ne peut pas être annulée.
+            </div>
 
-@{
-    ViewData["Title"] = "Supprimer une équipe";
-}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Équipe: @Model.TeamName</h5>
+                    <p class="card-text">@Model.Description</p>
 
-<h2>Supprimer l’équipe</h2>
+                    <dl class="row">
+                        <dt class="col-sm-3">Manager</dt>
+                        <dd class="col-sm-9">
+                            @if (Model.Manager != null)
+                            {
+                                @Model.Manager.FirstName @Model.Manager.LastName
+                            }
+                            else
+                            {
+                                <span class="text-muted">Non assigné</span>
+                            }
+                        </dd>
 
-<div>
-    <h4>Êtes-vous sûr de vouloir supprimer cette équipe ?</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">Nom</dt>
-        <dd class="col-sm-10">@Model.TeamName</dd>
+                        <dt class="col-sm-3">Nombre de membres</dt>
+                        <dd class="col-sm-9">@(ViewBag.Members?.Count ?? 0)</dd>
 
-        <dt class="col-sm-2">Description</dt>
-        <dd class="col-sm-10">@Model.Description</dd>
+                        <dt class="col-sm-3">Tickets assignés</dt>
+                        <dd class="col-sm-9">@ViewBag.TicketCount</dd>
+                    </dl>
+                </div>
+            </div>
 
-        <dt class="col-sm-2">Manager</dt>
-        <dd class="col-sm-10">@Model.Manager?.UserName</dd>
-    </dl>
+            <div class="alert alert-danger">
+                <p><strong>Conséquences de la suppression:</strong></p>
+                <ul>
+                    <li>Tous les membres seront retirés de cette équipe</li>
+                    <li>Les tickets assignés à cette équipe seront désassignés</li>
+                    <li>Toutes les règles d'assignation pointant vers cette équipe devront être modifiées</li>
+                </ul>
+            </div>
 
-    <form asp-action="Delete" method="post">
-        <input type="hidden" asp-for="TeamID" />
-        <button type="submit" class="btn btn-danger">Supprimer</button>
-        <a asp-action="Index" class="btn btn-secondary">Annuler</a>
-    </form>
+            <form asp-action="Delete" method="post" class="mt-4">
+                <input type="hidden" asp-for="TeamID" />
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Details" asp-route-id="@Model.TeamID" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Annuler
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Supprimer définitivement
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
