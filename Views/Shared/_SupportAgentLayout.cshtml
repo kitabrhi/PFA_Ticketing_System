@@ -8,84 +8,132 @@
     <!-- Bootstrap & FontAwesome CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet" />
-
-    <style>
-        body {
-            display: flex;
-            min-height: 100vh;
-            background-color: #f4f6fa;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .sidebar {
-            width: 250px;
-            background: linear-gradient(135deg, #00a78e, #007f73);
-            color: #fff;
-            padding: 2rem 1rem;
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .sidebar a {
-            color: #e1f7f5;
-            text-decoration: none;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.8rem;
-            transition: 0.3s ease;
-        }
-
-        .sidebar a:hover,
-        .sidebar a.active {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            font-weight: bold;
-        }
-
-        .main-content {
-            flex-grow: 1;
-            padding: 2rem;
-            width: 100%;
-            margin-left: 250px; 
-            display: flex;
-            justify-content: center; /* Centre horizontalement */
-            align-items: flex-start;
-        }
-
-        .container-fluid {
-            width: 100%;
-            max-width: 1400px;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/quantumdesk-theme.css" />
+    <link rel="stylesheet" href="~/css/support-agent-layout.css" />
 </head>
 <body>
+    <!-- Support Agent Sidebar -->
+    <div class="agent-sidebar">
+        <div class="sidebar-top">
+            <div class="logo-wrapper">
+                <i class="fas fa-headset"></i>
+                <div class="logo-text">QuantumDesk</div>
+            </div>
 
-    <!-- Sidebar Support Agent -->
-    <div class="sidebar">
-        <h3>QuantumDesk</h3>
-        <a href="/SupportAgent/Dashboard"><i class="fas fa-home me-2"></i> Dashboard</a>
-        <a href="/Ticket/AssignedTickets"><i class="fas fa-inbox me-2"></i> Assigned Tickets</a>
-        <a href="/Profile"><i class="fas fa-user me-2"></i> My Profile</a>
+            <div class="agent-profile">
+                <div class="agent-avatar">
+                    <img src="https://ui-avatars.com/api/?name=@User.Identity?.Name&background=00a78e&color=fff" alt="Agent Avatar">
+                </div>
+                <div class="agent-name">@User.Identity?.Name</div>
+                <div class="agent-title">Support Agent</div>
+            </div>
+        </div>
 
-        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/">
-            <button type="submit" class="btn btn-outline-light w-100 mt-3">
-                <i class="fas fa-sign-out-alt me-2"></i> Logout
-            </button>
-        </form>
+        <div class="sidebar-menu">
+            <h6>Dashboard</h6>
+            <ul class="list-unstyled">
+                <li>
+                    <a href="/SupportAgent/Dashboard" class="@(ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+            </ul>
+
+            <h6>Tickets</h6>
+            <ul class="list-unstyled">
+                <li>
+                    <a href="/Ticket/AssignedTickets" class="@(ViewContext.RouteData.Values["Action"]?.ToString() == "AssignedTickets" ? "active" : "")">
+                        <i class="fas fa-inbox"></i>
+                        <span>My Tickets</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Ticket" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Ticket" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                        <i class="fas fa-ticket-alt"></i>
+                        <span>All Tickets</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Ticket/UnassignedTickets" class="@(ViewContext.RouteData.Values["Action"]?.ToString() == "UnassignedTickets" ? "active" : "")">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Unassigned</span>
+                    </a>
+                </li>
+            </ul>
+
+            <h6>Team</h6>
+            <ul class="list-unstyled">
+                <li>
+                    <a href="/TeamMember" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "TeamMember" ? "active" : "")">
+                        <i class="fas fa-users"></i>
+                        <span>My Team</span>
+                    </a>
+                </li>
+            </ul>
+
+            <h6>Account</h6>
+            <ul class="list-unstyled">
+                <li>
+                    <a href="/Profile" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Profile" ? "active" : "")">
+                        <i class="fas fa-user"></i>
+                        <span>My Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/Notification" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Notification" ? "active" : "")">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                    </a>
+                </li>
+                <li>
+                    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/">
+                        <button type="submit">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
     </div>
 
-    <!-- Main Content -->
+    <!-- Main Content Area -->
     <div class="main-content">
+        <div class="content-header">
+            <div class="header-title">
+                <h1>@ViewData["Title"]</h1>
+                <p>Support Agent Dashboard</p>
+            </div>
+
+            <div class="header-actions">
+                <button class="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+
+                <button class="notification-btn d-md-none" id="toggleSidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+
+        <!-- Page Content -->
         @RenderBody()
     </div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Mobile sidebar toggle
+        document.getElementById('toggleSidebar')?.addEventListener('click', function() {
+            document.body.classList.toggle('sidebar-shown');
+        });
+    </script>
+
     @RenderSection("Scripts", required: false)
 </body>
 </html>

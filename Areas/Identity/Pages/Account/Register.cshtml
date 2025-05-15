@@ -6,185 +6,150 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/identity-pages.css" />
+    <style>
+        /* Conteneur principal */
+        .identity-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+            color: #fff;
+        }
+
+        /* Formulaire */
+        .register-container {
+            background: #fff;
+            color: #333;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 2rem;
+        }
+
+        .register-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4f46e5;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .form-floating label {
+            color: #6c757d;
+        }
+
+        .form-floating input {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+        }
+
+        .form-floating input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+        }
+
+        .btn-success-quantum {
+            background: #4f46e5;
+            border: none;
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-success-quantum:hover {
+            background: #4338ca;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .quantum-link {
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .quantum-link:hover {
+            text-decoration: underline;
+        }
+
+        .identity-features-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .identity-features-list li i {
+            font-size: 1.5rem;
+            color: #4f46e5;
+            margin-right: 1rem;
+        }
+
+        .or-divider {
+            text-align: center;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .or-divider::before,
+        .or-divider::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #ddd;
+        }
+
+        .or-divider::before {
+            left: 0;
+        }
+
+        .or-divider::after {
+            right: 0;
+        }
+
+        .or-divider span {
+            background: #fff;
+            padding: 0 1rem;
+            color: #6c757d;
+        }
+
+        .btn-external {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border: 1px solid #ced4da;
+            color: #333;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .btn-external i {
+            margin-right: 0.5rem;
+        }
+
+        .btn-external:hover {
+            background: #e2e6ea;
+        }
+    </style>
 }
-
-
 
 <div id="particles-background" class="identity-container">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <div class="identity-header-container">
+            <div class="identity-header-container text-center mb-4">
                 <div class="identity-brand-icon">
                     <i class="fas fa-ticket-alt quantum-logo-icon identity-logo-pulse"></i>
                     <span class="quantum-logo-text">QuantumDesk</span>
                 </div>
-                <h1 class="register-title identity-fade-in">@ViewData["Title"]</h1>
-                <p class="text-muted">Créez votre compte et commencez à utiliser notre système de gestion de tickets</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="row justify-content-center">
-        <div class="col-lg-5">
-            <div class="register-container identity-fade-in">
-                <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="identity-form">
-                    <h2 class="section-title">Créer un nouveau compte</h2>
-                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div class="form-floating identity-form-floating mb-3 mb-md-0">
-                                <input asp-for="Input.FirstName" class="form-control quantum-form-control" aria-required="true" placeholder="Prénom" />
-                                <label asp-for="Input.FirstName">Prénom</label>
-                                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating identity-form-floating">
-                                <input asp-for="Input.LastName" class="form-control quantum-form-control" aria-required="true" placeholder="Nom" />
-                                <label asp-for="Input.LastName">Nom</label>
-                                <span asp-validation-for="Input.LastName" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-floating identity-form-floating mb-3">
-                        <input asp-for="Input.Email" class="form-control quantum-form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                        <label asp-for="Input.Email">Email</label>
-                        <span asp-validation-for="Input.Email" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-floating identity-form-floating mb-2">
-                        <input asp-for="Input.Password" class="form-control quantum-form-control" autocomplete="new-password" aria-required="true" placeholder="Mot de passe" />
-                        <label asp-for="Input.Password">Mot de passe</label>
-                        <span asp-validation-for="Input.Password" class="text-danger"></span>
-                    </div>
-
-                    <div class="password-strength mb-3">
-                        <div class="password-strength-meter"></div>
-                        <small class="password-strength-text text-muted"></small>
-                    </div>
-
-                    <div class="form-floating identity-form-floating mb-4">
-                        <input asp-for="Input.ConfirmPassword" class="form-control quantum-form-control" autocomplete="new-password" aria-required="true" placeholder="Confirmez le mot de passe" />
-                        <label asp-for="Input.ConfirmPassword">Confirmez le mot de passe</label>
-                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-check mb-4">
-                        <input class="form-check-input" type="checkbox" id="termsCheck" required />
-                        <label class="form-check-label" for="termsCheck">
-                            J'accepte les <a href="#" class="quantum-link">conditions d'utilisation</a> et la <a href="#" class="quantum-link">politique de confidentialité</a>
-                        </label>
-                    </div>
-
-                    <button id="registerSubmit" type="submit" class="btn-success-quantum">
-                        <i class="fas fa-user-plus me-2"></i>Créer mon compte
-                    </button>
-
-                    <div class="text-center mt-4">
-                        <p>Vous avez déjà un compte ? <a asp-page="./Login" class="quantum-link">Connexion</a></p>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div class="col-lg-5">
-            <div class="service-container identity-fade-in">
-                <section>
-                    <h3 class="section-title">Pourquoi QuantumDesk ?</h3>
-
-                    <ul class="identity-features-list">
-                        <li>
-                            <i class="fas fa-ticket-alt feature-icon-small"></i>
-                            <div>
-                                <strong>Gestion de tickets optimisée</strong><br />
-                                <span class="text-muted">Suivi et résolution rapide de tous vos tickets</span>
-                            </div>
-                        </li>
-                        <li>
-                            <i class="fas fa-tachometer-alt feature-icon-small"></i>
-                            <div>
-                                <strong>Tableaux de bord personnalisables</strong><br />
-                                <span class="text-muted">Visualisez vos performances en temps réel</span>
-                            </div>
-                        </li>
-                        <li>
-                            <i class="fas fa-bolt feature-icon-small"></i>
-                            <div>
-                                <strong>Automatisation intelligente</strong><br />
-                                <span class="text-muted">Réduisez les tâches manuelles et gagnez du temps</span>
-                            </div>
-                        </li>
-                        <li>
-                            <i class="fas fa-chart-line feature-icon-small"></i>
-                            <div>
-                                <strong>Rapports détaillés</strong><br />
-                                <span class="text-muted">Suivez vos KPIs et améliorez votre service</span>
-                            </div>
-                        </li>
-                    </ul>
-
-                    <div class="or-divider">ou</div>
-
-                    <h3 class="section-title">S'inscrire avec</h3>
-                    @if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                    {
-                        <div class="text-center py-4">
-                            <i class="fas fa-plug mb-3" style="font-size: 3rem; color: var(--quantum-muted-text);"></i>
-                            <p class="mb-0">
-                                Aucun service d'authentification externe n'est configuré.
-                            </p>
-                        </div>
-                    }
-                    else
-                    {
-                        <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                            <div class="external-login-container">
-                                @foreach (var provider in Model.ExternalLogins!)
-                                {
-                                    <button type="submit" class="btn-external" name="provider" value="@provider.Name" title="S'inscrire avec votre compte @provider.DisplayName">
-                                        @if (provider.DisplayName == "Google")
-                                        {
-                                            <i class="fab fa-google me-2"></i>
-                                        }
-                                        else if (provider.DisplayName == "Facebook")
-                                        {
-                                            <i class="fab fa-facebook me-2"></i>
-                                        }
-                                        else if (provider.DisplayName == "Microsoft")
-                                        {
-                                            <i class="fab fa-microsoft me-2"></i>
-                                        }
-                                        else if (provider.DisplayName == "Twitter")
-                                        {
-                                            <i class="fab fa-twitter me-2"></i>
-                                        }
-                                        else if (provider.DisplayName == "LinkedIn")
-                                        {
-                                            <i class="fab fa-linkedin me-2"></i>
-                                        }
-                                        else if (provider.DisplayName == "GitHub")
-                                        {
-                                            <i class="fab fa-github me-2"></i>
-                                        }
-                                        else
-                                        {
-                                            <i class="fas fa-external-link-alt me-2"></i>
-                                        }
-                                        @provider.DisplayName
-                                    </button>
-                                }
-                            </div>
-                        </form>
-                    }
-                </section>
-            </div>
-        </div>
-    </div>
-</div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-    <script src="~/js/identity-forms.js"></script>
-}
+                <h1 class="register-title">@ViewData["Title"]</h1>
+                <p class="text-muted

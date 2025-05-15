@@ -18,140 +18,220 @@
     }
 }
 
-<div class="container mt-4">
+<div class="container-fluid py-4">
+    <!-- Page Header avec actions -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Tickets qui me sont assignés</h1>
-        <div>
+        <div class="page-title-wrapper">
+            <h1 class="quantum-gradient-text fw-bold mb-0">Mes tickets assignés</h1>
+            <p class="quantum-text-muted mb-0">Gérez efficacement les tickets qui vous sont attribués</p>
+        </div>
+        <div class="page-actions">
             <div class="btn-group">
-                <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-filter"></i> Filtrer
+                <button type="button" class="quantum-btn quantum-btn-outline dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-filter me-2"></i>Filtrer
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end">
+                <ul class="dropdown-menu dropdown-menu-end quantum-shadow quantum-rounded">
                     <li><h6 class="dropdown-header">Statut</h6></li>
-                    <li><a class="dropdown-item" asp-action="FilterByStatus" asp-route-status="Open">Ouverts</a></li>
-                    <li><a class="dropdown-item" asp-action="FilterByStatus" asp-route-status="InProgress">En cours</a></li>
-                    <li><a class="dropdown-item" asp-action="FilterByStatus" asp-route-status="Resolved">Résolus</a></li>
-                    <li><a class="dropdown-item" asp-action="FilterByStatus" asp-route-status="Closed">Fermés</a></li>
+                    <li><a class="dropdown-item" asp-action="FilterByStatus" asp-route-status="Open"><i class="fas fa-door-open me-2 quantum-text-info"></i>Ouverts</a></li>
+                    <li><a class="dropdown-item" asp-action="FilterByStatus" asp-route-status="InProgress"><i class="fas fa-spinner me-2 quantum-text-warning"></i>En cours</a></li>
+                    <li><a class="dropdown-item" asp-action="FilterByStatus" asp-route-status="Resolved"><i class="fas fa-check-circle me-2 quantum-text-success"></i>Résolus</a></li>
+                    <li><a class="dropdown-item" asp-action="FilterByStatus" asp-route-status="Closed"><i class="fas fa-times-circle me-2 quantum-text-muted"></i>Fermés</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><h6 class="dropdown-header">Priorité</h6></li>
-                    <li><a class="dropdown-item" asp-action="FilterByPriority" asp-route-priority="Critical">Critique</a></li>
-                    <li><a class="dropdown-item" asp-action="FilterByPriority" asp-route-priority="High">Élevée</a></li>
-                    <li><a class="dropdown-item" asp-action="FilterByPriority" asp-route-priority="Medium">Moyenne</a></li>
-                    <li><a class="dropdown-item" asp-action="FilterByPriority" asp-route-priority="Low">Basse</a></li>
+                    <li><a class="dropdown-item" asp-action="FilterByPriority" asp-route-priority="Critical"><i class="fas fa-exclamation-triangle me-2 quantum-text-danger"></i>Critique</a></li>
+                    <li><a class="dropdown-item" asp-action="FilterByPriority" asp-route-priority="High"><i class="fas fa-arrow-up me-2 quantum-text-warning"></i>Élevée</a></li>
+                    <li><a class="dropdown-item" asp-action="FilterByPriority" asp-route-priority="Medium"><i class="fas fa-equals me-2 quantum-text-info"></i>Moyenne</a></li>
+                    <li><a class="dropdown-item" asp-action="FilterByPriority" asp-route-priority="Low"><i class="fas fa-arrow-down me-2 quantum-text-success"></i>Basse</a></li>
                 </ul>
             </div>
-            <a asp-action="Index" class="btn btn-outline-secondary">
-                <i class="fas fa-list"></i> Tous les tickets
+            <a asp-action="Index" class="quantum-btn quantum-btn-outline-secondary ms-2">
+                <i class="fas fa-list me-2"></i>Tous les tickets
             </a>
         </div>
     </div>
 
-    <!-- Affichage du nombre de tickets par statut -->
+    <!-- Cartes de statistiques -->
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="card bg-primary text-white">
-                <div class="card-body text-center">
-                    <h2>@Model.Count(t => t.Status == TicketStatus.Open)</h2>
-                    <p class="mb-0">Ouverts</p>
+            <div class="quantum-widget quantum-animate-slide-up" style="animation-delay: 0.1s;">
+                <div class="quantum-widget-title">
+                    <h5 class="mb-0">Ouverts</h5>
+                    <i class="fas fa-door-open quantum-widget-icon quantum-text-info"></i>
+                </div>
+                <div class="quantum-widget-number quantum-text-info">@Model.Count(t => t.Status == TicketStatus.Open)</div>
+                <div class="quantum-widget-label">tickets nécessitent votre attention</div>
+                <div class="progress quantum-progress mt-2">
+                    <div class="progress-bar bg-info" style="width: @(Model.Any() ? Model.Count(t => t.Status == TicketStatus.Open) * 100 / Model.Count() : 0)%"></div>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-warning text-dark">
-                <div class="card-body text-center">
-                    <h2>@Model.Count(t => t.Status == TicketStatus.InProgress)</h2>
-                    <p class="mb-0">En cours</p>
+            <div class="quantum-widget quantum-animate-slide-up" style="animation-delay: 0.2s;">
+                <div class="quantum-widget-title">
+                    <h5 class="mb-0">En cours</h5>
+                    <i class="fas fa-spinner quantum-widget-icon quantum-text-warning"></i>
+                </div>
+                <div class="quantum-widget-number quantum-text-warning">@Model.Count(t => t.Status == TicketStatus.InProgress)</div>
+                <div class="quantum-widget-label">tickets sont en traitement</div>
+                <div class="progress quantum-progress mt-2">
+                    <div class="progress-bar bg-warning" style="width: @(Model.Any() ? Model.Count(t => t.Status == TicketStatus.InProgress) * 100 / Model.Count() : 0)%"></div>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-success text-white">
-                <div class="card-body text-center">
-                    <h2>@Model.Count(t => t.Status == TicketStatus.Resolved)</h2>
-                    <p class="mb-0">Résolus</p>
+            <div class="quantum-widget quantum-animate-slide-up" style="animation-delay: 0.3s;">
+                <div class="quantum-widget-title">
+                    <h5 class="mb-0">Résolus</h5>
+                    <i class="fas fa-check-circle quantum-widget-icon quantum-text-success"></i>
+                </div>
+                <div class="quantum-widget-number quantum-text-success">@Model.Count(t => t.Status == TicketStatus.Resolved)</div>
+                <div class="quantum-widget-label">tickets résolus récemment</div>
+                <div class="progress quantum-progress mt-2">
+                    <div class="progress-bar bg-success" style="width: @(Model.Any() ? Model.Count(t => t.Status == TicketStatus.Resolved) * 100 / Model.Count() : 0)%"></div>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-secondary text-white">
-                <div class="card-body text-center">
-                    <h2>@Model.Count(t => t.Status == TicketStatus.Closed)</h2>
-                    <p class="mb-0">Fermés</p>
+            <div class="quantum-widget quantum-animate-slide-up" style="animation-delay: 0.4s;">
+                <div class="quantum-widget-title">
+                    <h5 class="mb-0">Fermés</h5>
+                    <i class="fas fa-times-circle quantum-widget-icon quantum-text-muted"></i>
+                </div>
+                <div class="quantum-widget-number quantum-text-muted">@Model.Count(t => t.Status == TicketStatus.Closed)</div>
+                <div class="quantum-widget-label">tickets archivés</div>
+                <div class="progress quantum-progress mt-2">
+                    <div class="progress-bar bg-secondary" style="width: @(Model.Any() ? Model.Count(t => t.Status == TicketStatus.Closed) * 100 / Model.Count() : 0)%"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Ajout d'un message de débogage -->
+    <!-- État vide -->
     @if (Model == null || !Model.Any())
     {
-        <div class="alert alert-info">
-            <p>Aucun ticket n'est actuellement assigné à votre compte.</p>
-            <p>ID Utilisateur: @User.Identity.Name</p>
+        <div class="quantum-card quantum-card-body p-5 text-center quantum-animate-fade-in">
+            <div class="empty-state-icon mb-4">
+                <i class="fas fa-clipboard-check fa-4x quantum-text-muted"></i>
+            </div>
+            <h4 class="quantum-font-semibold">Aucun ticket assigné</h4>
+            <p class="quantum-text-muted mb-4">Il n'y a actuellement aucun ticket assigné à votre compte.</p>
+            <p class="quantum-text-muted small">ID Utilisateur: @User.Identity.Name</p>
         </div>
     }
-
-    <div class="card shadow-sm">
-        <div class="card-body">
-            @if (Model != null && Model.Any())
-            {
+    else
+    {
+        <!-- Table des tickets -->
+        <div class="quantum-card quantum-animate-fade-in">
+            <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="quantum-ticket-table table-hover">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Titre</th>
-                                <th>Créé par</th>
-                                <th>Statut</th>
-                                <th>Priorité</th>
-                                <th>Créé le</th>
-                                <th>Dernière mise à jour</th>
-                                <th>Actions</th>
+                                <th width="5%">#</th>
+                                <th width="30%">Titre</th>
+                                <th width="15%">Créé par</th>
+                                <th width="10%">Statut</th>
+                                <th width="10%">Priorité</th>
+                                <th width="10%">Créé le</th>
+                                <th width="10%">Mise à jour</th>
+                                <th width="10%">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var ticket in Model)
                             {
                                 <tr>
-                                    <td>@ticket.TicketID</td>
+                                    <td class="quantum-ticket-id">@ticket.TicketID</td>
                                     <td>
-                                        <a asp-action="Details" asp-route-id="@ticket.TicketID">@ticket.Title</a>
+                                        <a asp-action="Details" asp-route-id="@ticket.TicketID" class="quantum-link fw-medium">
+                                            @ticket.Title
+                                        </a>
+                                        @if (ticket.IsEscalated)
+                                        {
+                                            <span class="quantum-badge quantum-badge-accent ms-2">Escalated</span>
+                                        }
                                     </td>
-                                    <td>@ticket.CreatedByUser?.FirstName @ticket.CreatedByUser?.LastName</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="quantum-avatar-sm me-2">
+                                                @{
+                                                    var initials = "?";
+                                                    if (ticket.CreatedByUser != null)
+                                                    {
+                                                        initials = ticket.CreatedByUser.FirstName?.Substring(0, 1) + ticket.CreatedByUser.LastName?.Substring(0, 1);
+                                                    }
+                                                }
+                                                <span>@initials</span>
+                                            </div>
+                                            <div>@ticket.CreatedByUser?.FirstName @ticket.CreatedByUser?.LastName</div>
+                                        </div>
+                                    </td>
                                     <td>
                                         @{
                                             string statusClass = ticket.Status switch
                                             {
-                                                TicketStatus.Open => "bg-primary",
-                                                TicketStatus.InProgress => "bg-warning",
-                                                TicketStatus.Resolved => "bg-success",
-                                                TicketStatus.Closed => "bg-secondary",
-                                                _ => "bg-info"
+                                                TicketStatus.Open => "quantum-status-new",
+                                                TicketStatus.InProgress => "quantum-status-in-progress",
+                                                TicketStatus.Resolved => "quantum-status-resolved",
+                                                TicketStatus.Closed => "quantum-status-closed",
+                                                _ => "quantum-status-new"
+                                            };
+
+                                            string statusIcon = ticket.Status switch
+                                            {
+                                                TicketStatus.Open => "fa-door-open",
+                                                TicketStatus.InProgress => "fa-spinner",
+                                                TicketStatus.Resolved => "fa-check-circle",
+                                                TicketStatus.Closed => "fa-times-circle",
+                                                _ => "fa-question-circle"
                                             };
                                         }
-                                        <span class="badge @statusClass">@ticket.Status</span>
+                                        <span class="quantum-status @statusClass">
+                                            <i class="fas @statusIcon quantum-status-icon"></i>
+                                            <span>@ticket.Status</span>
+                                        </span>
                                     </td>
                                     <td>
                                         @{
                                             string priorityClass = ticket.Priority switch
                                             {
-                                                TicketPriority.Low => "bg-success",
-                                                TicketPriority.Medium => "bg-info",
-                                                TicketPriority.High => "bg-warning",
-                                                TicketPriority.Critical => "bg-danger",
-                                                _ => "bg-secondary"
+                                                TicketPriority.Low => "quantum-priority-low",
+                                                TicketPriority.Medium => "quantum-priority-medium",
+                                                TicketPriority.High => "quantum-priority-high",
+                                                TicketPriority.Critical => "quantum-priority-critical",
+                                                _ => "quantum-priority-low"
+                                            };
+
+                                            string priorityIcon = ticket.Priority switch
+                                            {
+                                                TicketPriority.Low => "fa-arrow-down",
+                                                TicketPriority.Medium => "fa-equals",
+                                                TicketPriority.High => "fa-arrow-up",
+                                                TicketPriority.Critical => "fa-exclamation-triangle",
+                                                _ => "fa-question"
                                             };
                                         }
-                                        <span class="badge @priorityClass">@ticket.Priority</span>
+                                        <span class="quantum-priority @priorityClass">
+                                            <i class="fas @priorityIcon quantum-priority-icon"></i>
+                                            <span>@ticket.Priority</span>
+                                        </span>
                                     </td>
-                                    <td>@ticket.CreatedDate.ToString("dd MMM yyyy")</td>
-                                    <td>@ticket.UpdatedDate.ToString("dd MMM yyyy")</td>
                                     <td>
-                                        <div class="btn-group">
-                                            <a asp-action="Details" asp-route-id="@ticket.TicketID" class="btn btn-sm btn-info">
+                                        <span class="quantum-timeago" data-date="@ticket.CreatedDate.ToString("o")">
+                                            @ticket.CreatedDate.ToString("dd MMM yyyy")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="quantum-timeago" data-date="@ticket.UpdatedDate.ToString("o")">
+                                            @ticket.UpdatedDate.ToString("dd MMM yyyy")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="quantum-action-buttons">
+                                            <a asp-action="Details" asp-route-id="@ticket.TicketID" class="quantum-action-btn quantum-tooltip" data-tooltip="Voir le détail">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a asp-action="Edit" asp-route-id="@ticket.TicketID" class="btn btn-sm btn-warning">
+                                            <a asp-action="Edit" asp-route-id="@ticket.TicketID" class="quantum-action-btn quantum-tooltip" data-tooltip="Modifier">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                         </div>
@@ -161,15 +241,101 @@
                         </tbody>
                     </table>
                 </div>
-            }
-            else
-            {
-                <div class="text-center py-5">
-                    <i class="fas fa-clipboard-check fa-4x text-muted mb-3"></i>
-                    <h4>Aucun ticket assigné</h4>
-                    <p class="text-muted">Il n'y a actuellement aucun ticket assigné à votre compte.</p>
-                </div>
-            }
+            </div>
         </div>
-    </div>
+    }
 </div>
+
+<style>
+    /* Styles spécifiques pour la page des tickets assignés */
+    .page-title-wrapper {
+        position: relative;
+    }
+
+    .page-actions .quantum-btn {
+        padding: 0.6rem 1.2rem;
+    }
+
+    /* Progress bar styling */
+    .quantum-progress {
+        height: 4px;
+        border-radius: 2px;
+        overflow: hidden;
+        background-color: var(--quantum-light-accent);
+    }
+
+    /* Empty state styling */
+    .empty-state-icon {
+        background-color: var(--quantum-light-accent);
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+
+    /* Avatar styling */
+    .quantum-avatar-sm {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: var(--quantum-primary-light);
+        color: var(--quantum-light-text);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    /* Action buttons */
+    .quantum-action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .quantum-action-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--quantum-dark-text);
+        background-color: var(--quantum-light-accent);
+        transition: var(--quantum-transition-default);
+    }
+
+        .quantum-action-btn:hover {
+            background-color: var(--quantum-secondary);
+            color: var(--quantum-light-text);
+            text-decoration: none;
+        }
+
+    /* Animation des statistiques */
+   
+
+    .quantum-widget-number {
+        animation: countUp 1s ease-out forwards;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Active tooltips
+            initializeTooltips();
+
+            // Format relative timestamps
+            setupDateTimeFormatting();
+
+            // Pour le tri et filtrage interactif (optionnel)
+            // Activez lorsque vous ajouterez ces fonctionnalités
+            // initializeTicketFilters();
+
+            console.log('Tickets assignés page initialized');
+        });
+    </script>
+}

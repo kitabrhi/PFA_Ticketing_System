@@ -1,84 +1,185 @@
-﻿
-@{
+﻿@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
-
 @model Ticketing_System.Models.User
-
 @{
     Layout = User.IsInRole("Admin") ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
 }
-
-
 @{
     ViewData["Title"] = "Edit User";
 }
 
-<div class="container mt-4">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-action="Users">Users</a></li>
-            <li class="breadcrumb-item"><a asp-action="UserDetails" asp-route-id="@Model.Id">Details</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+<div class="dashboard-container">
+    <!-- Floating Breadcrumb -->
+    <nav aria-label="breadcrumb" class="floating-breadcrumb">
+        <ol class="breadcrumb py-2 px-4 m-0 rounded-pill shadow-sm">
+            <li class="breadcrumb-item"><a asp-action="Users" class="text-decoration-none"><i class="fas fa-users me-1"></i>Users</a></li>
+            <li class="breadcrumb-item"><a asp-action="UserDetails" asp-route-id="@Model.Id" class="text-decoration-none"><i class="fas fa-user me-1"></i>Details</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-edit me-1"></i>Edit</li>
         </ol>
     </nav>
 
-    <div class="card shadow-sm">
-        <div class="card-header">
-            <h4 class="mb-0">Edit User</h4>
-        </div>
-        <div class="card-body">
-            <form asp-action="EditUser" method="post">
-                <input type="hidden" asp-for="Id" />
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label asp-for="FirstName" class="form-label">First Name</label>
-                            <input asp-for="FirstName" class="form-control" />
-                            <span asp-validation-for="FirstName" class="text-danger"></span>
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Main Form Container -->
+            <div class="form-container">
+                <!-- User Profile Card -->
+                <div class="profile-card">
+                    <div class="profile-banner"></div>
+                    <div class="profile-avatar">
+                        <div class="avatar-wrapper">
+                            <img src="https://ui-avatars.com/api/?name=@Model.FirstName+@Model.LastName&background=00a78e&color=fff&size=150" 
+                                 alt="User Avatar">
+                            <div class="avatar-badge">
+                                <i class="fas fa-edit"></i>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label asp-for="LastName" class="form-label">Last Name</label>
-                            <input asp-for="LastName" class="form-control" />
-                            <span asp-validation-for="LastName" class="text-danger"></span>
+                    <div class="profile-info">
+                        <h3>@Model.FirstName @Model.LastName</h3>
+                        <div class="user-meta">
+                            <span class="user-id"><i class="fas fa-fingerprint me-1"></i>ID: @Model.Id.Substring(0, 8)...</span>
+                            <span id="statusIndicator" class="status-pill active">
+                                <i class="fas fa-circle me-1"></i><span id="statusText">Active</span>
+                            </span>
                         </div>
                     </div>
                 </div>
-
-                <div class="mb-3">
-                    <label asp-for="Email" class="form-label">Email</label>
-                    <input asp-for="Email" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
+                
+                <!-- Editor Form -->
+                <div class="edit-form-panel">
+                    <form asp-action="EditUser" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+                        
+                        <!-- Tabs Navigation -->
+                        <div class="form-tabs">
+                            <button type="button" class="tab-btn active" data-tab="personal">
+                                <i class="fas fa-user-circle"></i>
+                                <span>Personal</span>
+                            </button>
+                            <button type="button" class="tab-btn" data-tab="contact">
+                                <i class="fas fa-address-card"></i>
+                                <span>Contact</span>
+                            </button>
+                            <button type="button" class="tab-btn" data-tab="security">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Roles & Security</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Tab Content - Personal -->
+                        <div class="tab-content active" id="personal-tab">
+                            <div class="form-section-header">
+                                <h4><i class="fas fa-id-card me-2"></i>Personal Information</h4>
+                                <p>Update the user's personal details</p>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label asp-for="FirstName">First Name</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-user"></i>
+                                        <input asp-for="FirstName" placeholder="Enter first name" class="form-control" />
+                                    </div>
+                                    <span asp-validation-for="FirstName" class="text-danger small"></span>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label asp-for="LastName">Last Name</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-user"></i>
+                                        <input asp-for="LastName" placeholder="Enter last name" class="form-control" />
+                                    </div>
+                                    <span asp-validation-for="LastName" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tab Content - Contact -->
+                        <div class="tab-content" id="contact-tab">
+                            <div class="form-section-header">
+                                <h4><i class="fas fa-envelope me-2"></i>Contact Details</h4>
+                                <p>Update contact information and communication preferences</p>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label asp-for="Email">Email Address</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-envelope"></i>
+                                    <input asp-for="Email" placeholder="Enter email address" class="form-control" />
+                                </div>
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label asp-for="PhoneNumber">Phone Number</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-phone-alt"></i>
+                                    <input asp-for="PhoneNumber" placeholder="Enter phone number" class="form-control" />
+                                </div>
+                                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        
+                        <!-- Tab Content - Security -->
+                        <div class="tab-content" id="security-tab">
+                            <div class="form-section-header">
+                                <h4><i class="fas fa-user-shield me-2"></i>Roles & Account Status</h4>
+                                <p>Manage access control and account status</p>
+                            </div>
+                            
+                            <div class="form-group roles-selector">
+                                <label>User Roles & Permissions</label>
+                                <div class="roles-container">
+                                    <select name="selectedRoles" class="form-select" multiple asp-items="ViewBag.Roles">
+                                    </select>
+                                    <div class="role-hint">
+                                        <i class="fas fa-info-circle"></i>
+                                        <div class="hint-content">
+                                            <strong>How to select multiple roles:</strong>
+                                            <ul>
+                                                <li>Hold Ctrl (or Cmd on Mac) to select multiple</li>
+                                                <li>Click to add or remove roles</li>
+                                                <li>Selected roles appear highlighted</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group account-status-toggle">
+                                <label>Account Status</label>
+                                <div class="toggle-wrapper">
+                                    <div class="status-toggle">
+                                        <input type="checkbox" class="toggle-checkbox" asp-for="IsActive" id="accountStatusSwitch">
+                                        <label for="accountStatusSwitch" class="toggle-label">
+                                            <span class="toggle-inner"></span>
+                                            <span class="toggle-switch"></span>
+                                        </label>
+                                    </div>
+                                    <div class="status-info">
+                                        <div class="status-text">
+                                            <span id="statusLabelText" class="active">Active</span>
+                                            <small id="statusDescription" class="text-muted">User can access the system</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <a asp-action="UserDetails" asp-route-id="@Model.Id" class="btn btn-light">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Details
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
+                        </div>
+                    </form>
                 </div>
-
-                <div class="mb-3">
-                    <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
-                    <input asp-for="PhoneNumber" class="form-control" />
-                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Roles</label>
-                    <select name="selectedRoles" class="form-select" multiple asp-items="ViewBag.Roles">
-                    </select>
-                </div>
-
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" asp-for="IsActive" />
-                    <label class="form-check-label" asp-for="IsActive">Active</label>
-                </div>
-
-                <div class="d-flex justify-content-end">
-                    <a asp-action="UserDetails" asp-route-id="@Model.Id" class="btn btn-secondary me-2">Cancel</a>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Save Changes
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
@@ -87,4 +188,53 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        $(document).ready(function() {
+            // Tab switching functionality
+            $('.tab-btn').click(function() {
+                const tabId = $(this).data('tab');
+                
+                // Activate button
+                $('.tab-btn').removeClass('active');
+                $(this).addClass('active');
+                
+                // Show tab content
+                $('.tab-content').removeClass('active');
+                $(`#${tabId}-tab`).addClass('active');
+            });
+            
+            // Status toggle functionality
+            function updateStatus() {
+                if ($('#accountStatusSwitch').is(':checked')) {
+                    $('#statusLabelText').text('Active').removeClass('inactive').addClass('active');
+                    $('#statusDescription').text('User can access the system');
+                    $('#statusIndicator').removeClass('inactive').addClass('active');
+                    $('#statusText').text('Active');
+                } else {
+                    $('#statusLabelText').text('Inactive').removeClass('active').addClass('inactive');
+                    $('#statusDescription').text('User cannot access the system');
+                    $('#statusIndicator').removeClass('active').addClass('inactive');
+                    $('#statusText').text('Inactive');
+                }
+            }
+            
+            // Initialize status
+            updateStatus();
+            
+            // Update on change
+            $('#accountStatusSwitch').change(function() {
+                updateStatus();
+            });
+            
+            // Role hint popup
+            $('.role-hint').hover(
+                function() {
+                    $(this).find('.hint-content').fadeIn(200);
+                },
+                function() {
+                    $(this).find('.hint-content').fadeOut(200);
+                }
+            );
+        });
+    </script>
 }

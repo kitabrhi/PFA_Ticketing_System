@@ -23,99 +23,113 @@
         Layout = "~/Views/Shared/_Layout.cshtml"; // default fallback
     }
 }
-
-
-
-<div class="container mt-4">
-    <h2 class="mb-4">🎫 Créer un nouveau ticket</h2>
-
-    <div class="card shadow-sm mb-4">
+<div class="container-fluid py-4">
+    <div class="quantum-card quantum-shadow mb-4">
+        <div class="card-header">
+            <h2 class="mb-0"><i class="fas fa-plus-circle text-primary me-2"></i>Créer un nouveau ticket</h2>
+        </div>
         <div class="card-body">
             <form asp-action="Create" method="post" enctype="multipart/form-data">
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-
-                <!-- Informations principales -->
-                <div class="mb-3">
-                    <label asp-for="Title" class="form-label">Titre</label>
-                    <input asp-for="Title" class="form-control" />
-                    <span asp-validation-for="Title" class="text-danger"></span>
-                </div>
-
                 <div class="row">
-                    <div class="col-md-4">
-                        <label asp-for="Category" class="form-label">Catégorie</label>
-                        <select asp-for="Category" class="form-select" asp-items="ViewBag.Categories" asp-option-label="-- Choisir --"></select>
-                        <span asp-validation-for="Category" class="text-danger"></span>
-                    </div>
-                    <div class="col-md-4">
-                        <label asp-for="Priority" class="form-label">Priorité</label>
-                        <select asp-for="Priority" class="form-select" asp-items="ViewBag.Priorities" asp-option-label="-- Choisir --"></select>
-                        <span asp-validation-for="Priority" class="text-danger"></span>
-                    </div>
-                    
-                </div>
+                    <div class="col-md-8">
+                        <!-- Informations principales du ticket -->
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <label asp-for="Title" class="form-label fw-bold">Titre</label>
+                                <input asp-for="Title" class="form-control form-control-lg" placeholder="Décrivez brièvement votre problème" required />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
 
-                <div class="mb-3 mt-3">
-                    <label asp-for="Description" class="form-label">Description</label>
-                    <textarea asp-for="Description" class="form-control" rows="5"></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Category" class="form-label fw-bold">Catégorie</label>
+                                <select asp-for="Category" class="form-select" asp-items="ViewBag.Categories" required>
+                                    <option value="">-- Sélectionnez une catégorie --</option>
+                                </select>
+                                <span asp-validation-for="Category" class="text-danger"></span>
+                            </div>
 
-              
-
-                <!-- Valeurs cachées -->
-                <input type="hidden" asp-for="Source" value="Web" />
-                @Html.HiddenFor(m => m.CreatedByUserId, new { Value = User?.FindFirstValue(ClaimTypes.NameIdentifier) })
-
-                <hr />
-
-                <!-- Champ de commentaire -->
-                <div class="mb-4">
-                    <label for="commentText" class="form-label">Commentaire initial</label>
-                    <textarea name="InitialComment" id="commentText" class="form-control" rows="3" placeholder="Ajoutez un commentaire..."></textarea>
-                </div>
-
-                <!-- Pièce jointe -->
-                <div class="mb-4">
-                    <label for="file" class="form-label">Ajouter une pièce jointe</label>
-                    <input type="file" name="file" id="file" class="form-control" />
-                </div>
-                @if (User.IsInRole("Admin") || User.IsInRole("SupportAgent"))
-                {
-                    <div class="card mt-3">
-                        <div class="card-header">
-                            <h5 class="mb-0">Ticket Assignment & Escalation</h5>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Priority" class="form-label fw-bold">Priorité</label>
+                                <select asp-for="Priority" class="form-select" asp-items="ViewBag.Priorities" required>
+                                    <option value="">-- Sélectionnez une priorité --</option>
+                                </select>
+                                <span asp-validation-for="Priority" class="text-danger"></span>
+                                <small class="form-text text-muted">Choisissez la priorité en fonction de l'urgence du problème.</small>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <form asp-controller="AssignmentRule" asp-action="ApplyToTicket" method="post">
-                                        <input type="hidden" name="ticketId" value="@Model.TicketID" />
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-random"></i> Apply Assignment Rules
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label fw-bold">Description détaillée</label>
+                            <textarea asp-for="Description" class="form-control" rows="8" placeholder="Décrivez en détail votre problème, y compris les étapes à reproduire et les résultats attendus" required></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="InitialComment" class="form-label fw-bold">Commentaire initial (Optionnel)</label>
+                            <textarea name="InitialComment" id="InitialComment" class="form-control" rows="3" placeholder="Ajoutez un commentaire supplémentaire si nécessaire"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <!-- Panneau latéral d'informations et options -->
+                        <div class="quantum-card quantum-shadow mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Informations</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="quantum-features-list">
+                                    <li>
+                                        <i class="fas fa-check-circle quantum-feature-icon-small quantum-text-secondary"></i>
+                                        <div>Le ticket sera automatiquement assigné à un agent de support</div>
+                                    </li>
+                                    <li>
+                                        <i class="fas fa-check-circle quantum-feature-icon-small quantum-text-secondary"></i>
+                                        <div>Vous recevrez des notifications par email sur les mises à jour</div>
+                                    </li>
+                                    <li>
+                                        <i class="fas fa-check-circle quantum-feature-icon-small quantum-text-secondary"></i>
+                                        <div>Vous pouvez ajouter des pièces jointes pour faciliter la résolution</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Pièces jointes -->
+                        <div class="quantum-card quantum-shadow">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0"><i class="fas fa-paperclip me-2"></i>Pièce jointe</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="quantum-dropzone" id="dropzoneUpload">
+                                    <div class="quantum-dropzone-message">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <h5>Glissez et déposez un fichier ici</h5>
+                                        <p>ou</p>
+                                        <input type="file" name="file" id="file" class="d-none">
+                                        <button type="button" class="quantum-btn quantum-btn-outline" id="browseButton">
+                                            Parcourir
                                         </button>
-                                    </form>
+                                    </div>
+                                    <div class="quantum-dropzone-preview"></div>
                                 </div>
-                                <div class="col-md-6">
-                                    @if (!Model.IsEscalated)
-                                    {
-                                        <form asp-controller="EscalationRule" asp-action="EscalateTicket" method="post">
-                                            <input type="hidden" name="ticketId" value="@Model.TicketID" />
-                                            <button type="submit" class="btn btn-warning">
-                                                <i class="fas fa-arrow-up"></i> Escalate Ticket
-                                            </button>
-                                        </form>
-                                    }
-                                </div>
+                                <small class="form-text text-muted mt-2">
+                                    Formats acceptés: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, ZIP (max. 10 MB)
+                                </small>
                             </div>
                         </div>
                     </div>
-                }
+                </div>
 
-                <div class="d-flex justify-content-end">
-                    <a asp-action="Index" class="btn btn-secondary me-2">Annuler</a>
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-save me-1"></i> Créer le ticket
+                <!-- Valeurs cachées -->
+                <input type="hidden" asp-for="Source" value="Web" />
+                <input type="hidden" name="CreatedByUserId" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)" />
+
+                <div class="d-flex justify-content-end mt-4">
+                    <a asp-action="MyTickets" class="quantum-btn quantum-btn-outline me-2">
+                        <i class="fas fa-times me-1"></i>Annuler
+                    </a>
+                    <button type="submit" class="quantum-btn quantum-btn-primary">
+                        <i class="fas fa-save me-1"></i>Créer le ticket
                     </button>
                 </div>
             </form>
@@ -123,6 +137,230 @@
     </div>
 </div>
 
-@section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-}
+<style>
+    /* Styles spécifiques pour le formulaire de création */
+    .quantum-dropzone {
+        border: 2px dashed var(--quantum-border);
+        border-radius: var(--quantum-border-radius);
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        background-color: var(--quantum-light-bg);
+    }
+
+    .quantum-dropzone-hover {
+        border-color: var(--quantum-tertiary);
+        background-color: rgba(123, 104, 238, 0.05);
+    }
+
+    .quantum-dropzone-message {
+        color: var(--quantum-muted-text);
+    }
+
+        .quantum-dropzone-message i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--quantum-tertiary);
+        }
+
+    .quantum-dropzone-preview {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+        gap: 1rem;
+    }
+
+    .quantum-dropzone-item {
+        display: flex;
+        align-items: center;
+        border: 1px solid var(--quantum-border);
+        border-radius: var(--quantum-border-radius);
+        padding: 0.5rem;
+        background-color: white;
+        width: 100%;
+    }
+
+    .quantum-dropzone-icon {
+        font-size: 1.5rem;
+        color: var(--quantum-tertiary);
+        margin-right: 0.5rem;
+    }
+
+    .quantum-dropzone-info {
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .quantum-dropzone-filename {
+        font-weight: 600;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .quantum-dropzone-filesize {
+        font-size: 0.8rem;
+        color: var(--quantum-muted-text);
+    }
+
+    .quantum-dropzone-remove {
+        background: none;
+        border: none;
+        color: var(--quantum-danger);
+        cursor: pointer;
+    }
+
+    /* Cards de priorité */
+    .priority-card {
+        border: 2px solid transparent;
+        border-radius: var(--quantum-border-radius);
+        padding: 1rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .priority-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .priority-card.selected {
+            border-color: var(--quantum-tertiary);
+            box-shadow: 0 0 0 2px rgba(123, 104, 238, 0.3);
+        }
+
+        .priority-card i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+    .priority-low {
+        color: var(--quantum-success);
+    }
+
+    .priority-medium {
+        color: var(--quantum-warning);
+    }
+
+    .priority-high {
+        color: var(--quantum-danger);
+    }
+
+    .priority-critical {
+        color: #c0392b;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialisation du drag & drop pour les pièces jointes
+        const dropzone = document.getElementById('dropzoneUpload');
+        const fileInput = document.getElementById('file');
+        const browseButton = document.getElementById('browseButton');
+
+        if (dropzone && fileInput && browseButton) {
+            // Événements pour le drag & drop
+            dropzone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('quantum-dropzone-hover');
+            });
+
+            dropzone.addEventListener('dragleave', function() {
+                this.classList.remove('quantum-dropzone-hover');
+            });
+
+            dropzone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('quantum-dropzone-hover');
+
+                if (e.dataTransfer.files.length > 0) {
+                    fileInput.files = e.dataTransfer.files;
+                    updateFilePreview(e.dataTransfer.files);
+                }
+            });
+
+            // Événement pour le bouton de parcours de fichiers
+            browseButton.addEventListener('click', function() {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', function() {
+                updateFilePreview(this.files);
+            });
+
+            function updateFilePreview(files) {
+                const preview = dropzone.querySelector('.quantum-dropzone-preview');
+                preview.innerHTML = '';
+
+                if (files.length > 0) {
+                    const file = files[0]; // On prend seulement le premier fichier
+
+                    // Vérifier la taille du fichier
+                    if (file.size > 10 * 1024 * 1024) { // 10 MB
+                        alert('Le fichier est trop volumineux. La taille maximale est de 10 MB.');
+                        fileInput.value = '';
+                        return;
+                    }
+
+                    // Créer l'élément de prévisualisation
+                    const item = document.createElement('div');
+                    item.className = 'quantum-dropzone-item';
+
+                    // Déterminer le type d'icône en fonction du type de fichier
+                    let iconClass = 'fa-file';
+                    const fileExt = file.name.split('.').pop().toLowerCase();
+
+                    switch (fileExt) {
+                        case 'pdf': iconClass = 'fa-file-pdf'; break;
+                        case 'doc': case 'docx': iconClass = 'fa-file-word'; break;
+                        case 'xls': case 'xlsx': iconClass = 'fa-file-excel'; break;
+                        case 'ppt': case 'pptx': iconClass = 'fa-file-powerpoint'; break;
+                        case 'jpg': case 'jpeg': case 'png': case 'gif': iconClass = 'fa-file-image'; break;
+                        case 'zip': case 'rar': iconClass = 'fa-file-archive'; break;
+                    }
+
+                    item.innerHTML = `
+                        <div class="quantum-dropzone-icon">
+                            <i class="fas ${iconClass}"></i>
+                        </div>
+                        <div class="quantum-dropzone-info">
+                            <div class="quantum-dropzone-filename">${file.name}</div>
+                            <div class="quantum-dropzone-filesize">${formatFileSize(file.size)}</div>
+                        </div>
+                        <button type="button" class="quantum-dropzone-remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+
+                    preview.appendChild(item);
+
+                    // Événement pour supprimer le fichier
+                    const removeButton = item.querySelector('.quantum-dropzone-remove');
+                    removeButton.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        preview.innerHTML = '';
+                        fileInput.value = '';
+
+                        // Réafficher le message
+                        dropzone.querySelector('.quantum-dropzone-message').style.display = 'block';
+                    });
+
+                    // Masquer le message et afficher la prévisualisation
+                    dropzone.querySelector('.quantum-dropzone-message').style.display = 'none';
+                } else {
+                    dropzone.querySelector('.quantum-dropzone-message').style.display = 'block';
+                }
+            }
+
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+        }
+    });
+</script>

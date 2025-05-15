@@ -1,62 +1,176 @@
-<div class="quantum-footer">
+<footer class="quantum-footer mt-5 py-5">
     <div class="container">
         <div class="row mb-4">
+            <!-- Brand Section -->
             <div class="col-lg-4 mb-4 mb-lg-0">
                 <div class="d-flex align-items-center mb-3">
-                    <i class="fas fa-ticket-alt quantum-logo-icon"></i>
-                    <span class="quantum-logo-text">QuantumDesk</span>
+                    <i class="fas fa-ticket-alt quantum-logo-icon me-2"></i>
+                    <h5 class="quantum-logo-text mb-0">QuantumDesk</h5>
                 </div>
-                <p class="quantum-text-muted">La solution de gestion de tickets nouvelle génération pour des équipes de support efficaces et des clients satisfaits.</p>
-                <div class="d-flex mt-3">
-                    <a href="#" class="me-3 quantum-social-icon"><i class="fab fa-twitter fa-lg"></i></a>
-                    <a href="#" class="me-3 quantum-social-icon"><i class="fab fa-linkedin fa-lg"></i></a>
-                    <a href="#" class="me-3 quantum-social-icon"><i class="fab fa-facebook fa-lg"></i></a>
-                    <a href="#" class="quantum-social-icon"><i class="fab fa-instagram fa-lg"></i></a>
+                <p class="quantum-text-muted mb-3">Advanced ticketing system for efficient support teams and seamless customer experience.</p>
+                <div class="d-flex mt-3 quantum-social-icons">
+                    <a href="#" class="quantum-social-icon me-3"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="quantum-social-icon me-3"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="quantum-social-icon me-3"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="quantum-social-icon"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
+
+            <!-- Quick Links -->
             <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
-                <h5 class="quantum-footer-title">Produit</h5>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><a href="#" class="quantum-footer-link">Fonctionnalités</a></li>
-                    <li class="mb-2"><a href="#" class="quantum-footer-link">Tarifs</a></li>
-                    <li class="mb-2"><a href="#" class="quantum-footer-link">Démos</a></li>
-                    <li class="mb-2"><a href="#" class="quantum-footer-link">Roadmap</a></li>
+                <h6 class="quantum-footer-title">Product</h6>
+                <ul class="quantum-footer-links">
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">Pricing</a></li>
+                    <li><a href="#">Demo</a></li>
+                    <li><a href="#">Roadmap</a></li>
                 </ul>
             </div>
+
+            <!-- Support Section -->
             <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
-                <h5 class="quantum-footer-title">Support</h5>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><a href="#" class="quantum-footer-link">Centre d'aide</a></li>
-                    <li class="mb-2"><a href="#" class="quantum-footer-link">Documentation</a></li>
-                    <li class="mb-2"><a href="#" class="quantum-footer-link">API</a></li>
-                    <li class="mb-2"><a href="#" class="quantum-footer-link">API</a></li>
-                    <li class="mb-2"><a href="#" class="quantum-footer-link">Communauté</a></li>
+                <h6 class="quantum-footer-title">Support</h6>
+                <ul class="quantum-footer-links">
+                    <li><a href="/Home/FAQ">FAQ</a></li>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">API</a></li>
+                    <li><a href="#">Community</a></li>
                 </ul>
             </div>
+
+            <!-- Company Section -->
             <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
-                <h5 class="quantum-footer-title">Entreprise</h5>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><a href="#" class="quantum-footer-link">À propos</a></li>
-                    <li class="mb-2"><a href="#" class="quantum-footer-link">Blog</a></li>
-                    <li class="mb-2"><a href="#" class="quantum-footer-link">Carrières</a></li>
-                    <li class="mb-2"><a href="#" class="quantum-footer-link">Contact</a></li>
+                <h6 class="quantum-footer-title">Company</h6>
+                <ul class="quantum-footer-links">
+                    <li><a href="/Home/About">About</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="/Home/Contact">Contact</a></li>
                 </ul>
             </div>
+
+            <!-- Legal Section -->
             <div class="col-lg-2 col-md-4">
-                <h5 class="quantum-footer-title">Légal</h5>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><a href="#" class="quantum-footer-link">Confidentialité</a></li>
-                    <li class="mb-2"><a href="#" class="quantum-footer-link">Conditions</a></li>
-                    <li class="mb-2"><a href="#" class="quantum-footer-link">RGPD</a></li>
-                    <li class="mb-2"><a href="#" class="quantum-footer-link">Sécurité</a></li>
+                <h6 class="quantum-footer-title">Legal</h6>
+                <ul class="quantum-footer-links">
+                    <li><a href="#">Privacy</a></li>
+                    <li><a href="#">Terms</a></li>
+                    <li><a href="#">Security</a></li>
                 </ul>
             </div>
         </div>
-        <hr class="bg-light opacity-25">
-        <div class="row text-center">
-            <div class="col-12">
-                <p class="mb-0 quantum-text-muted">© @DateTime.Now.Year QuantumDesk. Tous droits réservés.</p>
+
+        <!-- Copyright -->
+        <div class="border-top pt-4 d-flex justify-content-between align-items-center">
+            <p class="mb-0 quantum-text-muted">© @DateTime.Now.Year QuantumDesk. All rights reserved.</p>
+            <div>
+                <select class="form-select form-select-sm quantum-lang-selector">
+                    <option value="en" selected>English</option>
+                    <option value="fr">Français</option>
+                    <option value="es">Español</option>
+                    <option value="ar">العربية</option>
+                </select>
             </div>
         </div>
     </div>
-</div>
+</footer>
+
+<style>
+    /* Footer Styling */
+    .quantum-footer {
+        background-color: var(--quantum-primary);
+        color: var(--quantum-light-text);
+    }
+
+    .quantum-footer-title {
+        color: var(--quantum-light-text);
+        font-weight: 600;
+        margin-bottom: 1.25rem;
+        position: relative;
+    }
+
+        .quantum-footer-title::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            width: 2rem;
+            height: 2px;
+            background: linear-gradient(to right, var(--quantum-secondary), var(--quantum-tertiary));
+            border-radius: 2px;
+        }
+
+    .quantum-footer-links {
+        list-style: none;
+        padding-left: 0;
+    }
+
+        .quantum-footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .quantum-footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            position: relative;
+            display: inline-block;
+        }
+
+            .quantum-footer-links a:hover {
+                color: var(--quantum-secondary);
+            }
+
+            .quantum-footer-links a::before {
+                content: "›";
+                position: absolute;
+                left: -12px;
+                opacity: 0;
+                transition: all 0.3s ease;
+            }
+
+            .quantum-footer-links a:hover::before {
+                opacity: 1;
+                left: -15px;
+                color: var(--quantum-secondary);
+            }
+
+    .quantum-social-icons {
+        display: flex;
+    }
+
+    .quantum-social-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--quantum-light-text);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+        .quantum-social-icon:hover {
+            background-color: var(--quantum-secondary);
+            transform: translateY(-3px);
+            color: var(--quantum-light-text);
+        }
+
+    .quantum-lang-selector {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: var(--quantum-light-text);
+        padding: 0.4rem 1rem;
+        border-radius: 2rem;
+        width: auto;
+    }
+
+        .quantum-lang-selector:focus {
+            box-shadow: 0 0 0 0.25rem rgba(0, 167, 142, 0.25);
+            background-color: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: var(--quantum-light-text);
+        }
+</style>

@@ -121,7 +121,7 @@ namespace Ticketing_System.Controllers
             ViewBag.Team = team;
 
             // Get users who are not already members of this team
-            var users = await _userManager.Users.Where(u => u.IsActive).ToListAsync();
+            var users = _userManager.Users.Where(u => u.IsActive).ToList(); // Use synchronous method
             var teamMembers = await _memberService.GetMembersByTeamIdAsync(teamId);
             var teamMemberIds = teamMembers.Select(tm => tm.UserId).ToList();
             var availableUsers = users.Where(u => !teamMemberIds.Contains(u.Id)).ToList();
@@ -276,7 +276,7 @@ namespace Ticketing_System.Controllers
             var teams = await _teamService.GetAllAsync();
 
             // Get users who can be added to teams (non-admin users)
-            var users = await _userManager.Users.Where(u => u.IsActive).ToListAsync();
+            var users = _userManager.Users.Where(u => u.IsActive).ToList(); // Use synchronous method
 
             ViewBag.Teams = new SelectList(teams, "TeamID", "TeamName", teamId);
             ViewBag.Users = new SelectList(users, "Id", "Email", userId);

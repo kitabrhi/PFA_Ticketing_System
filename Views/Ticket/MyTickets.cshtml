@@ -30,75 +30,198 @@
     ViewData["Title"] = "My Tickets";
 }
 
-<div class="container mt-4">
+<div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>My Tickets</h1>
         <div>
-            <a asp-action="Create" class="btn btn-primary">
-                <i class="fas fa-plus"></i> New Ticket
-            </a>
+            <h1 class="quantum-page-title">
+                <i class="fas fa-clipboard-list text-primary me-2"></i>Mes Tickets
+            </h1>
+            <p class="text-muted">Suivez et gérez vos tickets de support</p>
+        </div>
+        <a href="/Ticket/Create" class="quantum-btn quantum-btn-primary">
+            <i class="fas fa-plus me-2"></i>Nouveau Ticket
+        </a>
+    </div>
+
+    <!-- Cards statistiques -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="quantum-widget">
+                <div class="quantum-widget-title">Nombre total</div>
+                <div class="quantum-widget-number">@Model.Count()</div>
+                <div class="quantum-widget-label">Tickets</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="quantum-widget">
+                <div class="quantum-widget-title">Tickets en cours</div>
+                <div class="quantum-widget-number">@Model.Count(t => t.Status == TicketStatus.InProgress)</div>
+                <div class="quantum-widget-label">En traitement</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="quantum-widget">
+                <div class="quantum-widget-title">Non résolus</div>
+                <div class="quantum-widget-number">
+                    @Model.Count(t => t.Status == TicketStatus.New || t.Status == TicketStatus.Open || t.Status == TicketStatus.InProgress)
+                </div>
+                <div class="quantum-widget-label">En attente</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="quantum-widget">
+                <div class="quantum-widget-title">Résolus</div>
+                <div class="quantum-widget-number">@Model.Count(t => t.Status == TicketStatus.Resolved || t.Status == TicketStatus.Closed)</div>
+                <div class="quantum-widget-label">Terminés</div>
+            </div>
         </div>
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
+    <!-- Filtres et recherche -->
+    <div class="quantum-card quantum-shadow mb-4 p-3">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="quantum-search-box">
+                    <input type="text" id="searchMyTickets" class="quantum-search-input" placeholder="Rechercher un ticket...">
+                    <i class="fas fa-search quantum-search-icon"></i>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="quantum-filter-chips">
+                    <div class="dropdown d-inline-block me-2">
+                        <button class="quantum-filter-chip dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-filter me-1"></i>Statut
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><button class="dropdown-item filter-status" data-status="all">Tous</button></li>
+                            <li><button class="dropdown-item filter-status" data-status="New">Nouveau</button></li>
+                            <li><button class="dropdown-item filter-status" data-status="Open">Ouvert</button></li>
+                            <li><button class="dropdown-item filter-status" data-status="InProgress">En cours</button></li>
+                            <li><button class="dropdown-item filter-status" data-status="Resolved">Résolu</button></li>
+                            <li><button class="dropdown-item filter-status" data-status="Closed">Fermé</button></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown d-inline-block me-2">
+                        <button class="quantum-filter-chip dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-exclamation-triangle me-1"></i>Priorité
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><button class="dropdown-item filter-priority" data-priority="all">Toutes</button></li>
+                            <li><button class="dropdown-item filter-priority" data-priority="Low">Basse</button></li>
+                            <li><button class="dropdown-item filter-priority" data-priority="Medium">Moyenne</button></li>
+                            <li><button class="dropdown-item filter-priority" data-priority="High">Haute</button></li>
+                            <li><button class="dropdown-item filter-priority" data-priority="Critical">Critique</button></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown d-inline-block me-2">
+                        <button class="quantum-filter-chip dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-calendar me-1"></i>Date
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><button class="dropdown-item filter-date" data-date="all">Toutes</button></li>
+                            <li><button class="dropdown-item filter-date" data-date="today">Aujourd'hui</button></li>
+                            <li><button class="dropdown-item filter-date" data-date="week">Cette semaine</button></li>
+                            <li><button class="dropdown-item filter-date" data-date="month">Ce mois-ci</button></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tableau des tickets -->
+    <div class="quantum-card quantum-shadow">
+        <div class="card-body p-0">
             @if (Model.Any())
             {
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table quantum-ticket-table mb-0">
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Title</th>
-                                <th>Status</th>
-                                <th>Priority</th>
-                                <th>Category</th>
-                                <th>Created Date</th>
-                                <th>Updated Date</th>
+                                <th>Titre</th>
+                                <th>Statut</th>
+                                <th>Priorité</th>
+                                <th>Catégorie</th>
+                                <th>Date de création</th>
+                                <th>Dernière mise à jour</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var ticket in Model)
                             {
-                                <tr>
-                                    <td>@ticket.TicketID</td>
-                                    <td>@ticket.Title</td>
+                                <tr data-status="@ticket.Status" data-priority="@ticket.Priority" data-date="@ticket.CreatedDate.ToString("yyyy-MM-dd")">
+                                    <td><span class="quantum-ticket-id">#@ticket.TicketID</span></td>
                                     <td>
-                                        @{
-                                            string statusClass = ticket.Status switch
-                                            {
-                                                TicketStatus.Open => "bg-primary",
-                                                TicketStatus.InProgress => "bg-warning",
-                                                TicketStatus.Resolved => "bg-success",
-                                                TicketStatus.Closed => "bg-secondary",
-                                                _ => "bg-info"
-                                            };
-                                        }
-                                        <span class="badge @statusClass">@ticket.Status</span>
+                                        <a href="/Ticket/Details/@ticket.TicketID" class="fw-semibold text-truncate d-block" style="max-width: 250px;">
+                                            @ticket.Title
+                                        </a>
                                     </td>
                                     <td>
                                         @{
-                                            string priorityClass = ticket.Priority switch
+                                            string statusClass = "";
+                                            switch (ticket.Status)
                                             {
-                                                TicketPriority.Low => "bg-success",
-                                                TicketPriority.Medium => "bg-info",
-                                                TicketPriority.High => "bg-warning",
-                                                TicketPriority.Critical => "bg-danger",
-                                                _ => "bg-secondary"
-                                            };
+                                                case TicketStatus.New:
+                                                case TicketStatus.Open:
+                                                    statusClass = "quantum-status-new";
+                                                    break;
+                                                case TicketStatus.InProgress:
+                                                    statusClass = "quantum-status-in-progress";
+                                                    break;
+                                                case TicketStatus.Resolved:
+                                                    statusClass = "quantum-status-resolved";
+                                                    break;
+                                                case TicketStatus.Closed:
+                                                    statusClass = "quantum-status-closed";
+                                                    break;
+                                                default:
+                                                    statusClass = "quantum-status-new";
+                                                    break;
+                                            }
                                         }
-                                        <span class="badge @priorityClass">@ticket.Priority</span>
+                                        <span class="quantum-status @statusClass">
+                                            <i class="quantum-status-icon fas fa-circle"></i>
+                                            @ticket.Status
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @{
+                                            string priorityClass = "";
+                                            switch (ticket.Priority)
+                                            {
+                                                case TicketPriority.Low:
+                                                    priorityClass = "quantum-priority-low";
+                                                    break;
+                                                case TicketPriority.Medium:
+                                                    priorityClass = "quantum-priority-medium";
+                                                    break;
+                                                case TicketPriority.High:
+                                                    priorityClass = "quantum-priority-high";
+                                                    break;
+                                                case TicketPriority.Critical:
+                                                    priorityClass = "quantum-priority-critical";
+                                                    break;
+                                                default:
+                                                    priorityClass = "quantum-priority-low";
+                                                    break;
+                                            }
+                                        }
+                                        <span class="quantum-priority @priorityClass">
+                                            <i class="quantum-priority-icon fas fa-exclamation-circle"></i>
+                                            @ticket.Priority
+                                        </span>
                                     </td>
                                     <td>@ticket.Category</td>
-                                    <td>@ticket.CreatedDate.ToString("dd MMM yyyy")</td>
-                                    <td>@ticket.UpdatedDate.ToString("dd MMM yyyy")</td>
+                                    <td><span title="@ticket.CreatedDate.ToString("dd MMM yyyy HH:mm")">@ticket.CreatedDate.ToString("dd MMM yyyy")</span></td>
+                                    <td><span title="@ticket.UpdatedDate.ToString("dd MMM yyyy HH:mm")">@ticket.UpdatedDate.ToString("dd MMM yyyy")</span></td>
                                     <td>
-                                        <div class="btn-group" role="group">
-                                            <a asp-action="Details" asp-route-id="@ticket.TicketID" class="btn btn-sm btn-info">
+                                        <div class="btn-group">
+                                            <a href="/Ticket/Details/@ticket.TicketID" class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a asp-action="Edit" asp-route-id="@ticket.TicketID" class="btn btn-sm btn-warning">
+                                            <a href="/Ticket/Edit/@ticket.TicketID" class="btn btn-sm btn-outline-warning">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                         </div>
@@ -112,13 +235,106 @@
             else
             {
                 <div class="text-center py-5">
-                    <i class="fas fa-ticket-alt fa-4x text-muted mb-3"></i>
-                    <h4>No tickets found</h4>
-                    <p class="text-muted">You haven't created any tickets yet.</p>
-                    <a asp-action="Create" class="btn btn-primary mt-2">Create Your First Ticket</a>
+                    <i class="fas fa-clipboard-check fa-4x text-muted mb-3"></i>
+                    <h4>Aucun ticket trouvé</h4>
+                    <p class="text-muted">Vous n'avez pas encore créé de ticket.</p>
+                    <a href="/Ticket/Create" class="quantum-btn quantum-btn-primary mt-3">Créer un ticket</a>
                 </div>
             }
         </div>
     </div>
+
+    <!-- Pagination (affichée seulement s'il y a des tickets) -->
+    @if (Model.Count() > 10)
+    {
+        <div class="quantum-pagination mt-4">
+            <a href="#" class="quantum-pagination-item disabled">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            <a href="#" class="quantum-pagination-item active">1</a>
+            <a href="#" class="quantum-pagination-item">2</a>
+            <a href="#" class="quantum-pagination-item">3</a>
+            <a href="#" class="quantum-pagination-item">
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
+    }
 </div>
-```
+
+<!-- Scripts pour le filtrage client-side -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Fonction de recherche
+        document.getElementById('searchMyTickets').addEventListener('keyup', function (e) {
+            const searchText = e.target.value.toLowerCase();
+            filterTickets();
+        });
+
+        // Filtrage par statut
+        document.querySelectorAll('.filter-status').forEach(item => {
+            item.addEventListener('click', function (e) {
+                document.querySelectorAll('.filter-status').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                filterTickets();
+            });
+        });
+
+        // Filtrage par priorité
+        document.querySelectorAll('.filter-priority').forEach(item => {
+            item.addEventListener('click', function (e) {
+                document.querySelectorAll('.filter-priority').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                filterTickets();
+            });
+        });
+
+        // Filtrage par date
+        document.querySelectorAll('.filter-date').forEach(item => {
+            item.addEventListener('click', function (e) {
+                document.querySelectorAll('.filter-date').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                filterTickets();
+            });
+        });
+
+        // Fonction combinée de filtrage
+        function filterTickets() {
+            const searchText = document.getElementById('searchMyTickets').value.toLowerCase();
+            const selectedStatus = document.querySelector('.filter-status.active')?.dataset.status || 'all';
+            const selectedPriority = document.querySelector('.filter-priority.active')?.dataset.priority || 'all';
+            const selectedDate = document.querySelector('.filter-date.active')?.dataset.date || 'all';
+
+            const today = new Date();
+            const weekAgo = new Date();
+            weekAgo.setDate(today.getDate() - 7);
+            const monthAgo = new Date();
+            monthAgo.setDate(today.getDate() - 30);
+
+            document.querySelectorAll('.quantum-ticket-table tbody tr').forEach(row => {
+                const title = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                const status = row.dataset.status;
+                const priority = row.dataset.priority;
+                const date = new Date(row.dataset.date);
+
+                let showBySearch = title.includes(searchText);
+                let showByStatus = selectedStatus === 'all' || status === selectedStatus;
+                let showByPriority = selectedPriority === 'all' || priority === selectedPriority;
+
+                let showByDate = true;
+                if (selectedDate === 'today') {
+                    showByDate = date.toDateString() === today.toDateString();
+                } else if (selectedDate === 'week') {
+                    showByDate = date >= weekAgo;
+                } else if (selectedDate === 'month') {
+                    showByDate = date >= monthAgo;
+                }
+
+                if (showBySearch && showByStatus && showByPriority && showByDate) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>

@@ -13,215 +13,213 @@
     ViewData["Title"] = "Modifier le ticket";
     Layout = "_Layout";
 }
+<div class="container-fluid py-4">
+    <div class="quantum-card quantum-shadow mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2 class="mb-0"><i class="fas fa-edit text-warning me-2"></i>Modifier le ticket #@Model.TicketID</h2>
+            <span class="quantum-badge quantum-badge-primary">Créé le @Model.CreatedDate.ToString("dd MMM yyyy")</span>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="TicketID" />
+                <input type="hidden" asp-for="CreatedByUserId" />
+                <input type="hidden" asp-for="CreatedDate" />
+                <input type="hidden" asp-for="Source" />
 
-<style>
-    /* Palette de couleurs QuantumDesk */
-    :root {
-        --primary-color: #1a3a5f; /* Bleu profond */
-        --secondary-color: #00a78e; /* Turquoise */
-        --tertiary-color: #7b68ee; /* Violet clair */
-        --accent-color: #ff6b6b; /* Rouge corail */
-        --light-bg: #f5f7fa; /* Gris très clair */
-        --light-accent: #e9f7f5; /* Turquoise très clair */
-        --dark-text: #2c3e50; /* Bleu très foncé */
-        --light-text: #ffffff; /* Blanc */
-        --muted-text: #8da1b5; /* Bleu gris */
-    }
-
-    .ticket-edit-container {
-        background-color: var(--light-text);
-        border-radius: 0.75rem;
-        box-shadow: 0 15px 35px rgba(26, 58, 95, 0.08);
-        padding: 2.5rem;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .ticket-edit-container::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 6px;
-        height: 100%;
-        background: linear-gradient(to bottom, var(--tertiary-color), var(--secondary-color));
-        border-radius: 4px 0 0 4px;
-    }
-
-    .edit-title {
-        color: var(--primary-color);
-        font-weight: 700;
-        margin-bottom: 2rem;
-        position: relative;
-        display: inline-block;
-    }
-
-    .edit-title::after {
-        content: '';
-        position: absolute;
-        bottom: -10px;
-        left: 0;
-        width: 50px;
-        height: 3px;
-        background: linear-gradient(to right, var(--secondary-color), var(--tertiary-color));
-        border-radius: 3px;
-    }
-
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    .btn-submit {
-        background: linear-gradient(135deg, var(--tertiary-color), var(--secondary-color));
-        border: none;
-        padding: 0.75rem 2rem;
-        font-weight: 500;
-        border-radius: 50rem;
-        box-shadow: 0 5px 15px rgba(123, 104, 238, 0.3);
-        transition: all 0.3s ease;
-        color: var(--light-text);
-    }
-
-    .btn-submit:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    }
-
-    .btn-cancel {
-        background-color: var(--light-bg);
-        color: var(--dark-text);
-        border: none;
-        padding: 0.75rem 2rem;
-        font-weight: 500;
-        border-radius: 50rem;
-        transition: all 0.3s ease;
-    }
-
-    .btn-cancel:hover {
-        background-color: #e9ecef;
-    }
-</style>
-
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="ticket-edit-container mt-4 mb-4">
-                <h2 class="edit-title">Modifier le ticket #@Model.TicketID</h2>
-
-                <form asp-action="Edit" method="post">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <input type="hidden" asp-for="TicketID" />
-                    <input type="hidden" asp-for="CreatedByUserId" />
-                    <input type="hidden" asp-for="CreatedDate" />
-                    <input type="hidden" asp-for="Source" />
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Title" class="control-label">Titre</label>
-                                <input asp-for="Title" class="form-control" required />
+                <div class="row">
+                    <div class="col-md-8">
+                        <!-- Informations principales du ticket -->
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <label asp-for="Title" class="form-label fw-bold">Titre</label>
+                                <input asp-for="Title" class="form-control form-control-lg" required />
                                 <span asp-validation-for="Title" class="text-danger"></span>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Category" class="control-label">Catégorie</label>
-                                <select asp-for="Category" class="form-select" asp-items="Html.GetEnumSelectList<TicketCategory>()">
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Category" class="form-label fw-bold">Catégorie</label>
+                                <select asp-for="Category" class="form-select" asp-items="ViewBag.Categories" required>
                                 </select>
                                 <span asp-validation-for="Category" class="text-danger"></span>
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Priority" class="control-label">Priorité</label>
-                                <select asp-for="Priority" class="form-select" asp-items="Html.GetEnumSelectList<TicketPriority>()">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Priority" class="form-label fw-bold">Priorité</label>
+                                <select asp-for="Priority" class="form-select" asp-items="ViewBag.Priorities" required>
                                 </select>
                                 <span asp-validation-for="Priority" class="text-danger"></span>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Status" class="control-label">Statut</label>
-                                <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<TicketStatus>()">
+                            
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Status" class="form-label fw-bold">Statut</label>
+                                <select asp-for="Status" class="form-select" asp-items="ViewBag.Statuses" required>
                                 </select>
                                 <span asp-validation-for="Status" class="text-danger"></span>
                             </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DueDate" class="form-label fw-bold">Date d'échéance</label>
+                                <input asp-for="DueDate" type="date" class="form-control" />
+                                <span asp-validation-for="DueDate" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label fw-bold">Description détaillée</label>
+                            <textarea asp-for="Description" class="form-control" rows="8" required></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label asp-for="Description" class="control-label">Description</label>
-                        <textarea asp-for="Description" class="form-control" rows="6" required></textarea>
-                        <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
+                    <div class="col-md-4">
+                        <!-- Panneau latéral pour les assignations -->
+                        <div class="quantum-card quantum-shadow">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0"><i class="fas fa-user-cog me-2"></i>Assignation</h5>
+                            </div>
+                            <div class="card-body">
+                                @if (User.IsInRole("Admin") || User.IsInRole("SupportAgent"))
+                                {
+                                    <div class="mb-3">
+                                        <label asp-for="AssignedToUserId" class="form-label">Assigné à (Agent)</label>
+                                        <select asp-for="AssignedToUserId" class="form-select">
+                                            <option value="">Non assigné</option>
+                                            @if (ViewBag.Agents != null)
+                                            {
+                                                @foreach (var agent in ViewBag.Agents)
+                                                {
+                                                    <option value="@agent.Id" selected="@(Model.AssignedToUserId == agent.Id)">
+                                                        @agent.FirstName @agent.LastName
+                                                    </option>
+                                                }
+                                            }
+                                        </select>
+                                        <span asp-validation-for="AssignedToUserId" class="text-danger"></span>
+                                    </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="AssignedToUserId" class="control-label">Assigné à (Agent)</label>
-                                <select asp-for="AssignedToUserId" class="form-select">
-                                    <option value="">Non assigné</option>
-                                    @* Vous devriez ajouter ici une boucle pour les agents disponibles *@
-                                    @* @foreach (var agent in ViewBag.Agents) { 
-                                        <option value="@agent.Id" selected="@(Model.AssignedToUserId == agent.Id)">@agent.FirstName @agent.LastName</option>
-                                    } *@
-                                </select>
-                                <span asp-validation-for="AssignedToUserId" class="text-danger"></span>
+                                    <div class="mb-3">
+                                        <label asp-for="AssignedToTeamID" class="form-label">Assigné à (Équipe)</label>
+                                        <select asp-for="AssignedToTeamID" class="form-select">
+                                            <option value="">Non assigné</option>
+                                            @if (ViewBag.Teams != null)
+                                            {
+                                                @foreach (var team in ViewBag.Teams)
+                                                {
+                                                    <option value="@team.TeamID" selected="@(Model.AssignedToTeamID == team.TeamID)">
+                                                        @team.TeamName
+                                                    </option>
+                                                }
+                                            }
+                                        </select>
+                                        <span asp-validation-for="AssignedToTeamID" class="text-danger"></span>
+                                        <small class="form-text text-muted">Choisir soit un agent, soit une équipe.</small>
+                                    </div>
+                                    
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" asp-for="IsEscalated" />
+                                        <label class="form-check-label" asp-for="IsEscalated">
+                                            <i class="fas fa-arrow-up me-1 text-danger"></i> Ticket escaladé
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="d-grid mt-4">
+                                        <button id="reassignButton" type="button" class="quantum-btn quantum-btn-outline w-100">
+                                            <i class="fas fa-random me-1"></i> Appliquer règles d'assignation
+                                        </button>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <input type="hidden" asp-for="AssignedToUserId" />
+                                    <input type="hidden" asp-for="AssignedToTeamID" />
+                                    <input type="hidden" asp-for="IsEscalated" />
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Assigné à</label>
+                                        <div>
+                                            @if (Model.AssignedToUser != null)
+                                            {
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-user me-2 text-primary"></i>
+                                                    <span>@Model.AssignedToUser.FirstName @Model.AssignedToUser.LastName</span>
+                                                </div>
+                                            }
+                                            else if (Model.AssignedToTeam != null)
+                                            {
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-users me-2 text-primary"></i>
+                                                    <span>@Model.AssignedToTeam.TeamName</span>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Non assigné</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Seuls les administrateurs et les agents de support peuvent modifier l'assignation d'un ticket.
+                                    </div>
+                                }
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="AssignedToTeamID" class="control-label">Assigné à (Équipe)</label>
-                                <select asp-for="AssignedToTeamID" class="form-select">
-                                    <option value="">Non assigné</option>
-                                    @* Vous devriez ajouter ici une boucle pour les équipes disponibles *@
-                                    @* @foreach (var team in ViewBag.Teams) { 
-                                        <option value="@team.TeamID" selected="@(Model.AssignedToTeamID == team.TeamID)">@team.TeamName</option>
-                                    } *@
-                                </select>
-                                <span asp-validation-for="AssignedToTeamID" class="text-danger"></span>
-                            </div>
-                        </div>
-                        @if (User.IsInRole("Admin") || User.IsInRole("SupportAgent"))
-                        {
-                            <div class="form-group">
-                                <div class="form-check">
-                                    <input class="form-check-input" asp-for="IsEscalated" />
-                                    <label class="form-check-label" asp-for="IsEscalated">
-                                        Is Escalated
-                                    </label>
-                                </div>
-                            </div>
-                        }
-                        else
-                        {
-                            <input type="hidden" asp-for="IsEscalated" />
-                        }
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label asp-for="DueDate" class="control-label">Date d'échéance</label>
-                        <input asp-for="DueDate" type="date" class="form-control" />
-                        <span asp-validation-for="DueDate" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group d-flex justify-content-between mt-4">
-                        <a asp-action="Details" asp-route-id="@Model.TicketID" class="btn btn-cancel">Annuler</a>
-                        <button type="submit" class="btn btn-submit">
-                            <i class="fas fa-save me-2"></i>Enregistrer les modifications
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <div class="d-flex justify-content-end mt-4">
+                    <a asp-action="Details" asp-route-id="@Model.TicketID" class="quantum-btn quantum-btn-outline me-2">
+                        <i class="fas fa-times me-1"></i>Annuler
+                    </a>
+                    <button type="submit" class="quantum-btn quantum-btn-primary">
+                        <i class="fas fa-save me-1"></i>Enregistrer les modifications
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-    <!-- Ajout de Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Empêcher l'assignation simultanée à un utilisateur et une équipe
+        const assignToUser = document.getElementById('AssignedToUserId');
+        const assignToTeam = document.getElementById('AssignedToTeamID');
+        
+        if (assignToUser && assignToTeam) {
+            assignToUser.addEventListener('change', function() {
+                if (this.value) {
+                    assignToTeam.value = '';
+                }
+            });
+            
+            assignToTeam.addEventListener('change', function() {
+                if (this.value) {
+                    assignToUser.value = '';
+                }
+            });
+        }
+        
+        // Bouton pour appliquer les règles d'assignation
+        const reassignButton = document.getElementById('reassignButton');
+        if (reassignButton) {
+            reassignButton.addEventListener('click', function() {
+                if (confirm('Voulez-vous appliquer les règles d\'assignation automatiques à ce ticket? Cela remplacera toute assignation manuelle.')) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '/Ticket/ApplyAssignmentRule/' + @Model.TicketID;
+                    
+                    const tokenInput = document.createElement('input');
+                    tokenInput.type = 'hidden';
+                    tokenInput.name = '__RequestVerificationToken';
+                    tokenInput.value = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                    
+                    form.appendChild(tokenInput);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+    });
+</script>
