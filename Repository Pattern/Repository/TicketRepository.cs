@@ -19,10 +19,16 @@ public class TicketRepository : Repository<Ticket>, ITicketRepository
 
     public async Task<IEnumerable<Ticket>> GetTicketsByAssignedUserIdAsync(string userId)
     {
+        if (string.IsNullOrEmpty(userId))
+        {
+            return new List<Ticket>();
+        }
+
         return await _dbSet
             .Where(t => t.AssignedToUserId == userId)
             .Include(t => t.CreatedByUser)
             .Include(t => t.AssignedToUser)
+            .Include(t => t.AssignedToTeam)
             .ToListAsync();
     }
 

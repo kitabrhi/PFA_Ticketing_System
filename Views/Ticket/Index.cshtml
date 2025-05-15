@@ -107,6 +107,16 @@
                                                     <i class="fas fa-trash"></i>
                                                 </a>
                                             }
+
+                                            @if (User.IsInRole("Admin") && string.IsNullOrEmpty(ticket.AssignedToUserId))
+                                            {
+                                                <form asp-action="ForceAssignTicket" method="post" style="display: inline;">
+                                                    <input type="hidden" name="ticketId" value="@ticket.TicketID" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-user-plus"></i>
+                                                    </button>
+                                                </form>
+                                            }
                                         </div>
                                     </td>
                                 </tr>

@@ -1,4 +1,5 @@
-﻿using Ticketing_System.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Ticketing_System.Models;
 using Ticketing_System.Repository.Interfaces;
 using Ticketing_System.Repository_Pattern.Interfaces;
 using Ticketing_System.Service_Layer.Interfaces;
@@ -47,7 +48,7 @@ public class TicketService : ITicketService
         // Valeurs par défaut
         ticket.CreatedDate = DateTime.Now;
         ticket.UpdatedDate = DateTime.Now;
-        ticket.Status = TicketStatus.Open;
+        ticket.Status = TicketStatus.New; // Changed to New instead of Open
         if (string.IsNullOrEmpty(ticket.Source)) ticket.Source = "Web";
 
         // Créer le ticket
@@ -62,7 +63,6 @@ public class TicketService : ITicketService
             // Utiliser un ID utilisateur système si l'utilisateur n'existe pas
             changedByUserId = "system"; // Assurez-vous que cet ID existe dans AspNetUsers
         }
-        await _assignmentRuleService.ApplyRuleToTicketAsync(createdTicket.TicketID);
 
         // Ajouter une entrée d'historique pour la création
         var history = new TicketHistory
@@ -77,9 +77,11 @@ public class TicketService : ITicketService
 
         await _historyService.AddHistoryEntryAsync(history);
 
+        // Apply assignment rules automatically
+        await _assignmentRuleService.ApplyRuleToTicketAsync(createdTicket.TicketID);
+
         return createdTicket;
     }
-
     public async Task UpdateTicketAsync(Ticket ticket)
     {
         if (ticket == null) throw new ArgumentNullException(nameof(ticket));
@@ -152,6 +154,18 @@ public class TicketService : ITicketService
 
     public async Task<IEnumerable<Ticket>> GetTicketsByAssignedUserIdAsync(string userId)
     {
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new ArgumentNullException(nameof(userId), "L'ID utilisateur ne peut pas être null ou vide.");
+        }
+
+        // Vérifier si l'utilisateur existe
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null)
+        {
+            throw new KeyNotFoundException($"Utilisateur avec ID {userId} non trouvé");
+        }
+
         return await _ticketRepository.GetTicketsByAssignedUserIdAsync(userId);
     }
 

@@ -131,6 +131,12 @@
         <a asp-controller="Profile" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Profile" ? "active" : "")">
             <i class="fas fa-user"></i> My Profile
         </a>
+        <a asp-controller="Ticket" asp-action="UnassignedTickets" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "UnassignedTickets" ? "active" : "")">
+            <i class="fas fa-exclamation-triangle"></i> Tickets non assignés
+        </a>
+        <a asp-controller="Diagnostic" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Diagnostic" ? "active" : "")">
+            <i class="fas fa-stethoscope"></i> Diagnostics
+        </a>
 
     <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/">
         <button type="submit" class="btn btn-outline-danger w-100 text-start">

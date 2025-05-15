@@ -1,59 +1,66 @@
 @model Ticketing_System.Models.SupportTeam
+
 @{
-    ViewData["Title"] = "Créer une Équipe";
     Layout = User.IsInRole("Admin") ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Créer une équipe";
 }
 
-<div class="container py-5">
+<div class="container mt-4">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-action="Index">Équipes</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Créer une équipe</li>
+            <li class="breadcrumb-item active">Nouvelle équipe</li>
         </ol>
     </nav>
 
-    <div class="card shadow-sm rounded-4">
-        <div class="card-header bg-primary text-white py-3">
-            <h4 class="mb-0"><i class="fas fa-users-cog me-2"></i>Créer une Nouvelle Équipe</h4>
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h4 class="mb-0">Créer une nouvelle équipe</h4>
         </div>
-        <div class="card-body p-4">
+        <div class="card-body">
             <form asp-action="Create" method="post">
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 <div class="mb-3">
-                    <label asp-for="TeamName" class="form-label">Nom de l'équipe <span class="text-danger">*</span></label>
-                    <input asp-for="TeamName" class="form-control" placeholder="Ex: Support Technique" required />
+                    <label asp-for="TeamName" class="form-label">Nom de l'équipe</label>
+                    <input asp-for="TeamName" class="form-control" required />
                     <span asp-validation-for="TeamName" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
                     <label asp-for="Description" class="form-label">Description</label>
-                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Décrivez le rôle et les responsabilités de cette équipe"></textarea>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
 
-                <div class="mb-4">
-                    <label asp-for="ManagerId" class="form-label">Manager <span class="text-danger">*</span></label>
-                    <select asp-for="ManagerId" class="form-select" asp-items="ViewBag.Managers" required>
+                <div class="mb-3">
+                    <label asp-for="ManagerId" class="form-label">Manager</label>
+                    <select asp-for="ManagerId" class="form-select" asp-items="ViewBag.Users">
                         <option value="">-- Sélectionner un manager --</option>
                     </select>
                     <span asp-validation-for="ManagerId" class="text-danger"></span>
-                    <small class="form-text text-muted">Le manager doit avoir le rôle Admin ou SupportAgent</small>
+                    <small class="form-text text-muted">Le manager doit être un administrateur ou un agent de support.</small>
                 </div>
 
-                <div class="mb-4">
-                    <label class="form-label">Membres de l'équipe</label>
-                    <select name="MemberIds" class="form-select" multiple asp-items="ViewBag.AllUsers" size="5">
+                <div class="mb-3">
+                    <label class="form-label">Membres de l'équipe (Support Agents uniquement)</label>
+                    <select name="TeamMembersIds" class="form-select" multiple asp-items="ViewBag.TeamMembers">
                     </select>
-                    <small class="form-text text-muted">Sélectionnez les agents de support à ajouter à cette équipe (maintenez Ctrl pour sélectionner plusieurs)</small>
+                    <span class="text-danger">@Html.ValidationMessage("TeamMembers")</span>
+                    <small class="form-text text-muted">Seuls les utilisateurs avec le rôle SupportAgent peuvent être ajoutés à l'équipe.</small>
                 </div>
 
-                <div class="d-flex justify-content-between">
-                    <a asp-action="Index" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>Annuler
-                    </a>
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-save me-2"></i>Créer l'équipe
+                <div class="mb-3">
+                    <label class="form-label">Tickets assignés à l'équipe</label>
+                    <select name="AssignedTicketsIds" class="form-select" multiple asp-items="ViewBag.AssignedTickets">
+                    </select>
+                    <span class="text-danger">@Html.ValidationMessage("AssignedTickets")</span>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a asp-action="Index" class="btn btn-secondary me-2">Annuler</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Créer l'équipe
                     </button>
                 </div>
             </form>

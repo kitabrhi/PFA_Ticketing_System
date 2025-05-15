@@ -370,7 +370,27 @@
                         <span class="badge bg-success">Normal</span>
                     }
                 </dd>
-
+                <td>
+    <div class="btn-group" role="group">
+        <a asp-action="Details" asp-route-id="@Model.TicketID" class="btn btn-sm btn-info">
+            <i class="fas fa-eye"></i>
+        </a>
+        <a asp-action="Edit" asp-route-id="@Model.TicketID" class="btn btn-sm btn-warning">
+            <i class="fas fa-edit"></i>
+        </a>
+        
+        <!-- Bouton d'assignation forcée -->
+        @if (User.IsInRole("Admin") && string.IsNullOrEmpty(@Model.AssignedToUserId))
+        {
+            <form asp-action="ForceAssignTicket" method="post" style="display: inline;">
+                <input type="hidden" name="ticketId" value="@Model.TicketID" />
+                <button type="submit" class="btn btn-sm btn-primary">
+                    <i class="fas fa-user-plus"></i>
+                </button>
+            </form>
+        }
+    </div>
+</td>
                 <!-- Add this for admin users -->
                 @if (User.IsInRole("Admin") || User.IsInRole("SupportAgent"))
                 {

@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Data.Entity;
 using Ticketing_System.Models;
 using Ticketing_System.Service_Layer.Interfaces;
+using Ticketing_System.Service_Layer.Service;
 
 namespace Ticketing_System.Controllers
 {
@@ -13,15 +15,85 @@ namespace Ticketing_System.Controllers
         private readonly IUserService _userService;
         private readonly RoleManager<Role> _roleManager;
         private readonly UserManager<User> _userManager;
+        private readonly ApplicationDbContext _context;
+        private readonly IAssignmentRuleService _assignmentRuleService;
 
         public AdminController(
             IUserService userService,
             RoleManager<Role> roleManager,
-            UserManager<User> userManager)
+            UserManager<User> userManager,
+            ApplicationDbContext context,
+            IAssignmentRuleService assignmentRuleService)
         {
             _userService = userService;
             _roleManager = roleManager;
             _userManager = userManager;
+            _context=context;
+            _assignmentRuleService=assignmentRuleService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TestAssignment()
+        {
+            try
+            {
+                // Get assignment rules
+                var rules = await _assignmentRuleService.GetAllRulesAsync();
+                var ruleInfo = rules.Select(r => new
+                {
+                    RuleID = r.RuleID,
+                    RuleName = r.RuleName,
+                    AssignToUserID = r.AssignToUserID,
+                    AssignToTeamID = r.AssignToTeamID,
+                    IsActive = r.IsActive
+                }).ToList();
+
+                // Get team members
+                var teamMembers = await _context.TeamMembers
+                    .Include(tm => tm.User)
+                    .Include(tm => tm.Team)
+                    .ToListAsync();
+
+                var teamMemberInfo = teamMembers.Select(tm => new
+                {
+                    TeamMemberID = tm.TeamMemberID,
+                    TeamID = tm.TeamID,
+                    TeamName = tm.Team?.TeamName,
+                    UserID = tm.UserId,
+                    UserName = tm.User?.UserName
+                }).ToList();
+
+                // Get support agents
+                var supportAgents = new List<object>();
+                var users = await _userManager.GetUsersInRoleAsync("SupportAgent");
+                foreach (var user in users)
+                {
+                    var ticketCount = await _context.Tickets
+                        .CountAsync(t => t.AssignedToUserId == user.Id);
+
+                    supportAgents.Add(new
+                    {
+                        UserID = user.Id,
+                        UserName = user.UserName,
+                        TicketCount = ticketCount
+                    });
+                }
+
+                return Json(new
+                {
+                    Rules = ruleInfo,
+                    TeamMembers = teamMemberInfo,
+                    SupportAgents = supportAgents
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    Error = ex.Message,
+                    StackTrace = ex.StackTrace
+                });
+            }
         }
 
         // GET: Admin/Users

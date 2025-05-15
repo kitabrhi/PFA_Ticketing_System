@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Ticketing_System.Models;
 using Ticketing_System.Service_Layer;
@@ -20,6 +22,7 @@ namespace Ticketing_System.Controllers
         private readonly ISupportTeamService _teamService;
         private readonly UserManager<User> _userManager;
         private readonly INotificationService _notificationService;
+
 
         public TeamMemberController(
             ITeamMemberService memberService,
@@ -47,13 +50,11 @@ namespace Ticketing_System.Controllers
             return View();
         }
 
-        // POST: TeamMember/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TeamMember member)
         {
-            ModelState.Remove("User");
             ModelState.Remove("Team");
+            ModelState.Remove("User");
 
             if (!ModelState.IsValid)
             {
@@ -61,18 +62,52 @@ namespace Ticketing_System.Controllers
                 return View(member);
             }
 
-            try
+            // Vérifier si l'utilisateur est déjà membre de cette équipe
+            var existingMember = await _memberService.GetMembersByTeamIdAsync(member.TeamID);
+            var userAlreadyInTeam = existingMember.Any(tm => tm.UserId == member.UserId);
+
+            if (userAlreadyInTeam)
             {
-                await _memberService.AddAsync(member);
-                TempData["SuccessMessage"] = "Team member added successfully";
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", $"Error adding team member: {ex.Message}");
+                ModelState.AddModelError("", "Cet utilisateur est déjà membre de cette équipe.");
                 await LoadViewBagDataAsync(member.TeamID, member.UserId);
                 return View(member);
             }
+
+            // Vérifier que l'utilisateur est un SupportAgent
+            var user = await _userManager.FindByIdAsync(member.UserId);
+            if (user == null || !await _userManager.IsInRoleAsync(user, "SupportAgent"))
+            {
+                ModelState.AddModelError("UserId", "Seuls les agents de support peuvent être ajoutés aux équipes.");
+                await LoadViewBagDataAsync(member.TeamID, member.UserId);
+                return View(member);
+            }
+
+            // Ajouter le membre à l'équipe
+            member.JoinDate = DateTime.Now;
+            await _memberService.AddAsync(member);
+
+            // Créer une notification
+            var adminUser = await _userManager.GetUserAsync(User);
+            var team = await _teamService.GetByIdAsync(member.TeamID);
+
+            if (adminUser != null && user != null && team != null)
+            {
+                await _notificationService.CreateNotificationAsync(
+                    adminUser.Id,
+                    " Nouveau membre d'équipe",
+                    $"L'utilisateur {user.FirstName} {user.LastName} a été ajouté à l'équipe \"{team.TeamName}\"."
+                );
+
+                // Notification pour l'utilisateur ajouté
+                await _notificationService.CreateNotificationAsync(
+                    user.Id,
+                    " Ajout à une équipe",
+                    $"Vous avez été ajouté à l'équipe de support \"{team.TeamName}\"."
+                );
+            }
+
+            TempData["SuccessMessage"] = " Membre ajouté avec succès";
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: TeamMember/AddMemberToTeam/5
@@ -210,6 +245,29 @@ namespace Ticketing_System.Controllers
 
             ViewBag.User = user;
             return View(userTeams);
+        }
+
+        // GET: TeamMember/Teams
+        [HttpGet]
+        [Authorize(Roles = "Admin,SupportAgent")]
+        public async Task<IActionResult> Teams()
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
+            // Si l'utilisateur est un administrateur, afficher toutes les équipes
+            if (User.IsInRole("Admin"))
+            {
+                var allTeams = await _teamService.GetAllAsync();
+                return View(allTeams);
+            }
+            
+            // Pour un agent, récupérer uniquement les équipes dont il est membre
+            var teamMembers = await _memberService.GetTeamsByUserIdAsync(userId);
+            
+            // Convertir la liste de TeamMember en liste de SupportTeam
+            var teams = teamMembers.Select(tm => tm.Team).Distinct().ToList();
+            
+            return View(teams);
         }
 
         // Private helper methods

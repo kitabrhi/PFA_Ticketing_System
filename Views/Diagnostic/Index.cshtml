@@ -1,0 +1,237 @@
+@{
+    ViewData["Title"] = "Diagnostics système";
+    Layout = User.IsInRole("Admin") ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
+    
+    // Convertir ViewBag.Rules en liste fortement typée
+    var rules = ViewBag.Rules as IEnumerable<dynamic>;
+    
+    // Convertir ViewBag.AgentInfo en liste fortement typée
+    var agentInfoList = ViewBag.AgentInfo as IEnumerable<dynamic>;
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Diagnostics du système d'assignation</h1>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-3">
+                        <form asp-action="AssignAllUnassignedTickets" method="post">
+                            <button type="submit" class="btn btn-success btn-lg w-100">
+                                <i class="fas fa-users"></i> Assigner tous les tickets non assignés
+                            </button>
+                        </form>
+                        
+                        <button id="runDiagnostics" class="btn btn-info btn-lg w-100">
+                            <i class="fas fa-stethoscope"></i> Exécuter les diagnostics
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Tickets non assignés (@ViewBag.UnassignedTickets.Count)</h5>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.UnassignedTickets.Count > 0)
+                    {
+                        <div class="list-group">
+                            @foreach (var ticket in ViewBag.UnassignedTickets.Take(5))
+                            {
+                                <a href="/Ticket/Details/@ticket.TicketID" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">#@ticket.TicketID - @ticket.Title</h6>
+                                        <small>@ticket.CreatedDate.ToString("dd/MM/yyyy")</small>
+                                    </div>
+                                    <small>Équipe: @(ticket.AssignedToTeamID.HasValue ? ticket.AssignedToTeamID.ToString() : "Aucune")</small>
+                                </a>
+                            }
+                        </div>
+                        
+                        @if (ViewBag.UnassignedTickets.Count > 5)
+                        {
+                            <div class="mt-2 text-center">
+                                <small class="text-muted">@(ViewBag.UnassignedTickets.Count - 5) tickets supplémentaires non affichés</small>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                            <h5>Tous les tickets sont assignés!</h5>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Règles d'assignation (@ViewBag.Rules.Count)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Catégorie</th>
+                                    <th>Priorité</th>
+                                    <th>Assigner à</th>
+                                    <th>Actif</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (rules != null)
+                                {
+                                    // Tri des règles par ordre
+                                    foreach (var rule in rules.OrderBy(r => (int)r.Order))
+                                    {
+                                        <tr>
+                                            <td>@rule.RuleName</td>
+                                            <td>@rule.Category</td>
+                                            <td>@rule.Priority</td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(rule.AssignToUserID))
+                                                {
+                                                    <span class="badge bg-primary">Utilisateur @rule.AssignToUserID</span>
+                                                }
+                                                else if (rule.AssignToTeamID != null)
+                                                {
+                                                    <span class="badge bg-info">Équipe @rule.AssignToTeamID</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Non défini</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (rule.IsActive)
+                                                {
+                                                    <span class="badge bg-success">Actif</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger">Inactif</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Agents de support (@ViewBag.SupportAgents.Count)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Email</th>
+                                    <th>Tickets assignés</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var agent in ViewBag.SupportAgents)
+                                {
+                                    // Recherche des infos de l'agent en utilisant une expression LINQ sur la collection typée
+                                    var agentInfo = agentInfoList?.FirstOrDefault(a => a.UserID == agent.UserID);
+                                    var ticketCount = agentInfo != null ? (int)agentInfo.Count : 0;
+                                    
+                                    <tr>
+                                        <td>@agent.FullName</td>
+                                        <td>@agent.Email</td>
+                                        <td>
+                                            <span class="badge bg-primary">@ticketCount</span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0">Résultats de diagnostic</h5>
+        </div>
+        <div class="card-body" id="diagnosticResults">
+            <div class="text-center py-4">
+                <p class="text-muted">Exécutez les diagnostics pour voir les résultats</p>
+            </div>
+        </div>
+        <form asp-action="FixAllTickets" method="post">
+            <button type="submit" class="btn btn-danger btn-lg w-100 mt-3">
+                <i class="fas fa-wrench"></i> Corriger tous les tickets
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $("#runDiagnostics").click(function() {
+                $.ajax({
+                    url: '@Url.Action("RunDiagnostics")',
+                    type: 'POST',
+                    dataType: 'json',
+                    beforeSend: function() {
+                        $("#diagnosticResults").html('<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-3x mb-3"></i><p>Exécution des diagnostics en cours...</p></div>');
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            var html = '<div class="table-responsive"><table class="table table-bordered">';
+                            html += '<tr><th>Métrique</th><th>Valeur</th></tr>';
+                            html += '<tr><td>Nombre d\'agents de support</td><td>' + response.data.supportAgentsCount + '</td></tr>';
+                            html += '<tr><td>Nombre de règles d\'assignation</td><td>' + response.data.rulesCount + '</td></tr>';
+                            html += '<tr><td>Tickets non assignés</td><td>' + response.data.unassignedTickets + '</td></tr>';
+                            html += '<tr><td>Total des tickets</td><td>' + response.data.totalTickets + '</td></tr>';
+                            html += '<tr><td>Nombre d\'équipes</td><td>' + response.data.teamsCount + '</td></tr>';
+                            html += '<tr><td>Nombre de membres d\'équipe</td><td>' + response.data.teamMembersCount + '</td></tr>';
+                            html += '</table></div>';
+                            
+                            $("#diagnosticResults").html(html);
+                        } else {
+                            $("#diagnosticResults").html('<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Erreur lors de l'exécution des diagnostics: ' + response.error + '</div>');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $("#diagnosticResults").html('<div class="alert alert-danger"><i class="fas fa-exclamation-triangle me-2"></i>Erreur de communication avec le serveur: ' + error + '</div>');
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -259,9 +259,10 @@ namespace Ticketing_System
                     {
                         RuleName = "Default Assignment Rule",
                         Description = "Assigns all tickets to the default support team",
-                        Category = null, // Tous types de catégorie
-                        Priority = null, // Tous niveaux de priorité
+                        Category = null, // All categories
+                        Priority = null, // All priorities
                         AssignToTeamID = defaultTeam.TeamID,
+                        AssignToUserID = null, // Assign to team, not specific user
                         IsActive = true,
                         RuleOrder = 1
                     };

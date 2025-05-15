@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Ticketing_System.Models;
 using Ticketing_System.Repository.Interfaces;
 using Ticketing_System.Service_Layer.Interfaces;
@@ -12,15 +15,21 @@ namespace Ticketing_System.Service_Layer.Service
         private readonly IAssignmentRuleRepository _ruleRepository;
         private readonly ITicketRepository _ticketRepository;
         private readonly ITicketHistoryService _historyService;
+        private readonly UserManager<User> _userManager;
+        private readonly ApplicationDbContext _context;
 
         public AssignmentRuleService(
             IAssignmentRuleRepository ruleRepository,
             ITicketRepository ticketRepository,
-            ITicketHistoryService historyService)
+            ITicketHistoryService historyService,
+            UserManager<User> userManager,
+            ApplicationDbContext context)
         {
             _ruleRepository = ruleRepository;
             _ticketRepository = ticketRepository;
             _historyService = historyService;
+            _userManager = userManager;
+            _context = context;
         }
 
         public async Task<IEnumerable<AssignmentRule>> GetAllRulesAsync()
@@ -86,6 +95,7 @@ namespace Ticketing_System.Service_Layer.Service
         {
             if (ticket == null) throw new ArgumentNullException(nameof(ticket));
 
+            // Rechercher la règle correspondante avec la priorité la plus élevée (ordre le plus bas)
             return await _ruleRepository.GetHighestPriorityMatchingRuleAsync(
                 ticket.Category, ticket.Priority);
         }
@@ -106,19 +116,31 @@ namespace Ticketing_System.Service_Layer.Service
                 int? oldAssignedTeamId = ticket.AssignedToTeamID;
 
                 // Appliquer la règle
-                ticket.AssignedToUserId = matchingRule.AssignToUserID;
-                ticket.AssignedToTeamID = matchingRule.AssignToTeamID;
-                ticket.UpdatedDate = DateTime.Now;
+                if (!string.IsNullOrEmpty(matchingRule.AssignToUserID))
+                {
+                    // Si la règle spécifie un utilisateur, assigner directement
+                    ticket.AssignedToUserId = matchingRule.AssignToUserID;
+                    ticket.AssignedToTeamID = null;
+                }
+                else if (matchingRule.AssignToTeamID.HasValue)
+                {
+                    // Si la règle spécifie une équipe, assigner l'équipe
+                    ticket.AssignedToTeamID = matchingRule.AssignToTeamID;
 
+                    // Rechercher l'agent le moins chargé dans cette équipe
+                    await AssignToLeastBusyAgentInTeam(ticket, matchingRule.AssignToTeamID.Value);
+                }
+
+                ticket.UpdatedDate = DateTime.Now;
                 await _ticketRepository.UpdateAsync(ticket);
 
-                // Enregistrer l'historique
+                // Enregistrer les modifications dans l'historique
                 if (oldAssignedUserId != ticket.AssignedToUserId)
                 {
                     await _historyService.AddHistoryEntryAsync(new TicketHistory
                     {
                         TicketID = ticketId,
-                        ChangedByUserId = "SYSTEM", // Utilisateur système
+                        ChangedByUserId = "SYSTEM",
                         FieldName = "AssignedToUser",
                         OldValue = oldAssignedUserId ?? "Unassigned",
                         NewValue = ticket.AssignedToUserId ?? "Unassigned",
@@ -139,6 +161,62 @@ namespace Ticketing_System.Service_Layer.Service
                     });
                 }
             }
+
+            // Si le ticket n'a toujours pas d'utilisateur assigné, essayer d'assigner à n'importe quel agent
+            if (string.IsNullOrEmpty(ticket.AssignedToUserId))
+            {
+                await AssignTicketToLeastBusyAgentAsync(ticketId);
+            }
+        }
+
+        private async Task AssignToLeastBusyAgentInTeam(Ticket ticket, int teamId)
+        {
+            // Obtenir tous les membres de l'équipe
+            var teamMembers = await _context.TeamMembers
+                .Where(tm => tm.TeamID == teamId)
+                .Select(tm => tm.UserId)
+                .ToListAsync();
+
+            if (teamMembers.Any())
+            {
+                // Filtrer pour ne garder que les agents de support
+                var supportAgents = new List<User>();
+                foreach (var userId in teamMembers)
+                {
+                    var user = await _userManager.FindByIdAsync(userId);
+                    if (user != null && await _userManager.IsInRoleAsync(user, "SupportAgent"))
+                    {
+                        supportAgents.Add(user);
+                    }
+                }
+
+                if (supportAgents.Any())
+                {
+                    // Calculer la charge de travail pour chaque agent
+                    var workloads = new Dictionary<string, int>();
+                    foreach (var agent in supportAgents)
+                    {
+                        var count = await _context.Tickets
+                            .CountAsync(t => t.AssignedToUserId == agent.Id &&
+                                         (t.Status == TicketStatus.New ||
+                                          t.Status == TicketStatus.Open ||
+                                          t.Status == TicketStatus.InProgress));
+                        workloads.Add(agent.Id, count);
+                    }
+
+                    // Trouver l'agent avec la charge la plus faible
+                    if (workloads.Any())
+                    {
+                        var leastBusyAgent = workloads.OrderBy(pair => pair.Value).First();
+                        ticket.AssignedToUserId = leastBusyAgent.Key;
+                    }
+                    else
+                    {
+                        // Aucun agent n'a de tickets, assigner au premier
+                        ticket.AssignedToUserId = supportAgents.First().Id;
+                    }
+                }
+            }
         }
 
         public async Task AutoAssignTicketAsync(Ticket ticket)
@@ -148,8 +226,82 @@ namespace Ticketing_System.Service_Layer.Service
             var matchingRule = await GetMatchingRuleForTicketAsync(ticket);
             if (matchingRule != null)
             {
-                ticket.AssignedToUserId = matchingRule.AssignToUserID;
-                ticket.AssignedToTeamID = matchingRule.AssignToTeamID;
+                if (!string.IsNullOrEmpty(matchingRule.AssignToUserID))
+                {
+                    // Si la règle spécifie un utilisateur, assigner directement
+                    ticket.AssignedToUserId = matchingRule.AssignToUserID;
+                    ticket.AssignedToTeamID = null;
+                }
+                else if (matchingRule.AssignToTeamID.HasValue)
+                {
+                    // Si la règle spécifie une équipe, assigner l'équipe
+                    ticket.AssignedToTeamID = matchingRule.AssignToTeamID;
+
+                    // Rechercher l'agent le moins chargé dans cette équipe
+                    await AssignToLeastBusyAgentInTeam(ticket, matchingRule.AssignToTeamID.Value);
+                }
+            }
+        }
+
+        public async Task AssignTicketToLeastBusyAgentAsync(int ticketId)
+        {
+            var ticket = await _ticketRepository.GetByIdAsync(ticketId);
+            if (ticket == null)
+            {
+                throw new KeyNotFoundException($"Ticket with ID {ticketId} not found");
+            }
+
+            string oldAssignedUserId = ticket.AssignedToUserId;
+
+            // Si le ticket est déjà assigné à un agent, ne rien faire
+            if (!string.IsNullOrEmpty(ticket.AssignedToUserId))
+            {
+                return;
+            }
+
+            // Obtenir tous les agents de support
+            var supportAgents = await _userManager.GetUsersInRoleAsync("SupportAgent");
+
+            // Si aucun agent n'est disponible, chercher des administrateurs
+            if (!supportAgents.Any())
+            {
+                supportAgents = await _userManager.GetUsersInRoleAsync("Admin");
+            }
+
+            if (supportAgents.Any())
+            {
+                // Calculer la charge de travail pour chaque agent
+                var workloads = new Dictionary<string, int>();
+                foreach (var agent in supportAgents)
+                {
+                    var count = await _context.Tickets
+                        .CountAsync(t => t.AssignedToUserId == agent.Id &&
+                                     (t.Status == TicketStatus.New ||
+                                      t.Status == TicketStatus.Open ||
+                                      t.Status == TicketStatus.InProgress));
+                    workloads.Add(agent.Id, count);
+                }
+
+                // Trouver l'agent avec la charge la plus faible
+                if (workloads.Any())
+                {
+                    var leastBusyAgent = workloads.OrderBy(pair => pair.Value).First();
+                    ticket.AssignedToUserId = leastBusyAgent.Key;
+                    ticket.UpdatedDate = DateTime.Now;
+
+                    await _ticketRepository.UpdateAsync(ticket);
+
+                    // Enregistrer l'assignation dans l'historique
+                    await _historyService.AddHistoryEntryAsync(new TicketHistory
+                    {
+                        TicketID = ticketId,
+                        ChangedByUserId = "SYSTEM",
+                        FieldName = "AssignedToUser",
+                        OldValue = oldAssignedUserId ?? "Unassigned",
+                        NewValue = ticket.AssignedToUserId,
+                        ChangedDate = DateTime.Now
+                    });
+                }
             }
         }
     }

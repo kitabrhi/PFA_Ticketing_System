@@ -1,0 +1,110 @@
+﻿@model IEnumerable<Ticketing_System.Models.Ticket>
+@{
+    ViewData["Title"] = "Tickets non assignés";
+    Layout = User.IsInRole("Admin") ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Tickets non assignés</h1>
+        <form asp-action="AssignAllUnassignedTickets" method="post">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-users"></i> Assigner tous les tickets
+            </button>
+        </form>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Titre</th>
+                                <th>Catégorie</th>
+                                <th>Priorité</th>
+                                <th>Statut</th>
+                                <th>Créé par</th>
+                                <th>Date de création</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ticket in Model)
+                            {
+                                <tr>
+                                    <td>@ticket.TicketID</td>
+                                    <td>
+                                        <a asp-action="Details" asp-route-id="@ticket.TicketID">@ticket.Title</a>
+                                    </td>
+                                    <td>@ticket.Category</td>
+                                    <td>
+                                        @{
+                                            string priorityClass = ticket.Priority switch
+                                            {
+                                                TicketPriority.Low => "bg-success",
+                                                TicketPriority.Medium => "bg-info",
+                                                TicketPriority.High => "bg-warning",
+                                                TicketPriority.Critical => "bg-danger",
+                                                _ => "bg-secondary"
+                                            };
+                                        }
+                                        <span class="badge @priorityClass">@ticket.Priority</span>
+                                    </td>
+                                    <td>
+                                        @{
+                                            string statusClass = ticket.Status switch
+                                            {
+                                                TicketStatus.New => "bg-info",
+                                                TicketStatus.Open => "bg-primary",
+                                                TicketStatus.InProgress => "bg-warning",
+                                                TicketStatus.Resolved => "bg-success",
+                                                TicketStatus.Closed => "bg-secondary",
+                                                _ => "bg-secondary"
+                                            };
+                                        }
+                                        <span class="badge @statusClass">@ticket.Status</span>
+                                    </td>
+                                    <td>@ticket.CreatedByUser?.UserName</td>
+                                    <td>@ticket.CreatedDate.ToString("dd MMM yyyy")</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="Details" asp-route-id="@ticket.TicketID" class="btn btn-sm btn-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <form asp-action="ForceAssignTicket" method="post" style="display: inline;">
+                                                <input type="hidden" name="ticketId" value="@ticket.TicketID" />
+                                                <button type="submit" class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-user-plus"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                    <h4>Félicitations! Tous les tickets sont assignés</h4>
+                    <p class="text-muted">Il n'y a aucun ticket non assigné à un agent de support.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

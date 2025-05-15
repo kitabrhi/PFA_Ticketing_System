@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Security.Claims;
+using Ticketing_System.Models;
 using System.Threading.Tasks;
 using Ticketing_System.Service_Layer.Interfaces;
 
@@ -27,10 +28,10 @@ namespace Ticketing_System.Controllers
             var myTickets = await _ticketService.GetTicketsByUserIdAsync(userId);
 
             ViewBag.TotalTickets = myTickets.Count();
-            ViewBag.TicketsResolved = myTickets.Count(t => t.Status == Ticketing_System.Models.TicketStatus.Resolved);
+            ViewBag.TicketsResolved = myTickets.Count(t => t.Status == TicketStatus.Resolved);
             ViewBag.TicketsOpen = myTickets.Count(t =>
-                t.Status == Ticketing_System.Models.TicketStatus.Open ||
-                t.Status == Ticketing_System.Models.TicketStatus.New);
+                t.Status == TicketStatus.Open ||
+                t.Status == TicketStatus.New);
 
             return View(myTickets); // Tu peux créer une vue : Views/User/Dashboard.cshtml
         }
