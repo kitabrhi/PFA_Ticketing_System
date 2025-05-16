@@ -9,7 +9,7 @@ using Ticketing_System.Service_Layer.Interfaces;
 
 namespace Ticketing_System.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SupportAgent" )]
     public class AssignmentRuleController : Controller
     {
         private readonly IAssignmentRuleService _ruleService;

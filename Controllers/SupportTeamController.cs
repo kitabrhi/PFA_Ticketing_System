@@ -13,7 +13,7 @@ using Ticketing_System.Service_Layer.Interfaces;
 
 namespace Ticketing_System.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SupportAgent")]
     public class SupportTeamController : Controller
     {
         private readonly ISupportTeamService _teamService;
@@ -36,14 +36,14 @@ namespace Ticketing_System.Controllers
             _context = context;
         }
 
-        // GET: Liste des équipes
+        // GET: Liste des ï¿½quipes
         public async Task<IActionResult> Index()
         {
             var teams = await _teamService.GetAllAsync();
             return View(teams);
         }
 
-        // GET: Formulaire de création
+        // GET: Formulaire de crï¿½ation
         public async Task<IActionResult> Create()
         {
             await LoadViewBagDataWithSupportAgentsOnly();
@@ -53,7 +53,7 @@ namespace Ticketing_System.Controllers
         // GET: SupportTeam/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            // Au lieu de simplement récupérer l'équipe par son ID, nous allons faire une requête plus complète
+            // Au lieu de simplement rï¿½cupï¿½rer l'ï¿½quipe par son ID, nous allons faire une requï¿½te plus complï¿½te
             var team = await _context.SupportTeams
                 .Include(t => t.Manager)
                 .Include(t => t.TeamMembers)
@@ -67,10 +67,10 @@ namespace Ticketing_System.Controllers
                 return NotFound();
             }
 
-            // Obtenir tous les membres de l'équipe avec leurs détails
+            // Obtenir tous les membres de l'ï¿½quipe avec leurs dï¿½tails
             var members = team.TeamMembers?.Select(tm => tm.User).ToList() ?? new List<User>();
 
-            // Obtenir tous les tickets assignés à l'équipe
+            // Obtenir tous les tickets assignï¿½s ï¿½ l'ï¿½quipe
             var tickets = team.AssignedTickets?.ToList() ?? new List<Ticket>();
 
             ViewBag.Members = members;
@@ -79,7 +79,7 @@ namespace Ticketing_System.Controllers
             return View(team);
         }
 
-        // POST: Création d'une équipe
+        // POST: Crï¿½ation d'une ï¿½quipe
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SupportTeam team)
@@ -90,16 +90,16 @@ namespace Ticketing_System.Controllers
                 .Select(int.Parse)
                 .ToList();
 
-            // Supprimer la validation automatique sur les propriétés de navigation
+            // Supprimer la validation automatique sur les propriï¿½tï¿½s de navigation
             ModelState.Remove("Manager");
             ModelState.Remove("TeamMembers");
             ModelState.Remove("AssignedTickets");
 
-            // Validations personnalisées
+            // Validations personnalisï¿½es
             if (string.IsNullOrEmpty(team.ManagerId))
                 ModelState.AddModelError("ManagerId", "Le manager est obligatoire.");
 
-            // Vérifier que les membres sélectionnés sont des SupportAgents
+            // Vï¿½rifier que les membres sï¿½lectionnï¿½s sont des SupportAgents
             bool allAreSupportAgents = true;
             foreach (var userId in selectedMemberIds)
             {
@@ -113,7 +113,7 @@ namespace Ticketing_System.Controllers
 
             if (!allAreSupportAgents)
             {
-                ModelState.AddModelError("TeamMembers", "Tous les membres doivent avoir le rôle SupportAgent.");
+                ModelState.AddModelError("TeamMembers", "Tous les membres doivent avoir le rï¿½le SupportAgent.");
             }
 
             // Si erreurs de validation
@@ -125,50 +125,50 @@ namespace Ticketing_System.Controllers
 
             try
             {
-                // Création de l'équipe
+                // Crï¿½ation de l'ï¿½quipe
                 var createdTeam = await _teamService.CreateTeamAsync(team, selectedMemberIds);
 
-                // Récupération de l'utilisateur connecté
+                // Rï¿½cupï¿½ration de l'utilisateur connectï¿½
                 var user = await _userManager.GetUserAsync(User);
 
-                // Création d'une notification pour l'utilisateur
+                // Crï¿½ation d'une notification pour l'utilisateur
                 await _notificationService.CreateNotificationAsync(
                     user.Id,
-                    "?? Nouvelle Équipe Créée",
-                    $"L'équipe \"{createdTeam.TeamName}\" a été créée avec succès."
+                    "?? Nouvelle ï¿½quipe Crï¿½ï¿½e",
+                    $"L'ï¿½quipe \"{createdTeam.TeamName}\" a ï¿½tï¿½ crï¿½ï¿½e avec succï¿½s."
                 );
 
-                // Notifications pour les membres ajoutés
+                // Notifications pour les membres ajoutï¿½s
                 foreach (var memberId in selectedMemberIds)
                 {
                     await _notificationService.CreateNotificationAsync(
                         memberId,
-                        "?? Ajout à une équipe",
-                        $"Vous avez été ajouté à l'équipe \"{createdTeam.TeamName}\"."
+                        "?? Ajout ï¿½ une ï¿½quipe",
+                        $"Vous avez ï¿½tï¿½ ajoutï¿½ ï¿½ l'ï¿½quipe \"{createdTeam.TeamName}\"."
                     );
                 }
 
-                TempData["SuccessMessage"] = "? Équipe créée avec succès.";
+                TempData["SuccessMessage"] = "? ï¿½quipe crï¿½ï¿½e avec succï¿½s.";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Une erreur s'est produite lors de la création de l'équipe: " + ex.Message);
+                ModelState.AddModelError("", "Une erreur s'est produite lors de la crï¿½ation de l'ï¿½quipe: " + ex.Message);
                 await LoadViewBagDataWithSupportAgentsOnly(team.ManagerId, selectedMemberIds, selectedTicketIds);
                 return View(team);
             }
         }
 
-        // GET: Modifier une équipe
+        // GET: Modifier une ï¿½quipe
         public async Task<IActionResult> Edit(int id)
         {
             var team = await _teamService.GetByIdAsync(id);
             if (team == null) return NotFound();
 
-            // Récupérer les membres actuels de l'équipe
+            // Rï¿½cupï¿½rer les membres actuels de l'ï¿½quipe
             var currentMemberIds = team.TeamMembers?.Select(tm => tm.UserId).ToList() ?? new List<string>();
 
-            // Récupérer les tickets actuellement assignés
+            // Rï¿½cupï¿½rer les tickets actuellement assignï¿½s
             var currentTicketIds = team.AssignedTickets?.Select(t => t.TicketID).ToList() ?? new List<int>();
 
             await LoadViewBagDataWithSupportAgentsOnly(team.ManagerId, currentMemberIds, currentTicketIds);
@@ -196,7 +196,7 @@ namespace Ticketing_System.Controllers
             if (string.IsNullOrEmpty(team.ManagerId))
                 ModelState.AddModelError("ManagerId", "Le manager est obligatoire.");
 
-            // Vérifier que les membres sélectionnés sont des SupportAgents
+            // Vï¿½rifier que les membres sï¿½lectionnï¿½s sont des SupportAgents
             bool allAreSupportAgents = true;
             foreach (var userId in selectedMemberIds)
             {
@@ -210,7 +210,7 @@ namespace Ticketing_System.Controllers
 
             if (!allAreSupportAgents)
             {
-                ModelState.AddModelError("TeamMembers", "Tous les membres doivent avoir le rôle SupportAgent.");
+                ModelState.AddModelError("TeamMembers", "Tous les membres doivent avoir le rï¿½le SupportAgent.");
             }
 
             if (!ModelState.IsValid)
@@ -221,7 +221,7 @@ namespace Ticketing_System.Controllers
 
             try
             {
-                // Charger l'équipe existante
+                // Charger l'ï¿½quipe existante
                 var existingTeam = await _context.SupportTeams
                     .Include(t => t.TeamMembers)
                     .Include(t => t.AssignedTickets)
@@ -229,7 +229,7 @@ namespace Ticketing_System.Controllers
 
                 if (existingTeam == null) return NotFound();
 
-                // Mettre à jour les infos de base
+                // Mettre ï¿½ jour les infos de base
                 existingTeam.TeamName = team.TeamName;
                 existingTeam.Description = team.Description;
                 existingTeam.ManagerId = team.ManagerId;
@@ -237,7 +237,7 @@ namespace Ticketing_System.Controllers
                 // Obtenir les membres actuels pour identifier les changements
                 var currentMemberIds = existingTeam.TeamMembers.Select(tm => tm.UserId).ToList();
 
-                // Membres supprimés
+                // Membres supprimï¿½s
                 var removedMemberIds = currentMemberIds.Except(selectedMemberIds).ToList();
 
                 // Nouveaux membres
@@ -260,12 +260,12 @@ namespace Ticketing_System.Controllers
                     // Notification pour les nouveaux membres
                     await _notificationService.CreateNotificationAsync(
                         userId,
-                        "?? Ajout à une équipe",
-                        $"Vous avez été ajouté à l'équipe \"{existingTeam.TeamName}\"."
+                        "?? Ajout ï¿½ une ï¿½quipe",
+                        $"Vous avez ï¿½tï¿½ ajoutï¿½ ï¿½ l'ï¿½quipe \"{existingTeam.TeamName}\"."
                     );
                 }
 
-                // Mise à jour des tickets assignés
+                // Mise ï¿½ jour des tickets assignï¿½s
                 var oldTickets = await _context.Tickets
                     .Where(t => t.AssignedToTeamID == existingTeam.TeamID)
                     .ToListAsync();
@@ -282,18 +282,18 @@ namespace Ticketing_System.Controllers
 
                 await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "? Équipe mise à jour avec succès.";
+                TempData["SuccessMessage"] = "? ï¿½quipe mise ï¿½ jour avec succï¿½s.";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Une erreur s'est produite lors de la mise à jour: " + ex.Message);
+                ModelState.AddModelError("", "Une erreur s'est produite lors de la mise ï¿½ jour: " + ex.Message);
                 await LoadViewBagDataWithSupportAgentsOnly(team.ManagerId, selectedMemberIds, selectedTicketIds);
                 return View(team);
             }
         }
 
-        // GET: Supprimer une équipe
+        // GET: Supprimer une ï¿½quipe
         public async Task<IActionResult> Delete(int id)
         {
             var team = await _teamService.GetByIdAsync(id);
@@ -309,7 +309,7 @@ namespace Ticketing_System.Controllers
             try
             {
                 await _teamService.DeleteAsync(id);
-                TempData["SuccessMessage"] = "? Équipe supprimée avec succès.";
+                TempData["SuccessMessage"] = "? ï¿½quipe supprimï¿½e avec succï¿½s.";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -319,8 +319,8 @@ namespace Ticketing_System.Controllers
             }
         }
 
-        // Méthode utilitaire pour charger les données des listes déroulantes
-        // Cette version garantit que seuls les SupportAgents peuvent être ajoutés
+        // Mï¿½thode utilitaire pour charger les donnï¿½es des listes dï¿½roulantes
+        // Cette version garantit que seuls les SupportAgents peuvent ï¿½tre ajoutï¿½s
         private async Task LoadViewBagDataWithSupportAgentsOnly(
             string managerId = null,
             List<string> selectedMemberIds = null,
@@ -331,7 +331,7 @@ namespace Ticketing_System.Controllers
                 .Where(u => u.IsActive)  // Uniquement les utilisateurs actifs
                 .ToListAsync();
 
-            // Filtrer pour obtenir uniquement les utilisateurs avec le rôle SupportAgent
+            // Filtrer pour obtenir uniquement les utilisateurs avec le rï¿½le SupportAgent
             var supportAgents = new List<User>();
             foreach (var user in allUsers)
             {
@@ -341,7 +341,7 @@ namespace Ticketing_System.Controllers
                 }
             }
 
-            // Préparer les listes pour les managers (admin ou support)
+            // Prï¿½parer les listes pour les managers (admin ou support)
             var managers = new List<User>();
             foreach (var user in allUsers)
             {
@@ -352,12 +352,12 @@ namespace Ticketing_System.Controllers
                 }
             }
 
-            // Récupérer les tickets non assignés ou assignés à cette équipe
+            // Rï¿½cupï¿½rer les tickets non assignï¿½s ou assignï¿½s ï¿½ cette ï¿½quipe
             var tickets = await _context.Tickets
                 .Where(t => t.AssignedToTeamID == null || selectedTicketIds != null && selectedTicketIds.Contains(t.TicketID))
                 .ToListAsync();
 
-            // Configurer les listes déroulantes
+            // Configurer les listes dï¿½roulantes
             ViewBag.Users = new SelectList(managers, "Id", "UserName", managerId);
             ViewBag.TeamMembers = new MultiSelectList(supportAgents, "Id", "UserName", selectedMemberIds);
             ViewBag.AssignedTickets = new MultiSelectList(tickets, "TicketID", "Title", selectedTicketIds);

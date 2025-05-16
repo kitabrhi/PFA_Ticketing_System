@@ -15,7 +15,7 @@ using Ticketing_System.Service_Layer.Interfaces;
 
 namespace Ticketing_System.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,SupportAgent")]
     public class TeamMemberController : Controller
     {
         private readonly ITeamMemberService _memberService;
@@ -62,31 +62,31 @@ namespace Ticketing_System.Controllers
                 return View(member);
             }
 
-            // Vérifier si l'utilisateur est déjà membre de cette équipe
+            // Vï¿½rifier si l'utilisateur est dï¿½jï¿½ membre de cette ï¿½quipe
             var existingMember = await _memberService.GetMembersByTeamIdAsync(member.TeamID);
             var userAlreadyInTeam = existingMember.Any(tm => tm.UserId == member.UserId);
 
             if (userAlreadyInTeam)
             {
-                ModelState.AddModelError("", "Cet utilisateur est déjà membre de cette équipe.");
+                ModelState.AddModelError("", "Cet utilisateur est dï¿½jï¿½ membre de cette ï¿½quipe.");
                 await LoadViewBagDataAsync(member.TeamID, member.UserId);
                 return View(member);
             }
 
-            // Vérifier que l'utilisateur est un SupportAgent
+            // Vï¿½rifier que l'utilisateur est un SupportAgent
             var user = await _userManager.FindByIdAsync(member.UserId);
             if (user == null || !await _userManager.IsInRoleAsync(user, "SupportAgent"))
             {
-                ModelState.AddModelError("UserId", "Seuls les agents de support peuvent être ajoutés aux équipes.");
+                ModelState.AddModelError("UserId", "Seuls les agents de support peuvent ï¿½tre ajoutï¿½s aux ï¿½quipes.");
                 await LoadViewBagDataAsync(member.TeamID, member.UserId);
                 return View(member);
             }
 
-            // Ajouter le membre à l'équipe
+            // Ajouter le membre ï¿½ l'ï¿½quipe
             member.JoinDate = DateTime.Now;
             await _memberService.AddAsync(member);
 
-            // Créer une notification
+            // Crï¿½er une notification
             var adminUser = await _userManager.GetUserAsync(User);
             var team = await _teamService.GetByIdAsync(member.TeamID);
 
@@ -94,19 +94,19 @@ namespace Ticketing_System.Controllers
             {
                 await _notificationService.CreateNotificationAsync(
                     adminUser.Id,
-                    " Nouveau membre d'équipe",
-                    $"L'utilisateur {user.FirstName} {user.LastName} a été ajouté à l'équipe \"{team.TeamName}\"."
+                    " Nouveau membre d'ï¿½quipe",
+                    $"L'utilisateur {user.FirstName} {user.LastName} a ï¿½tï¿½ ajoutï¿½ ï¿½ l'ï¿½quipe \"{team.TeamName}\"."
                 );
 
-                // Notification pour l'utilisateur ajouté
+                // Notification pour l'utilisateur ajoutï¿½
                 await _notificationService.CreateNotificationAsync(
                     user.Id,
-                    " Ajout à une équipe",
-                    $"Vous avez été ajouté à l'équipe de support \"{team.TeamName}\"."
+                    " Ajout ï¿½ une ï¿½quipe",
+                    $"Vous avez ï¿½tï¿½ ajoutï¿½ ï¿½ l'ï¿½quipe de support \"{team.TeamName}\"."
                 );
             }
 
-            TempData["SuccessMessage"] = " Membre ajouté avec succès";
+            TempData["SuccessMessage"] = " Membre ajoutï¿½ avec succï¿½s";
             return RedirectToAction(nameof(Index));
         }
 
@@ -254,14 +254,14 @@ namespace Ticketing_System.Controllers
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             
-            // Si l'utilisateur est un administrateur, afficher toutes les équipes
+            // Si l'utilisateur est un administrateur, afficher toutes les ï¿½quipes
             if (User.IsInRole("Admin"))
             {
                 var allTeams = await _teamService.GetAllAsync();
                 return View(allTeams);
             }
             
-            // Pour un agent, récupérer uniquement les équipes dont il est membre
+            // Pour un agent, rï¿½cupï¿½rer uniquement les ï¿½quipes dont il est membre
             var teamMembers = await _memberService.GetTeamsByUserIdAsync(userId);
             
             // Convertir la liste de TeamMember en liste de SupportTeam

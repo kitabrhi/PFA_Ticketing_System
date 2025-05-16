@@ -1,92 +1,117 @@
 @model IEnumerable<Ticketing_System.Models.EscalationRule>
 @{
-    ViewData["Title"] = "Escalation Rules";
+    var user = Context.User;
+    if (user?.Identity?.IsAuthenticated ?? false)
+    {
+        if (user.IsInRole("Admin") || user.IsInRole("SuperAdmin"))
+        {
+            Layout = "~/Views/Shared/_AdminLayout.cshtml";
+        }
+        else if (user.IsInRole("SupportAgent"))
+        {
+            Layout = "~/Views/Shared/_SupportAgentLayout.cshtml";
+        }
+        else
+        {
+            Layout = "~/Views/Shared/_UserLayout.cshtml";
+        }
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    ViewData["Title"] = "Règles d'escalade";
 }
 
-<div class="container mt-4">
+<div class="container-fluid px-4 py-5" style="background-color: #f5f7fa; min-height: 100vh;">
+    <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Escalation Rules</h1>
         <div>
-            <a asp-action="TicketsNeedingEscalation" class="btn btn-warning me-2">
-                <i class="fas fa-exclamation-triangle"></i> Tickets Needing Escalation
+            <h1 class="fw-bold mb-1">Règles d'escalade</h1>
+            <p class="text-muted mb-0">Gérez comment et quand vos tickets sont automatiquement escaladés</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="TicketsNeedingEscalation" class="btn btn-warning rounded-pill px-4 py-2 shadow-sm">
+                <i class="fas fa-exclamation-triangle me-2"></i>Tickets en attente
             </a>
-            <a asp-action="Create" class="btn btn-primary">
-                <i class="fas fa-plus"></i> New Rule
+            <a asp-action="Create" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm">
+                <i class="fas fa-plus me-2"></i>Nouvelle règle
             </a>
         </div>
     </div>
 
+    <!-- Alerts -->
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show">
-            @TempData["SuccessMessage"]
+        <div class="alert alert-success alert-dismissible fade show rounded-4" role="alert">
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
-
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show">
-            @TempData["ErrorMessage"]
+        <div class="alert alert-danger alert-dismissible fade show rounded-4" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
 
-    <div class="card shadow-sm">
-        <div class="card-body">
+    <!-- Rules Table Card -->
+    <div class="card border-0 rounded-4 shadow-sm">
+        <div class="card-body p-4">
             @if (Model.Any())
             {
                 <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
                             <tr>
-                                <th>Rule Name</th>
-                                <th>Priority</th>
-                                <th>Status</th>
-                                <th>Escalate After</th>
-                                <th>Escalate To</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th>Nom</th>
+                                <th>Priorité</th>
+                                <th>Statut</th>
+                                <th>Délai</th>
+                                <th>Cible</th>
+                                <th>État</th>
+                                <th class="text-end">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var rule in Model)
+                            @foreach (var r in Model)
                             {
                                 <tr>
-                                    <td>@rule.RuleName</td>
+                                    <td class="fw-semibold">@r.RuleName</td>
                                     <td>
-                                        @if (rule.Priority.HasValue)
+                                        @if (r.Priority.HasValue)
                                         {
-                                            <span class="badge bg-warning">@rule.Priority.Value.ToString()</span>
+                                            <span class="badge bg-warning text-dark">@r.Priority</span>
                                         }
                                         else
                                         {
-                                            <span class="text-muted">Any</span>
+                                            <span class="text-muted">Toutes</span>
                                         }
                                     </td>
                                     <td>
-                                        @if (rule.Status.HasValue)
+                                        @if (r.Status.HasValue)
                                         {
-                                            <span class="badge bg-info">@rule.Status.Value.ToString()</span>
+                                            <span class="badge bg-info">@r.Status</span>
                                         }
                                         else
                                         {
-                                            <span class="text-muted">Any</span>
+                                            <span class="text-muted">Tous</span>
                                         }
                                     </td>
-                                    <td>@rule.EscalateAfterHours hours</td>
+                                    <td>@r.EscalateAfterHours h</td>
                                     <td>
-                                        @if (!string.IsNullOrEmpty(rule.EscalateToUserID))
+                                        @if (!string.IsNullOrEmpty(r.EscalateToUserID))
                                         {
-                                            <span><i class="fas fa-user me-1"></i>@(rule.EscalateToUser?.FirstName + " " + rule.EscalateToUser?.LastName)</span>
+                                            <i class="fas fa-user me-1"></i>@(r.EscalateToUser?.FirstName) @(r.EscalateToUser?.LastName)
                                         }
-                                        else if (rule.EscalateToTeamID.HasValue)
+                                        else if (r.EscalateToTeamID.HasValue)
                                         {
-                                            <span><i class="fas fa-users me-1"></i>@rule.EscalateToTeam?.TeamName</span>
+                                            <i class="fas fa-users me-1"></i>@r.EscalateToTeam?.TeamName
                                         }
                                     </td>
                                     <td>
-                                        @if (rule.IsActive)
+                                        @if (r.IsActive)
                                         {
                                             <span class="badge bg-success">Active</span>
                                         }
@@ -95,12 +120,12 @@
                                             <span class="badge bg-secondary">Inactive</span>
                                         }
                                     </td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a asp-action="Edit" asp-route-id="@rule.RuleID" class="btn btn-sm btn-warning">
+                                    <td class="text-end">
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="Edit" asp-route-id="@r.RuleID" class="btn btn-sm btn-outline-primary">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a asp-action="Delete" asp-route-id="@rule.RuleID" class="btn btn-sm btn-danger">
+                                            <a asp-action="Delete" asp-route-id="@r.RuleID" class="btn btn-sm btn-outline-danger">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </div>
@@ -114,11 +139,11 @@
             else
             {
                 <div class="text-center py-5">
-                    <i class="fas fa-arrow-up fa-4x text-muted mb-3"></i>
-                    <h4>No escalation rules defined</h4>
-                    <p class="text-muted">Create rules to automatically escalate tickets based on priority, status, and time limits.</p>
-                    <a asp-action="Create" class="btn btn-primary mt-3">
-                        Create Your First Rule
+                    <i class="fas fa-exclamation-triangle fa-3x text-muted mb-3"></i>
+                    <h4 class="fw-bold mb-2">Aucune règle trouvée</h4>
+                    <p class="text-muted mb-4">Créez une règle pour automatiser l'escalade de vos tickets.</p>
+                    <a asp-action="Create" class="btn btn-primary rounded-pill px-4 py-2">
+                        <i class="fas fa-plus me-2"></i>Créer la première règle
                     </a>
                 </div>
             }

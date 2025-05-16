@@ -1,8 +1,21 @@
 ﻿@model Ticketing_System.Models.SupportTeam
 
 @{
-    Layout = User.IsInRole("Admin") ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "Détails de l'équipe";
+    ViewData["Title"] = "Support Teams";
+
+    // Définir le bon layout en fonction du rôle de l'utilisateur
+    if (User.IsInRole("Admin"))
+    {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+    else if (User.IsInRole("SupportAgent"))
+    {
+        Layout = "~/Views/Shared/_SupportAgentLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
 }
 
 <div class="container mt-4">

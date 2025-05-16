@@ -1,15 +1,28 @@
 @model IEnumerable<Ticketing_System.Models.TeamMember>
 @{
-    Layout = User.IsInRole("Admin") ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Team Members";
+
+    // Définir le bon layout en fonction du rôle de l'utilisateur
+    if (User.IsInRole("Admin"))
+    {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+    else if (User.IsInRole("SupportAgent"))
+    {
+        Layout = "~/Views/Shared/_SupportAgentLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
 }
 
 <div class="container py-5">
     <!-- Header with title and create button -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="fw-bold mb-0">Team Members</h1>
-            <p class="text-muted">Manage users assigned to support teams</p>
+            
+            
         </div>
         <a asp-action="Create" class="btn btn-success rounded-pill px-4 py-2 shadow-sm">
             <i class="fas fa-user-plus me-2"></i> Add Team Member

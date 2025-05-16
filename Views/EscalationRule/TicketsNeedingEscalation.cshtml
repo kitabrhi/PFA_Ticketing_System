@@ -1,85 +1,55 @@
 @model IEnumerable<Ticketing_System.Models.Ticket>
 @{
-    ViewData["Title"] = "Tickets nécessitant une escalade";
-    Layout = User.IsInRole("Admin") ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Tickets Needing Escalation";
+}
+
+@{
+    var user = Context.User;
+    if (user?.Identity?.IsAuthenticated ?? false)
+    {
+        if (user.IsInRole("Admin") || user.IsInRole("SuperAdmin"))
+        {
+            Layout = "~/Views/Shared/_AdminLayout.cshtml";
+        }
+        else if (user.IsInRole("SupportAgent"))
+        {
+            Layout = "~/Views/Shared/_SupportAgentLayout.cshtml";
+        }
+        else
+        {
+            Layout = "~/Views/Shared/_UserLayout.cshtml";
+        }
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    ViewData["Title"] = "RÃ¨gles d'escalade";
 }
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="mb-0 d-flex align-items-center">
-                <i class="fas fa-arrow-circle-up text-danger me-3"></i>
-                Tickets nécessitant une escalade
-            </h1>
-            <p class="text-muted mb-0">Ces tickets dépassent les seuils définis et doivent être escaladés</p>
-        </div>
-        <div>
-            <a asp-action="Index" class="btn btn-outline-secondary me-2">
-                <i class="fas fa-arrow-left me-2"></i> Retour aux règles
-            </a>
-            @if (Model.Any())
-            {
-                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#escalateAllModal">
-                    <i class="fas fa-arrow-up me-2"></i> Escalader tous les tickets
-                </button>
-            }
-        </div>
+        <h1>Tickets Needing Escalation</h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Rules
+        </a>
     </div>
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
-            <i class="fas fa-check-circle me-3 fs-4"></i>
-            <div>
-                @TempData["SuccessMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        </div>
-    }
-
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
-            <i class="fas fa-exclamation-circle me-3 fs-4"></i>
-            <div>
-                @TempData["ErrorMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        </div>
-    }
-
-    @if (TempData["InfoMessage"] != null)
-    {
-        <div class="alert alert-info alert-dismissible fade show d-flex align-items-center" role="alert">
-            <i class="fas fa-info-circle me-3 fs-4"></i>
-            <div>
-                @TempData["InfoMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        </div>
-    }
-
-    <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-body p-0">
+    <div class="card shadow-sm">
+        <div class="card-body">
             @if (Model.Any())
             {
-                <div class="alert alert-warning border-0 rounded-0 m-0 d-flex align-items-center">
-                    <i class="fas fa-exclamation-triangle me-3 fs-4"></i>
-                    <div>
-                        <strong>Attention:</strong> Les tickets suivants ont dépassé le délai de résolution et doivent être escaladés selon vos règles.
-                    </div>
-                </div>
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
+                    <table class="table table-hover">
+                        <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Titre</th>
-                                <th>Priorité</th>
-                                <th>Statut</th>
-                                <th>Date de création</th>
-                                <th>Dernière mise à jour</th>
-                                <th>Temps écoulé</th>
+                                <th>Title</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Last Updated</th>
+                                <th>Time Elapsed</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -87,9 +57,9 @@
                             @foreach (var ticket in Model)
                             {
                                 <tr>
-                                    <td>#@ticket.TicketID</td>
+                                    <td>@ticket.TicketID</td>
                                     <td>
-                                        <a asp-controller="Ticket" asp-action="Details" asp-route-id="@ticket.TicketID" class="text-primary fw-semibold text-decoration-none">
+                                        <a asp-controller="Ticket" asp-action="Details" asp-route-id="@ticket.TicketID">
                                             @ticket.Title
                                         </a>
                                     </td>
@@ -99,7 +69,7 @@
                                             {
                                                 TicketPriority.Low => "bg-success",
                                                 TicketPriority.Medium => "bg-info",
-                                                TicketPriority.High => "bg-warning text-dark",
+                                                TicketPriority.High => "bg-warning",
                                                 TicketPriority.Critical => "bg-danger",
                                                 _ => "bg-secondary"
                                             };
@@ -111,7 +81,7 @@
                                             string statusClass = ticket.Status switch
                                             {
                                                 TicketStatus.Open => "bg-primary",
-                                                TicketStatus.InProgress => "bg-warning text-dark",
+                                                TicketStatus.InProgress => "bg-warning",
                                                 TicketStatus.Resolved => "bg-success",
                                                 TicketStatus.Closed => "bg-secondary",
                                                 _ => "bg-info"
@@ -124,100 +94,31 @@
                                     <td>
                                         @{
                                             var timeElapsed = DateTime.Now - ticket.UpdatedDate;
-                                            var hours = Math.Round(timeElapsed.TotalHours, 1);
-                                            var alertClass = hours > 48 ? "text-danger fw-bold" :
-                                            hours > 24 ? "text-warning fw-bold" : "";
                                         }
-                                        <span class="@alertClass">@hours heures</span>
+                                        @Math.Round(timeElapsed.TotalHours, 1) hours
                                     </td>
                                     <td>
-                                        <div class="btn-group">
-                                            <a asp-controller="Ticket" asp-action="Details" asp-route-id="@ticket.TicketID"
-                                               class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            <form asp-action="EscalateTicket" asp-route-ticketId="@ticket.TicketID" method="post"
-                                                  class="d-inline escalate-form">
-                                                <button type="submit" class="btn btn-sm btn-danger">
-                                                    <i class="fas fa-arrow-up me-1"></i> Escalader
-                                                </button>
-                                            </form>
-                                        </div>
+                                        <form asp-action="EscalateTicket" asp-route-ticketId="@ticket.TicketID" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-danger" 
+                                                    onclick="return confirm('Are you sure you want to escalate this ticket?');">
+                                                <i class="fas fa-arrow-up"></i> Escalate Now
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             }
                         </tbody>
                     </table>
                 </div>
-                <div class="p-3 bg-light d-flex justify-content-between">
-                    <div>
-                        <span class="badge bg-primary">@Model.Count()</span> tickets nécessitent une escalade
-                    </div>
-                    <div class="text-muted small">
-                        Dernière vérification: @DateTime.Now.ToString("dd MMM yyyy HH:mm")
-                    </div>
-                </div>
             }
             else
             {
                 <div class="text-center py-5">
                     <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
-                    <h4 class="fw-bold">Aucun ticket ne nécessite d'escalade</h4>
-                    <p class="text-muted">Tous les tickets sont dans les délais de résolution acceptables.</p>
+                    <h4>No tickets need escalation</h4>
+                    <p class="text-muted">All tickets are within their acceptable response times.</p>
                 </div>
             }
         </div>
     </div>
-
-    <!-- Modal de confirmation pour l'escalade multiple -->
-    @if (Model.Any())
-    {
-        <div class="modal fade" id="escalateAllModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            Confirmer l'escalade multiple
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Êtes-vous sûr de vouloir escalader <strong>tous les @Model.Count() tickets</strong> listés?</p>
-                        <p>Cette action va:</p>
-                        <ul>
-                            <li>Réassigner ces tickets selon les règles d'escalade configurées</li>
-                            <li>Notifier les personnes concernées</li>
-                            <li>Ajouter une entrée dans l'historique de chaque ticket</li>
-                        </ul>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <form asp-action="EscalateAllTickets" method="post">
-                            @foreach (var ticket in Model)
-                            {
-                                <input type="hidden" name="ticketIds" value="@ticket.TicketID" />
-                            }
-                            <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-arrow-up me-2"></i> Confirmer l'escalade
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
 </div>
-
-@section Scripts {
-    <script>
-        // Confirmation pour l'escalade individuelle
-        document.querySelectorAll('.escalate-form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                if (!confirm('Êtes-vous sûr de vouloir escalader ce ticket?')) {
-                    e.preventDefault();
-                }
-            });
-        });
-    </script>
-}

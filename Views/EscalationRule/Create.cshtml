@@ -1,168 +1,126 @@
 @model Ticketing_System.Models.EscalationRule
 @{
-    ViewData["Title"] = "Créer une règle d'escalade";
     Layout = User.IsInRole("Admin") ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Créer une règle d'escalade";
 }
 
-<div class="container mt-4">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-action="Index">Règles d'escalade</a></li>
-            <li class="breadcrumb-item active">Créer</li>
-        </ol>
-    </nav>
-
-    <div class="card shadow-sm border-0 rounded-4">
-        <div class="card-header bg-primary text-white p-3">
-            <h4 class="mb-0"><i class="fas fa-arrow-up me-2"></i>Créer une nouvelle règle d'escalade</h4>
-        </div>
-        <div class="card-body p-4">
-            <div class="alert alert-info d-flex">
-                <i class="fas fa-info-circle fs-4 me-3"></i>
+<div class="container-fluid px-4 py-5">
+    <!-- HEADER -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mx-auto">
+            <div class="d-sm-flex justify-content-between align-items-center">
                 <div>
-                    <strong>Qu'est-ce qu'une règle d'escalade?</strong>
-                    <p class="mb-0">Les règles d'escalade permettent d'automatiquement transférer des tickets à des équipes ou agents spécialisés lorsqu'ils ne sont pas résolus dans un délai défini.</p>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-2 bg-light p-2 rounded shadow-sm">
+                            <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none"><i class="fas fa-bell-exclamation me-1"></i>Règles d'escalade</a></li>
+                            <li class="breadcrumb-item active fw-medium">Nouvelle règle</li>
+                        </ol>
+                    </nav>
+                    <h2 class="fw-bold text-primary mb-1">Créer une nouvelle règle d'escalade</h2>
+                    <p class="text-muted">Définissez les conditions et les cibles pour l'escalade automatique des tickets.</p>
                 </div>
+                <img src="https://cdn-icons-png.flaticon.com/512/4639/4639929.png" alt="Escalade" width="90" class="d-none d-sm-block" />
             </div>
+        </div>
+    </div>
 
-            <form asp-action="Create" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label asp-for="RuleName" class="form-label fw-bold text-primary">Nom de la règle</label>
-                            <input asp-for="RuleName" class="form-control" placeholder="ex: Escalade tickets critiques" />
-                            <span asp-validation-for="RuleName" class="text-danger"></span>
+    <!-- FORM CARD -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden" style="background:rgba(255,255,255,0.9); backdrop-filter:blur(10px);">
+                <form asp-action="Create" method="post" class="needs-validation" novalidate>
+                    <div class="card-header bg-gradient text-white p-4" style="background:linear-gradient(90deg,#1D976C 0%,#93F9B9 100%);">
+                        <h4 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Étapes de création</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- STEP 1: Détails -->
+                        <h5 class="mb-3 d-flex align-items-center">
+                            <span class="badge bg-primary rounded-circle me-2" style="width:30px;height:30px;">1</span>Détails de la règle
+                        </h5>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-0 mb-4 d-flex align-items-center" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Veuillez corriger les erreurs.
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label asp-for="EscalateAfterHours" class="form-label fw-bold text-primary">Escalader après (heures)</label>
-                            <div class="input-group">
-                                <input asp-for="EscalateAfterHours" type="number" class="form-control" min="1" max="168" />
-                                <span class="input-group-text">heures</span>
-                            </div>
-                            <span asp-validation-for="EscalateAfterHours" class="text-danger"></span>
-                            <div class="form-text">Délai après lequel le ticket sera escaladé s'il n'est pas résolu</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <label asp-for="Description" class="form-label fw-bold text-primary">Description</label>
-                    <textarea asp-for="Description" class="form-control" rows="3"
-                              placeholder="Décrivez quand cette règle doit s'appliquer"></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
-
-                <div class="card mb-4 border-0 bg-light">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">Conditions d'escalade</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
+                        <div class="row g-4">
                             <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label asp-for="Priority" class="form-label fw-bold">Priorité</label>
-                                    <select asp-for="Priority" class="form-select" asp-items="ViewBag.Priorities">
-                                        <option value="">Toutes les priorités</option>
-                                    </select>
-                                    <span asp-validation-for="Priority" class="text-danger"></span>
-                                    <div class="form-text">Sélectionnez une priorité spécifique ou laissez vide pour toutes</div>
-                                </div>
+                                <label asp-for="RuleName" class="form-label fw-semibold">Nom de la règle <i class="text-danger">*</i></label>
+                                <input asp-for="RuleName" class="form-control form-control-lg shadow-sm" placeholder="Ex : Escalade urgences" required />
+                                <span asp-validation-for="RuleName" class="text-danger"></span>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label asp-for="Status" class="form-label fw-bold">Statut</label>
-                                    <select asp-for="Status" class="form-select" asp-items="ViewBag.Statuses">
-                                        <option value="">Tous les statuts</option>
-                                    </select>
-                                    <span asp-validation-for="Status" class="text-danger"></span>
-                                    <div class="form-text">Sélectionnez un statut spécifique ou laissez vide pour tous</div>
+                                <label asp-for="EscalateAfterHours" class="form-label fw-semibold">Heures avant escalade <i class="text-danger">*</i></label>
+                                <div class="input-group input-group-lg shadow-sm">
+                                    <input asp-for="EscalateAfterHours" type="number" min="1" class="form-control" required />
+                                    <span class="input-group-text">h</span>
                                 </div>
+                                <span asp-validation-for="EscalateAfterHours" class="text-danger"></span>
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="Description" class="form-label fw-semibold">Description</label>
+                                <textarea asp-for="Description" class="form-control shadow-sm" rows="3" placeholder="Décrivez le déclencheur de l'escalade"></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <div class="card mb-4 border-0 bg-light">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">Destination de l'escalade</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
+                        <!-- STEP 2: Cible -->
+                        <h5 class="mt-5 mb-3 d-flex align-items-center">
+                            <span class="badge bg-primary rounded-circle me-2" style="width:30px;height:30px;">2</span>Cibles d'escalade
+                        </h5>
+                        <div class="row g-4">
                             <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label asp-for="EscalateToUserID" class="form-label fw-bold">Escalader vers un agent</label>
-                                    <select asp-for="EscalateToUserID" class="form-select" asp-items="ViewBag.SupportUsers">
-                                        <option value="">Sélectionnez un agent...</option>
-                                    </select>
-                                    <span asp-validation-for="EscalateToUserID" class="text-danger"></span>
-                                </div>
+                                <label asp-for="EscalateToUserID" class="form-label fw-semibold">Utilisateur cible</label>
+                                <select asp-for="EscalateToUserID" class="form-select shadow-sm" asp-items="ViewBag.SupportUsers">
+                                    <option value="">Sélectionner un utilisateur</option>
+                                </select>
+                                <span asp-validation-for="EscalateToUserID" class="text-danger"></span>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label asp-for="EscalateToTeamID" class="form-label fw-bold">Escalader vers une équipe</label>
-                                    <select asp-for="EscalateToTeamID" class="form-select" asp-items="ViewBag.Teams">
-                                        <option value="">Sélectionnez une équipe...</option>
-                                    </select>
-                                    <span asp-validation-for="EscalateToTeamID" class="text-danger"></span>
+                                <label asp-for="EscalateToTeamID" class="form-label fw-semibold">Équipe cible</label>
+                                <select asp-for="EscalateToTeamID" class="form-select shadow-sm" asp-items="ViewBag.Teams">
+                                    <option value="">Sélectionner une équipe</option>
+                                </select>
+                                <span asp-validation-for="EscalateToTeamID" class="text-danger"></span>
+                            </div>
+                            <div class="col-12">
+                                <small class="text-muted">Choisissez soit un utilisateur, soit une équipe.</small>
+                            </div>
+                        </div>
+                        <!-- STEP 3: Notifications -->
+                        <h5 class="mt-5 mb-3 d-flex align-items-center">
+                            <span class="badge bg-primary rounded-circle me-2" style="width:30px;height:30px;">3</span>Notifications
+                        </h5>
+                        <div class="row g-4 align-items-end">
+                            <div class="col-12 col-md-8">
+                                <label asp-for="NotifyUserIDs" class="form-label fw-semibold">Notifier (IDs séparés par virgule)</label>
+                                <input asp-for="NotifyUserIDs" class="form-control shadow-sm" placeholder="id1,id2,id3" />
+                                <span asp-validation-for="NotifyUserIDs" class="text-danger"></span>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <div class="form-check form-switch pt-2">
+                                    <input asp-for="IsActive" class="form-check-input" id="IsActive" />
+                                    <label asp-for="IsActive" class="form-check-label fw-semibold">Activer la règle</label>
                                 </div>
                             </div>
                         </div>
-                        <div class="alert alert-warning mt-2 d-flex align-items-center">
-                            <i class="fas fa-exclamation-triangle me-3"></i>
-                            <span>Choisissez soit un agent, soit une équipe comme destination d'escalade</span>
-                        </div>
                     </div>
-                </div>
-
-                <div class="mb-4">
-                    <label asp-for="NotifyUserIDs" class="form-label fw-bold text-primary">Notifier des utilisateurs supplémentaires</label>
-                    <input asp-for="NotifyUserIDs" class="form-control" placeholder="ex: user1,user2,user3" />
-                    <span asp-validation-for="NotifyUserIDs" class="text-danger"></span>
-                    <div class="form-text">Entrez les identifiants d'utilisateurs (séparés par des virgules) à notifier lors de l'escalade</div>
-                </div>
-
-                <div class="form-check form-switch mb-4">
-                    <input class="form-check-input" asp-for="IsActive" />
-                    <label class="form-check-label fw-bold" asp-for="IsActive">
-                        Activer cette règle immédiatement
-                    </label>
-                </div>
-
-                <div class="d-flex justify-content-end gap-2">
-                    <a asp-action="Index" class="btn btn-secondary">
-                        <i class="fas fa-times me-2"></i> Annuler
-                    </a>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-2"></i> Créer la règle
-                    </button>
-                </div>
-            </form>
+                    <!-- ACTIONS -->
+                    <div class="card-footer bg-light d-flex justify-content-between py-3">
+                        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill"><i class="fas fa-arrow-left me-1"></i>Retour</a>
+                        <button type="submit" class="btn btn-success rounded-pill shadow-sm"><i class="fas fa-check me-1"></i>Créer la règle</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
-        $(document).ready(function() {
-            // Empêcher la sélection simultanée d'un utilisateur et d'une équipe
-            $('#EscalateToUserID').change(function() {
-                if ($(this).val()) {
-                    $('#EscalateToTeamID').val('');
-                }
-            });
-
-            $('#EscalateToTeamID').change(function() {
-                if ($(this).val()) {
-                    $('#EscalateToUserID').val('');
-                }
-            });
-        });
+        // Bootstrap validation
+        (function(){ 'use strict'; const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form=>{ form.addEventListener('submit',e=>{ if(!form.checkValidity()){ e.preventDefault(); e.stopPropagation(); } form.classList.add('was-validated'); }); });
+        })();
+        // Prevent selecting both user and team
+        document.getElementById('EscalateToUserID').addEventListener('change',function(){ if(this.value) document.getElementById('EscalateToTeamID').value=''; });
+        document.getElementById('EscalateToTeamID').addEventListener('change',function(){ if(this.value) document.getElementById('EscalateToUserID').value=''; });
     </script>
 }
