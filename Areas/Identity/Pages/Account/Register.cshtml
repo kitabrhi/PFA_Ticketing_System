@@ -7,149 +7,361 @@
 @section Styles {
     <link rel="stylesheet" href="~/css/identity-pages.css" />
     <style>
-        /* Conteneur principal */
+        /* Styles spécifiques pour la page d'inscription */
         .identity-container {
+            position: relative;
+            width: 100%;
             min-height: 100vh;
+            background: linear-gradient(135deg, var(--quantum-primary), var(--quantum-primary-dark));
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #4f46e5, #0ea5e9);
-            color: #fff;
+            padding: 2rem 0;
         }
 
-        /* Formulaire */
-        .register-container {
-            background: #fff;
-            color: #333;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            padding: 2rem;
+        .login-title, .section-title {
+            background: linear-gradient(45deg, var(--quantum-secondary), var(--quantum-tertiary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-fill-color: transparent;
+            font-weight: 800;
         }
 
-        .register-title {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #4f46e5;
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-
-        .form-floating label {
-            color: #6c757d;
+        .register-container, .service-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: var(--quantum-shadow-lg);
+            padding: 2.5rem;
+            position: relative;
+            transition: all 0.3s ease;
         }
 
         .form-floating input {
             border-radius: 8px;
-            border: 1px solid #ced4da;
-        }
-
-        .form-floating input:focus {
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
-        }
-
-        .btn-success-quantum {
-            background: #4f46e5;
-            border: none;
-            color: #fff;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 8px;
+            border: 1px solid var(--quantum-border);
+            padding: 1.2rem 1rem 0.6rem;
+            height: auto;
             transition: all 0.3s ease;
-            width: 100%;
         }
 
-        .btn-success-quantum:hover {
-            background: #4338ca;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            .form-floating input:focus {
+                border-color: var(--quantum-secondary);
+                box-shadow: 0 0 0 0.25rem rgba(0, 167, 142, 0.25);
+            }
+
+        .btn-primary-quantum {
+            width: 100%;
+            background: linear-gradient(45deg, var(--quantum-secondary), var(--quantum-tertiary));
+            border: none;
+            color: white;
+            border-radius: 50px;
+            padding: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(123, 104, 238, 0.4);
+        }
+
+            .btn-primary-quantum:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(123, 104, 238, 0.6);
+            }
+
+        .password-strength-container {
+            margin: 1rem 0;
+        }
+
+        .password-strength-meter {
+            height: 6px;
+            border-radius: 3px;
+            margin-top: 0.5rem;
+            background-color: #e9ecef;
+            overflow: hidden;
+        }
+
+        .password-weak {
+            width: 25%;
+            background-color: var(--quantum-accent);
+        }
+
+        .password-medium {
+            width: 50%;
+            background-color: var(--quantum-warning);
+        }
+
+        .password-strong {
+            width: 75%;
+            background-color: #8bc34a;
+        }
+
+        .password-very-strong {
+            width: 100%;
+            background-color: var(--quantum-success);
+        }
+
+        .password-weak-text {
+            color: var(--quantum-accent);
+        }
+
+        .password-medium-text {
+            color: var(--quantum-warning);
+        }
+
+        .password-strong-text {
+            color: #8bc34a;
+        }
+
+        .password-very-strong-text {
+            color: var(--quantum-success);
         }
 
         .quantum-link {
-            color: #4f46e5;
+            color: var(--quantum-secondary);
+            transition: all 0.2s;
             text-decoration: none;
-            font-weight: bold;
         }
 
-        .quantum-link:hover {
-            text-decoration: underline;
+            .quantum-link:hover {
+                color: var(--quantum-tertiary);
+            }
+
+        .identity-logo-pulse {
+            animation: pulse 2s infinite;
         }
 
-        .identity-features-list li {
-            display: flex;
-            align-items: center;
+        .identity-brand-icon {
+            text-align: center;
             margin-bottom: 1rem;
         }
 
-        .identity-features-list li i {
-            font-size: 1.5rem;
-            color: #4f46e5;
-            margin-right: 1rem;
+       
+
+        .identity-fade-in {
+            animation: fadeIn 0.8s ease-in-out;
         }
 
-        .or-divider {
-            text-align: center;
-            margin: 2rem 0;
-            position: relative;
-        }
-
-        .or-divider::before,
-        .or-divider::after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            width: 40%;
-            height: 1px;
-            background: #ddd;
-        }
-
-        .or-divider::before {
-            left: 0;
-        }
-
-        .or-divider::after {
-            right: 0;
-        }
-
-        .or-divider span {
-            background: #fff;
-            padding: 0 1rem;
-            color: #6c757d;
+        
+        .external-login-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin: 1.5rem 0;
         }
 
         .btn-external {
+            width: 100%;
+            background-color: white;
+            border: 1px solid var(--quantum-border);
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f8f9fa;
-            border: 1px solid #ced4da;
-            color: #333;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            width: 100%;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+            .btn-external:hover {
+                background-color: var(--quantum-light-accent);
+                transform: translateY(-2px);
+            }
+
+        .or-divider {
+            position: relative;
+            text-align: center;
+            margin: 2rem 0;
+            color: var(--quantum-muted-text);
+        }
+
+            .or-divider::before, .or-divider::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                width: 45%;
+                height: 1px;
+                background-color: var(--quantum-border);
+            }
+
+            .or-divider::before {
+                left: 0;
+            }
+
+            .or-divider::after {
+                right: 0;
+            }
+
+        .support-block {
+            text-align: center;
+            background-color: var(--quantum-light-accent);
+            border-radius: 12px;
+            padding: 2rem 1rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .support-icon {
+            font-size: 2rem;
+            color: var(--quantum-secondary);
             margin-bottom: 1rem;
         }
 
-        .btn-external i {
-            margin-right: 0.5rem;
+        .identity-header-container {
+            text-align: center;
+            margin-bottom: 2rem;
         }
 
-        .btn-external:hover {
-            background: #e2e6ea;
+        .help-links {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: space-between;
         }
     </style>
 }
 
 <div id="particles-background" class="identity-container">
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="identity-header-container text-center mb-4">
-                <div class="identity-brand-icon">
-                    <i class="fas fa-ticket-alt quantum-logo-icon identity-logo-pulse"></i>
-                    <span class="quantum-logo-text">QuantumDesk</span>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="identity-header-container">
+                    <div class="identity-brand-icon">
+                        <i class="fas fa-ticket-alt quantum-logo-icon identity-logo-pulse"></i>
+                        <span class="quantum-logo-text">QuantumDesk</span>
+                    </div>
+                    <h1 class="login-title">@ViewData["Title"]</h1>
+                    <p class="text-muted">Créez votre compte et commencez à utiliser notre système de gestion de tickets</p>
                 </div>
-                <h1 class="register-title">@ViewData["Title"]</h1>
-                <p class="text-muted
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-5">
+                <div class="register-container identity-fade-in">
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="identity-form">
+                        <h2 class="section-title">Créer un nouveau compte</h2>
+                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating identity-form-floating mb-3">
+                                    <input asp-for="Input.FirstName" class="form-control quantum-form-control" autocomplete="firstname" aria-required="true" placeholder="Prénom" />
+                                    <label asp-for="Input.FirstName" class="form-label">Prénom</label>
+                                    <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating identity-form-floating mb-3">
+                                    <input asp-for="Input.LastName" class="form-control quantum-form-control" autocomplete="lastname" aria-required="true" placeholder="Nom" />
+                                    <label asp-for="Input.LastName" class="form-label">Nom</label>
+                                    <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating identity-form-floating mb-3">
+                            <input asp-for="Input.Email" class="form-control quantum-form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                            <label asp-for="Input.Email" class="form-label">Email</label>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating identity-form-floating mb-2">
+                            <input asp-for="Input.Password" class="form-control quantum-form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                            <label asp-for="Input.Password" class="form-label">Mot de passe</label>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="password-strength-container">
+                            <div class="password-strength-meter"></div>
+                            <div class="password-strength-text small text-muted mt-1"></div>
+                        </div>
+
+                        <div class="form-floating identity-form-floating mb-3">
+                            <input asp-for="Input.ConfirmPassword" class="form-control quantum-form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                            <label asp-for="Input.ConfirmPassword" class="form-label">Confirmer le mot de passe</label>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <button id="registerSubmit" type="submit" class="btn-primary-quantum">
+                                <i class="fas fa-user-plus me-2"></i>Créer mon compte
+                            </button>
+                        </div>
+
+                        <div class="help-links">
+                            <a asp-page="./Login" class="quantum-link">
+                                <i class="fas fa-sign-in-alt me-1"></i>Déjà inscrit ? Se connecter
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="service-container identity-fade-in" style="animation-delay: 0.2s;">
+                    <section>
+                        <h3 class="section-title">Connexion avec un service externe</h3>
+
+                        @if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                        {
+                            <div class="text-center py-4">
+                                <i class="fas fa-plug mb-3" style="font-size: 3rem; color: var(--quantum-muted-text);"></i>
+                                <p>Aucun service d'authentification externe n'est configuré.</p>
+                                <p class="small text-muted">
+                                    Consultez <a href="https://go.microsoft.com/fwlink/?LinkID=532715" class="quantum-link">cet article</a> pour configurer l'authentification externe.
+                                </p>
+                            </div>
+                        }
+                        else
+                        {
+                            <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                                <div class="external-login-container">
+                                    @foreach (var provider in Model.ExternalLogins)
+                                    {
+                                        <button type="submit" class="btn-external" name="provider" value="@provider.Name">
+                                            @if (provider.DisplayName == "Google")
+                                            {
+                                                <i class="fab fa-google me-2"></i>
+                                            }
+                                            else if (provider.DisplayName == "Facebook")
+                                            {
+                                                <i class="fab fa-facebook me-2"></i>
+                                            }
+                                            else if (provider.DisplayName == "Microsoft")
+                                            {
+                                                <i class="fab fa-microsoft me-2"></i>
+                                            }
+                                            else if (provider.DisplayName == "Twitter")
+                                            {
+                                                <i class="fab fa-twitter me-2"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fas fa-external-link-alt me-2"></i>
+                                            }
+                                            Continuer avec @provider.DisplayName
+                                        </button>
+                                    }
+                                </div>
+                            </form>
+                        }
+
+                        <div class="or-divider">ou</div>
+
+                        <div class="support-block">
+                            <i class="fas fa-shield-alt support-icon"></i>
+                            <h4>Besoin d'aide pour vous inscrire?</h4>
+                            <p class="text-muted mb-4">Notre équipe de support est disponible pour vous aider dans le processus d'inscription</p>
+                            <a href="#" class="btn quantum-btn quantum-btn-outline-secondary rounded-pill">
+                                <i class="fas fa-headset me-2"></i>Contacter le support
+                            </a>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/identity-forms.js"></script>
+}

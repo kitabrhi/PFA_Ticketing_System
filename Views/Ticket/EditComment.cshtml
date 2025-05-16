@@ -1,10 +1,6 @@
 ﻿@{
-    Layout = User.IsInRole("Admin") ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_UserLayout.cshtml"; // Remplace le layout précédent
 }
-@{
-    Layout = "~/Views/Shared/_UserLayout.cshtml";
-}
-
 
 @model Ticketing_System.Models.TicketComment
 @{

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
@@ -6,23 +7,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Ticketing_System.Models;
-using Ticketing_System.Service_Layer.Interfaces;
 using Ticketing_System.Service_Layer;
+using Ticketing_System.Service_Layer.Interfaces;
 
 namespace Ticketing_System.Controllers
 {
+    using global::Ticketing_System.Repository.Interfaces;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.Extensions.Logging;
    
 
     namespace Ticketing_System.Controllers
@@ -38,6 +40,8 @@ namespace Ticketing_System.Controllers
             private readonly IAssignmentRuleService _assignmentRuleService;
             private readonly IEscalationRuleService _escalationRuleService;
             private readonly ISupportTeamService _supportTeamService;
+            private readonly ITicketRepository _ticketRepository;
+            private readonly ApplicationDbContext _context; // Contexte de la base de données
             private readonly ILogger<TicketController> _logger;
 
             public TicketController(
@@ -50,6 +54,8 @@ namespace Ticketing_System.Controllers
                 IEscalationRuleService escalationRuleService,
                 ISupportTeamService supportTeamService,
                 ILogger<TicketController> logger,
+                ITicketRepository ticketRepository,
+                ApplicationDbContext context,
                 INotificationService notificationService)  // Modifié ici : NotificationService -> INotificationService
             {
                 _ticketService = ticketService;
@@ -62,6 +68,8 @@ namespace Ticketing_System.Controllers
                 _supportTeamService = supportTeamService;
                 _logger = logger;
                 _notificationService = notificationService;
+                _ticketRepository = ticketRepository;
+                _context = context; // Contexte de la base de données
             }
 
             // Le reste du code reste inchangé
@@ -209,7 +217,7 @@ namespace Ticketing_System.Controllers
                 ticket.UpdatedDate = DateTime.Now;
                 ticket.Status = TicketStatus.New;
 
-                // 🔍 Supprimer les erreurs sur les relations non postées
+                // Supprimer les erreurs sur les relations non postées
                 ModelState.Remove(nameof(ticket.CreatedByUserId));
                 ModelState.Remove(nameof(ticket.CreatedByUser));
                 ModelState.Remove(nameof(ticket.AssignedToUser));
@@ -222,10 +230,13 @@ namespace Ticketing_System.Controllers
                 {
                     try
                     {
-                        // 🔹 1. Enregistrer le ticket
+                        // 1. Enregistrer le ticket
                         var createdTicket = await _ticketService.CreateTicketAsync(ticket);
 
-                        // 🔹 2. Commentaire initial
+                        // Journal pour le débogage
+                        _logger.LogInformation($"Ticket #{createdTicket.TicketID} créé avec succès.");
+
+                        // 2. Commentaire initial
                         var commentText = Request.Form["InitialComment"];
                         if (!string.IsNullOrWhiteSpace(commentText))
                         {
@@ -238,9 +249,10 @@ namespace Ticketing_System.Controllers
                                 CreatedDate = DateTime.Now
                             };
                             await _commentService.AddCommentAsync(comment);
+                            _logger.LogInformation($"Commentaire initial ajouté au ticket #{createdTicket.TicketID}");
                         }
 
-                        // 🔹 3. Ajouter pièce jointe
+                        // 3. Ajouter pièce jointe
                         var file = Request.Form.Files.FirstOrDefault();
                         if (file != null && file.Length > 0)
                         {
@@ -256,42 +268,127 @@ namespace Ticketing_System.Controllers
                             await file.CopyToAsync(memoryStream);
                             memoryStream.Position = 0;
                             await _attachmentService.AddAttachmentAsync(attachment, memoryStream);
+                            _logger.LogInformation($"Pièce jointe ajoutée au ticket #{createdTicket.TicketID}");
                         }
 
-                        // 🔹 4. Appliquer règle d'assignation
-                        await _assignmentRuleService.ApplyRuleToTicketAsync(createdTicket.TicketID);
-
-                        // 🔹 5. Si le ticket n'est pas assigné à un utilisateur, le faire maintenant
-                        var updatedTicket = await _ticketService.GetTicketByIdAsync(createdTicket.TicketID);
-                        if (string.IsNullOrEmpty(updatedTicket.AssignedToUserId))
+                        // 4. Appliquer règle d'assignation manuellement (BYPASSING SERVICE LAYER)
+                        try
                         {
-                            await _assignmentRuleService.AssignTicketToLeastBusyAgentAsync(createdTicket.TicketID);
+                            _logger.LogInformation($"Début de l'assignation du ticket #{createdTicket.TicketID}");
+
+                            // D'abord essayer d'appliquer une règle
+                            await _assignmentRuleService.ApplyRuleToTicketAsync(createdTicket.TicketID);
+                            _logger.LogInformation($"Règles d'assignation appliquées pour le ticket #{createdTicket.TicketID}");
+
+                            // Vérifier si le ticket a été assigné
+                            var updatedTicket = await _ticketRepository.GetByIdAsync(createdTicket.TicketID);
+                            _logger.LogInformation($"État après application des règles - Ticket #{updatedTicket.TicketID}: AssignedToUserId={updatedTicket.AssignedToUserId}, AssignedToTeamID={updatedTicket.AssignedToTeamID}");
+
+                            // Si aucun utilisateur n'est assigné, forcer l'assignation à un agent
+                            if (string.IsNullOrEmpty(updatedTicket.AssignedToUserId))
+                            {
+                                _logger.LogInformation($"Aucun utilisateur assigné - tentative d'assignation forcée");
+
+                                // ASSIGNATION DIRECTE POUR CONTOURNER LES SERVICES
+                                // Trouver l'agent le moins occupé
+                                var supportAgents = await _userManager.GetUsersInRoleAsync("SupportAgent");
+                                if (supportAgents.Any())
+                                {
+                                    // Compter les tickets actifs par agent
+                                    var workloads = new Dictionary<string, int>();
+                                    foreach (var agent in supportAgents)
+                                    {
+                                        var count = await _context.Tickets
+                                            .CountAsync(t => t.AssignedToUserId == agent.Id &&
+                                                (t.Status == TicketStatus.New ||
+                                                 t.Status == TicketStatus.Open ||
+                                                 t.Status == TicketStatus.InProgress));
+                                        workloads.Add(agent.Id, count);
+                                    }
+
+                                    // Trouver l'agent avec la charge la plus faible
+                                    var leastBusyAgent = workloads.OrderBy(pair => pair.Value).FirstOrDefault();
+                                    if (leastBusyAgent.Key != null)
+                                    {
+                                        // Assigner directement à cet agent
+                                        updatedTicket.AssignedToUserId = leastBusyAgent.Key;
+
+                                        // Trouver si l'agent appartient à une équipe
+                                        var teamMember = await _context.TeamMembers
+                                            .FirstOrDefaultAsync(tm => tm.UserId == leastBusyAgent.Key);
+
+                                        if (teamMember != null)
+                                        {
+                                            updatedTicket.AssignedToTeamID = teamMember.TeamID;
+                                        }
+
+                                        updatedTicket.UpdatedDate = DateTime.Now;
+
+                                        // Mise à jour DIRECTE du ticket
+                                        await _context.SaveChangesAsync();
+
+                                        _logger.LogInformation($"Ticket #{updatedTicket.TicketID} assigné manuellement à l'agent {leastBusyAgent.Key} (charge: {leastBusyAgent.Value})");
+
+                                        // Ajouter également une entrée dans l'historique
+                                        var history = new TicketHistory
+                                        {
+                                            TicketID = updatedTicket.TicketID,
+                                            ChangedByUserId = "SYSTEM",
+                                            FieldName = "AssignedToUser",
+                                            OldValue = "Unassigned",
+                                            NewValue = updatedTicket.AssignedToUserId,
+                                            ChangedDate = DateTime.Now
+                                        };
+                                        _context.TicketHistories.Add(history);
+                                        await _context.SaveChangesAsync();
+                                    }
+                                    else
+                                    {
+                                        _logger.LogWarning($"Aucun agent disponible pour l'assignation forcée du ticket #{updatedTicket.TicketID}");
+                                    }
+                                }
+                                else
+                                {
+                                    _logger.LogWarning($"Aucun agent de support trouvé dans le système pour l'assignation forcée");
+                                }
+                            }
+
+                            // Vérification finale
+                            var finalTicket = await _ticketRepository.GetByIdAsync(createdTicket.TicketID);
+                            _logger.LogInformation($"État final du ticket #{finalTicket.TicketID}: AssignedToUserId={finalTicket.AssignedToUserId}, AssignedToTeamID={finalTicket.AssignedToTeamID}");
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError($"ERREUR lors de l'assignation du ticket #{createdTicket.TicketID}: {ex.Message}");
+                            _logger.LogError($"StackTrace: {ex.StackTrace}");
                         }
 
-                        TempData["SuccessMessage"] = "✅ Ticket créé avec succès et assigné automatiquement!";
+                        TempData["SuccessMessage"] = "✅ Ticket créé avec succès!";
                         return RedirectToAction(nameof(MyTickets));
                     }
                     catch (Exception ex)
                     {
+                        _logger.LogError($"ERREUR GLOBALE lors de la création du ticket: {ex.Message}");
+                        _logger.LogError($"StackTrace: {ex.StackTrace}");
                         var message = ex.InnerException?.Message ?? ex.Message;
                         ModelState.AddModelError("", $"❌ Erreur lors de la création : {message}");
                     }
                 }
                 else
                 {
-                    // 🔍 Debug ModelState si invalid
-                    Console.WriteLine("⚠️ ModelState invalid:");
+                    // Debug ModelState si invalid
+                    _logger.LogWarning("⚠️ ModelState invalid:");
                     foreach (var key in ModelState.Keys)
                     {
                         var state = ModelState[key];
                         foreach (var err in state.Errors)
                         {
-                            Console.WriteLine($"Champ: {key} ➤ Erreur: {err.ErrorMessage}");
+                            _logger.LogWarning($"Champ: {key} ➤ Erreur: {err.ErrorMessage}");
                         }
                     }
                 }
 
-                // ❗ Recharger dropdowns si erreur
+                // Recharger dropdowns si erreur
                 ViewBag.Categories = Enum.GetValues(typeof(TicketCategory))
                     .Cast<TicketCategory>()
                     .Select(c => new SelectListItem { Value = c.ToString(), Text = c.ToString() })
@@ -309,7 +406,6 @@ namespace Ticketing_System.Controllers
 
                 return View(ticket);
             }
-
 
             // GET: Ticket/Edit/5
             [HttpGet]

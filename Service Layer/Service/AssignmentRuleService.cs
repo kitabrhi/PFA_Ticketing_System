@@ -120,7 +120,19 @@ namespace Ticketing_System.Service_Layer.Service
                 {
                     // Si la règle spécifie un utilisateur, assigner directement
                     ticket.AssignedToUserId = matchingRule.AssignToUserID;
-                    ticket.AssignedToTeamID = null;
+
+                    // Au lieu de mettre AssignedToTeamID à null, trouver l'équipe de l'agent
+                    var teamMember = await _context.TeamMembers
+                        .FirstOrDefaultAsync(tm => tm.UserId == matchingRule.AssignToUserID);
+
+                    if (teamMember != null)
+                    {
+                        ticket.AssignedToTeamID = teamMember.TeamID;
+                    }
+                    else
+                    {
+                        ticket.AssignedToTeamID = null;
+                    }
                 }
                 else if (matchingRule.AssignToTeamID.HasValue)
                 {
@@ -209,11 +221,15 @@ namespace Ticketing_System.Service_Layer.Service
                     {
                         var leastBusyAgent = workloads.OrderBy(pair => pair.Value).First();
                         ticket.AssignedToUserId = leastBusyAgent.Key;
+                        // Conserver l'assignation à l'équipe
+                        ticket.AssignedToTeamID = teamId;
                     }
                     else
                     {
                         // Aucun agent n'a de tickets, assigner au premier
                         ticket.AssignedToUserId = supportAgents.First().Id;
+                        // Conserver l'assignation à l'équipe
+                        ticket.AssignedToTeamID = teamId;
                     }
                 }
             }
@@ -230,7 +246,19 @@ namespace Ticketing_System.Service_Layer.Service
                 {
                     // Si la règle spécifie un utilisateur, assigner directement
                     ticket.AssignedToUserId = matchingRule.AssignToUserID;
-                    ticket.AssignedToTeamID = null;
+
+                    // Au lieu de mettre AssignedToTeamID à null, trouver l'équipe de l'agent
+                    var teamMember = await _context.TeamMembers
+                        .FirstOrDefaultAsync(tm => tm.UserId == matchingRule.AssignToUserID);
+
+                    if (teamMember != null)
+                    {
+                        ticket.AssignedToTeamID = teamMember.TeamID;
+                    }
+                    else
+                    {
+                        ticket.AssignedToTeamID = null;
+                    }
                 }
                 else if (matchingRule.AssignToTeamID.HasValue)
                 {
@@ -252,6 +280,7 @@ namespace Ticketing_System.Service_Layer.Service
             }
 
             string oldAssignedUserId = ticket.AssignedToUserId;
+            int? oldAssignedTeamId = ticket.AssignedToTeamID;
 
             // Si le ticket est déjà assigné à un agent, ne rien faire
             if (!string.IsNullOrEmpty(ticket.AssignedToUserId))
@@ -287,11 +316,21 @@ namespace Ticketing_System.Service_Layer.Service
                 {
                     var leastBusyAgent = workloads.OrderBy(pair => pair.Value).First();
                     ticket.AssignedToUserId = leastBusyAgent.Key;
+
+                    // Trouver si l'agent appartient à une équipe
+                    var teamMember = await _context.TeamMembers
+                        .FirstOrDefaultAsync(tm => tm.UserId == leastBusyAgent.Key);
+
+                    if (teamMember != null)
+                    {
+                        ticket.AssignedToTeamID = teamMember.TeamID;
+                    }
+
                     ticket.UpdatedDate = DateTime.Now;
 
                     await _ticketRepository.UpdateAsync(ticket);
 
-                    // Enregistrer l'assignation dans l'historique
+                    // Enregistrer l'assignation d'utilisateur dans l'historique
                     await _historyService.AddHistoryEntryAsync(new TicketHistory
                     {
                         TicketID = ticketId,
@@ -301,6 +340,20 @@ namespace Ticketing_System.Service_Layer.Service
                         NewValue = ticket.AssignedToUserId,
                         ChangedDate = DateTime.Now
                     });
+
+                    // Enregistrer l'assignation d'équipe dans l'historique si modifiée
+                    if (oldAssignedTeamId != ticket.AssignedToTeamID)
+                    {
+                        await _historyService.AddHistoryEntryAsync(new TicketHistory
+                        {
+                            TicketID = ticketId,
+                            ChangedByUserId = "SYSTEM",
+                            FieldName = "AssignedToTeam",
+                            OldValue = oldAssignedTeamId?.ToString() ?? "Unassigned",
+                            NewValue = ticket.AssignedToTeamID?.ToString() ?? "Unassigned",
+                            ChangedDate = DateTime.Now
+                        });
+                    }
                 }
             }
         }

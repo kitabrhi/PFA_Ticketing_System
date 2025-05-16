@@ -2,7 +2,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Ticketing_System.Models;
 using Ticketing_System.Service_Layer.Interfaces;
@@ -15,15 +18,18 @@ namespace Ticketing_System.Controllers
         private readonly IEscalationRuleService _ruleService;
         private readonly ISupportTeamService _teamService;
         private readonly UserManager<User> _userManager;
+        private readonly ILogger<EscalationRuleController> _logger;
 
         public EscalationRuleController(
             IEscalationRuleService ruleService,
             ISupportTeamService teamService,
-            UserManager<User> userManager)
+            UserManager<User> userManager,
+            ILogger<EscalationRuleController> logger)
         {
             _ruleService = ruleService;
             _teamService = teamService;
             _userManager = userManager;
+            _logger = logger;
         }
 
         // GET: EscalationRule
@@ -221,6 +227,82 @@ namespace Ticketing_System.Controllers
                 Value = t.TeamID.ToString(),
                 Text = t.TeamName
             }).ToList();
+        }
+
+        // POST: EscalationRule/EscalateAllTickets
+        [HttpPost]
+        [Authorize(Roles = "Admin,SupportAgent")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EscalateAllTickets(int[] ticketIds)
+        {
+            if (ticketIds == null || !ticketIds.Any())
+            {
+                // Si aucun ID de ticket n'est fourni, récupérer tous les tickets nécessitant une escalade
+                var ticketsNeedingEscalation = await _ruleService.GetTicketsNeedingEscalationAsync();
+                ticketIds = ticketsNeedingEscalation.Select(t => t.TicketID).ToArray();
+            }
+
+            if (!ticketIds.Any())
+            {
+                TempData["InfoMessage"] = "Aucun ticket à escalader.";
+                return RedirectToAction(nameof(TicketsNeedingEscalation));
+            }
+
+            int successCount = 0;
+            int errorCount = 0;
+            var errors = new List<string>();
+
+            foreach (var ticketId in ticketIds)
+            {
+                try
+                {
+                    var escalated = await _ruleService.CheckAndEscalateTicketAsync(ticketId);
+                    if (escalated)
+                    {
+                        successCount++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    errorCount++;
+                    errors.Add($"Ticket #{ticketId}: {ex.Message}");
+                    _logger.LogError(ex, $"Error escalating ticket {ticketId}");
+                }
+            }
+
+            if (successCount > 0)
+            {
+                TempData["SuccessMessage"] = $"{successCount} ticket(s) ont été escaladés avec succès.";
+            }
+
+            if (errorCount > 0)
+            {
+                TempData["ErrorMessage"] = $"{errorCount} ticket(s) n'ont pas pu être escaladés. Vérifiez les logs pour plus de détails.";
+            }
+
+            return RedirectToAction(nameof(TicketsNeedingEscalation));
+        }
+        private void LogEscalationDetails(IEnumerable<Ticket> tickets, IEnumerable<EscalationRule> rules)
+        {
+            _logger.LogInformation($"==== ESCALATION DEBUG ====");
+            _logger.LogInformation($"Total tickets needing escalation: {tickets.Count()}");
+
+            foreach (var ticket in tickets)
+            {
+                _logger.LogInformation($"Ticket #{ticket.TicketID}: Status={ticket.Status}, Priority={ticket.Priority}, Created={ticket.CreatedDate}, Updated={ticket.UpdatedDate}");
+
+                // Trouver les règles applicables
+                var matchingRules = rules.Where(r =>
+                    (r.Status == null || r.Status == ticket.Status) &&
+                    (r.Priority == null || r.Priority == ticket.Priority)).ToList();
+
+                _logger.LogInformation($"  Matching rules: {matchingRules.Count}");
+
+                foreach (var rule in matchingRules)
+                {
+                    _logger.LogInformation($"  Rule #{rule.RuleID}: {rule.RuleName}, EscalateAfter={rule.EscalateAfterHours}h, ToUser={rule.EscalateToUserID}, ToTeam={rule.EscalateToTeamID}");
+                }
+            }
         }
     }
 }

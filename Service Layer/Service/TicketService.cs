@@ -1,4 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Ticketing_System;
 using Ticketing_System.Models;
 using Ticketing_System.Repository.Interfaces;
 using Ticketing_System.Repository_Pattern.Interfaces;
@@ -11,12 +17,20 @@ public class TicketService : ITicketService
     private readonly ITicketHistoryService _historyService;
     private readonly IUserRepository _userRepository;
     private readonly IAssignmentRuleService _assignmentRuleService;
-    public TicketService(ITicketRepository ticketRepository, ITicketHistoryService historyService, IUserRepository userRepository, IAssignmentRuleService assignmentRuleService)
+    private readonly ApplicationDbContext _context;
+
+    public TicketService(
+        ITicketRepository ticketRepository,
+        ITicketHistoryService historyService,
+        IUserRepository userRepository,
+        IAssignmentRuleService assignmentRuleService,
+        ApplicationDbContext context)
     {
         _ticketRepository = ticketRepository;
         _historyService = historyService;
-        _userRepository=userRepository;
-        _assignmentRuleService=assignmentRuleService;
+        _userRepository = userRepository;
+        _assignmentRuleService = assignmentRuleService;
+        _context = context;
     }
 
     // Méthodes de base CRUD
@@ -77,11 +91,14 @@ public class TicketService : ITicketService
 
         await _historyService.AddHistoryEntryAsync(history);
 
-        // Apply assignment rules automatically
-        await _assignmentRuleService.ApplyRuleToTicketAsync(createdTicket.TicketID);
+        // NOUVELLE MODIFICATION: 
+        // Appliquer les règles d'assignation automatiquement dès la création
+        // Note: Cette partie est maintenant gérée dans le contrôleur pour éviter les dépendances circulaires
+        // await _assignmentRuleService.ApplyRuleToTicketAsync(createdTicket.TicketID);
 
         return createdTicket;
     }
+
     public async Task UpdateTicketAsync(Ticket ticket)
     {
         if (ticket == null) throw new ArgumentNullException(nameof(ticket));
@@ -243,13 +260,36 @@ public class TicketService : ITicketService
         }
 
         var oldAssignedUser = ticket.AssignedToUserId;
+        var oldAssignedTeamId = ticket.AssignedToTeamID;
+
         ticket.AssignedToUserId = assignedToUserId;
-        ticket.AssignedToTeamID = null; // Désassigner de l'équipe si assigné à un utilisateur
+
+        // MODIFICATION: Au lieu de mettre AssignedToTeamID à null, trouver l'équipe de l'agent
+        if (!string.IsNullOrEmpty(assignedToUserId))
+        {
+            // Rechercher l'équipe de l'agent
+            var teamMember = await _context.TeamMembers
+                .FirstOrDefaultAsync(tm => tm.UserId == assignedToUserId);
+
+            if (teamMember != null)
+            {
+                ticket.AssignedToTeamID = teamMember.TeamID;
+            }
+            else
+            {
+                ticket.AssignedToTeamID = null;
+            }
+        }
+        else
+        {
+            ticket.AssignedToTeamID = null;
+        }
+
         ticket.UpdatedDate = DateTime.Now;
 
         await _ticketRepository.UpdateAsync(ticket);
 
-        // Ajout d'une entrée dans l'historique
+        // Ajout d'une entrée dans l'historique pour l'utilisateur
         await _historyService.AddHistoryEntryAsync(new TicketHistory
         {
             TicketID = ticketId,
@@ -259,6 +299,20 @@ public class TicketService : ITicketService
             NewValue = assignedToUserId ?? "Unassigned",
             ChangedDate = DateTime.Now
         });
+
+        // Ajout d'une entrée dans l'historique pour l'équipe si elle a changé
+        if (oldAssignedTeamId != ticket.AssignedToTeamID)
+        {
+            await _historyService.AddHistoryEntryAsync(new TicketHistory
+            {
+                TicketID = ticketId,
+                ChangedByUserId = updatedByUserId,
+                FieldName = "AssignedToTeam",
+                OldValue = oldAssignedTeamId?.ToString() ?? "Unassigned",
+                NewValue = ticket.AssignedToTeamID?.ToString() ?? "Unassigned",
+                ChangedDate = DateTime.Now
+            });
+        }
 
         return ticket;
     }

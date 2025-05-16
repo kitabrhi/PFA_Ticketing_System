@@ -37,6 +37,9 @@ namespace Ticketing_System
             app.Run();
         }
 
+        // Modifications dans Program.cs pour assurer les dépendances correctes
+
+        // Dans la méthode ConfigureServices, assurez-vous que l'ordre est correct:
         private static void ConfigureServices(IServiceCollection services, string connectionString, IConfiguration configuration)
         {
             // 2.1 Configuration des repositories (Repository Pattern)
@@ -51,17 +54,22 @@ namespace Ticketing_System
             services.AddScoped<IEscalationRuleRepository, EscalationRuleRepository>();
             services.AddScoped<IAssignmentRuleRepository, AssignmentRuleRepository>();
 
-            // 2.2 Configuration des services (Service Layer)
-            services.AddScoped<ITicketService, TicketService>();
-            services.AddScoped<ITicketCommentService, TicketCommentService>();
+            // 2.2 Configuration des services (Service Layer) - Attention à l'ordre des services
+            // D'abord les services qui ne dépendent pas d'autres services
             services.AddScoped<ITicketHistoryService, TicketHistoryService>();
-            services.AddScoped<IAttachmentService, AttachmentService>();
-            services.AddScoped<ISupportTeamService, SupportTeamService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IUserService, UserService>();
+
+            // Ensuite les services qui dépendent des services précédents
             services.AddScoped<ITeamMemberService, TeamMemberService>();
+            services.AddScoped<ITicketCommentService, TicketCommentService>();
+            services.AddScoped<IAttachmentService, AttachmentService>();
+            services.AddScoped<ISupportTeamService, SupportTeamService>();
             services.AddScoped<IEscalationRuleService, EscalationRuleService>();
             services.AddScoped<IAssignmentRuleService, AssignmentRuleService>();
+
+            // Enfin, le TicketService qui dépend de plusieurs autres services
+            services.AddScoped<ITicketService, TicketService>();
 
             // Enregistrement des services de logging
             services.AddLogging(configure =>
