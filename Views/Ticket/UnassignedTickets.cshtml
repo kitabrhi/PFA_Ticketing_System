@@ -6,18 +6,34 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Tickets non assignés</h1>
-        <form asp-action="AssignAllUnassignedTickets" method="post">
-            <button type="submit" class="btn btn-success">
-                <i class="fas fa-users"></i> Assigner tous les tickets
-            </button>
-        </form>
+        <div>
+            <h1 class="fw-bold mb-0"><i class="fas fa-exclamation-circle text-warning me-2"></i>Tickets non assignés</h1>
+            <p class="text-muted">Ces tickets nécessitent une attention immédiate pour être assignés à un agent.</p>
+        </div>
+        <div>
+            <form asp-action="AssignAllUnassignedTickets" method="post" class="d-inline">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-users me-2"></i> Assigner tous les tickets
+                </button>
+            </form>
+            <a asp-action="Index" class="btn btn-outline-primary ms-2">
+                <i class="fas fa-list me-2"></i> Tous les tickets
+            </a>
+        </div>
     </div>
 
     @if (TempData["SuccessMessage"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show">
-            @TempData["SuccessMessage"]
+            <i class="fas fa-check-circle me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="fas fa-exclamation-triangle me-2"></i> @TempData["ErrorMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
@@ -26,9 +42,19 @@
         <div class="card-body">
             @if (Model.Any())
             {
+                <div class="alert alert-warning">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-triangle fs-3 me-3"></i>
+                        <div>
+                            <h5 class="alert-heading">Attention!</h5>
+                            <p class="mb-0">Il y a <strong>@Model.Count()</strong> tickets non assignés qui nécessitent une attention.</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="table-responsive">
                     <table class="table table-hover">
-                        <thead>
+                        <thead class="table-light">
                             <tr>
                                 <th>ID</th>
                                 <th>Titre</th>
@@ -46,7 +72,7 @@
                                 <tr>
                                     <td>@ticket.TicketID</td>
                                     <td>
-                                        <a asp-action="Details" asp-route-id="@ticket.TicketID">@ticket.Title</a>
+                                        <a asp-action="Details" asp-route-id="@ticket.TicketID" class="fw-medium">@ticket.Title</a>
                                     </td>
                                     <td>@ticket.Category</td>
                                     <td>
@@ -76,12 +102,29 @@
                                         }
                                         <span class="badge @statusClass">@ticket.Status</span>
                                     </td>
-                                    <td>@ticket.CreatedByUser?.UserName</td>
-                                    <td>@ticket.CreatedDate.ToString("dd MMM yyyy")</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar avatar-sm me-2 bg-primary">
+                                                @{
+                                                    string initials = "?";
+                                                    if (ticket.CreatedByUser != null)
+                                                    {
+                                                        initials = ticket.CreatedByUser.FirstName?.Substring(0, 1) + ticket.CreatedByUser.LastName?.Substring(0, 1);
+                                                    }
+                                                }
+                                                <span class="avatar-text">@initials</span>
+                                            </div>
+                                            @ticket.CreatedByUser?.UserName
+                                        </div>
+                                    </td>
+                                    <td>@ticket.CreatedDate.ToString("dd MMM yyyy HH:mm")</td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <a asp-action="Details" asp-route-id="@ticket.TicketID" class="btn btn-sm btn-info">
+                                            <a asp-action="Details" asp-route-id="@ticket.TicketID" class="btn btn-sm btn-outline-info">
                                                 <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@ticket.TicketID" class="btn btn-sm btn-outline-warning">
+                                                <i class="fas fa-edit"></i>
                                             </a>
                                             <form asp-action="ForceAssignTicket" method="post" style="display: inline;">
                                                 <input type="hidden" name="ticketId" value="@ticket.TicketID" />
@@ -101,10 +144,35 @@
             {
                 <div class="text-center py-5">
                     <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
-                    <h4>Félicitations! Tous les tickets sont assignés</h4>
-                    <p class="text-muted">Il n'y a aucun ticket non assigné à un agent de support.</p>
+                    <h4 class="fw-bold">Félicitations! Tous les tickets sont assignés</h4>
+                    <p class="text-muted mb-4">Il n'y a aucun ticket non assigné à un agent de support.</p>
+                    <a asp-action="Index" class="btn btn-primary">
+                        <i class="fas fa-list me-2"></i> Voir tous les tickets
+                    </a>
                 </div>
             }
         </div>
     </div>
 </div>
+
+<style>
+    .avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .avatar-sm {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+    
+    .avatar-text {
+        color: white;
+        font-weight: 600;
+    }
+</style>

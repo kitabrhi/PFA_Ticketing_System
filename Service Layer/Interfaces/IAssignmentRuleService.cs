@@ -11,6 +11,9 @@ public interface IAssignmentRuleService
     Task ApplyRuleToTicketAsync(int ticketId);
     Task AutoAssignTicketAsync(Ticket ticket);
 
-    // Nouvelle méthode pour distribuer les tickets en fonction de la charge de travail
+    // Méthode pour distribuer les tickets en fonction de la charge de travail
     Task AssignTicketToLeastBusyAgentAsync(int ticketId);
+
+    // Méthode unifiée pour l'assignation automatique
+    Task AssignTicketAutomaticallyAsync(int ticketId);
 }
