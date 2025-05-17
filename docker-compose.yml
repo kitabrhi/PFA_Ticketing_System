@@ -1,0 +1,49 @@
+services:
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: quantum-desk-app
+    ports:
+      - "8080:80"
+    depends_on:
+      db:
+        condition: service_started
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=db;Database=DB_PFA;User Id=sa;Password=Haitham@2468;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - ASPNETCORE_URLS=http://+:80
+    volumes:
+      - attachment-data:/app/wwwroot/Attachments
+    restart: unless-stopped
+    networks:
+      - quantum-network
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: quantum-desk-db
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Haitham@2468
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD", "/bin/bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/1433"]
+      interval: 20s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - quantum-network
+
+volumes:
+  mssql-data:
+  attachment-data:
+
+networks:
+  quantum-network:
+    driver: bridge

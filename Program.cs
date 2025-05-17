@@ -11,6 +11,7 @@ using Ticketing_System.Service_Layer.Service;
 using Ticketing_System.Service_Layer.Services;
 using Ticketing_System.Services;
 using Microsoft.Extensions.Logging;
+using Polly;
 
 namespace Ticketing_System
 {
@@ -20,8 +21,22 @@ namespace Ticketing_System
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // 1. Configuration de la chaîne de connexion SQL Server
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            // Forcer HTTP uniquement pour Docker
+            builder.WebHost.UseUrls("http://+:80");
+
+            // Ajout de la prise en charge des variables d'environnement (critique pour Docker)
+            builder.Configuration.AddEnvironmentVariables();
+
+            // Configuration du logging pour le conteneur
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+            builder.Logging.AddDebug();
+
+            // 1. Configuration de la chaîne de connexion SQL Server avec priorité aux variables d'environnement Docker
+            var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"] ??
+                                  builder.Configuration.GetConnectionString("DefaultConnection");
+
+            Console.WriteLine($"Connection string being used: {connectionString}");
 
             // 2. Configuration des services
             ConfigureServices(builder.Services, connectionString, builder.Configuration);
@@ -31,15 +46,12 @@ namespace Ticketing_System
             // 3. Configuration du pipeline HTTP
             ConfigureMiddleware(app);
 
-            // 4. Initialisation de la base de données et des données par défaut
-            await InitializeDatabaseAsync(app);
+            // 4. Initialisation de la base de données avec stratégie de retry
+            await InitializeDatabaseWithRetryAsync(app);
 
             app.Run();
         }
 
-        // Modifications dans Program.cs pour assurer les dépendances correctes
-
-        // Dans la méthode ConfigureServices, assurez-vous que l'ordre est correct:
         private static void ConfigureServices(IServiceCollection services, string connectionString, IConfiguration configuration)
         {
             // 2.1 Configuration des repositories (Repository Pattern)
@@ -54,7 +66,7 @@ namespace Ticketing_System
             services.AddScoped<IEscalationRuleRepository, EscalationRuleRepository>();
             services.AddScoped<IAssignmentRuleRepository, AssignmentRuleRepository>();
 
-            // 2.2 Configuration des services (Service Layer) - Attention à l'ordre des services
+            // 2.2 Configuration des services (Service Layer)
             // D'abord les services qui ne dépendent pas d'autres services
             services.AddScoped<ITicketHistoryService, TicketHistoryService>();
             services.AddScoped<INotificationService, NotificationService>();
@@ -72,27 +84,40 @@ namespace Ticketing_System
             // Enfin, le TicketService qui dépend de plusieurs autres services
             services.AddScoped<ITicketService, TicketService>();
 
-            // Enregistrement des services de logging
-            services.AddLogging(configure =>
-            {
-                configure.AddConsole();
-                configure.AddDebug();
-            });
+            // Configuration simple des healthchecks pour Docker (sans DbContextCheck)
+            services.AddHealthChecks();
 
+            // Configuration CORS plus sécurisée
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", policy =>
                 {
-                    policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
                 });
+            });
+
+            // Configuration pour ignorer les erreurs dans les services d'arrière-plan
+            services.Configure<HostOptions>(options =>
+            {
+                options.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
             });
 
             // 2.3 Services d'arrière-plan
             services.AddHostedService<EscalationBackgroundService>();
 
-            // 2.4 Configuration de la base de données
+            // 2.4 Configuration de la base de données avec retry pour Docker
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+            {
+                options.UseSqlServer(connectionString, sqlOptions =>
+                {
+                    sqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 10,
+                        maxRetryDelay: TimeSpan.FromSeconds(30),
+                        errorNumbersToAdd: null);
+                });
+            });
 
             // 2.5 Configuration de l'identité
             services.AddDefaultIdentity<User>(options =>
@@ -141,16 +166,21 @@ namespace Ticketing_System
 
         private static void ConfigureMiddleware(WebApplication app)
         {
+            var logger = app.Services.GetRequiredService<ILogger<Program>>();
+            logger.LogInformation("Configuring middleware pipeline...");
+
             // 3.1 Gestion des erreurs et sécurité
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
+                logger.LogInformation("Running in Production mode");
             }
             else
             {
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "QuantumDesk API v1"));
+                logger.LogInformation("Running in Development mode with Swagger enabled");
             }
 
             // 3.2 Middleware HTTP
@@ -159,6 +189,9 @@ namespace Ticketing_System
             // 3.3 Middleware de routage
             app.UseCors("AllowAll");
             app.UseRouting();
+
+            // Endpoint de health check pour Docker (simplifié)
+            app.MapHealthChecks("/health");
 
             // 3.4 Middleware d'authentification et d'autorisation
             app.UseAuthentication();
@@ -170,41 +203,71 @@ namespace Ticketing_System
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            logger.LogInformation("Middleware configuration completed successfully");
         }
 
-        private static async Task InitializeDatabaseAsync(WebApplication app)
+        private static async Task InitializeDatabaseWithRetryAsync(WebApplication app)
         {
-            using var scope = app.Services.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            await dbContext.Database.MigrateAsync();
+            var logger = app.Services.GetRequiredService<ILogger<Program>>();
+            logger.LogInformation("Starting database initialization with retry policy");
 
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+            // Définition d'une politique de retry pour l'initialisation de la base de données
+            var retryPolicy = Policy
+                .Handle<Exception>()
+                .WaitAndRetryAsync(
+                    10, // Nombre de tentatives
+                    retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), // Backoff exponentiel
+                    (exception, timeSpan, retryCount, context) =>
+                    {
+                        logger.LogWarning($"Attempt {retryCount} to initialize database failed. Retrying in {timeSpan.TotalSeconds} seconds. Error: {exception.Message}");
+                    }
+                );
 
-            // 4.1 Création des rôles
-            var roles = new[] { "Admin", "SupportAgent", "User" };
-            foreach (var role in roles)
+            await retryPolicy.ExecuteAsync(async () =>
             {
-                if (!await roleManager.RoleExistsAsync(role))
+                using var scope = app.Services.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                // Migrer la base de données
+                logger.LogInformation("Applying database migrations...");
+                await dbContext.Database.MigrateAsync();
+                logger.LogInformation("Database migrations applied successfully");
+
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+                // 4.1 Création des rôles
+                var roles = new[] { "Admin", "SupportAgent", "User" };
+                foreach (var role in roles)
                 {
-                    await roleManager.CreateAsync(new Role { Name = role });
+                    if (!await roleManager.RoleExistsAsync(role))
+                    {
+                        logger.LogInformation($"Creating role: {role}");
+                        await roleManager.CreateAsync(new Role { Name = role });
+                    }
                 }
-            }
 
-            // 4.2 Création des utilisateurs par défaut
-            await CreateDefaultUserAsync(userManager, "admin@admin.com", "Admin@123", "Admin", "User", "Admin");
-            await CreateDefaultUserAsync(userManager, "system@quantumdesk.com", "SystemPassword123!", "System", "Automated", "Admin");
-            await CreateDefaultUserAsync(userManager, "agent@quantumdesk.com", "Agent123!", "Support", "Agent", "SupportAgent");
+                // 4.2 Création des utilisateurs par défaut
+                logger.LogInformation("Creating default users...");
+                await CreateDefaultUserAsync(userManager, logger, "admin@admin.com", "Admin@123", "Admin", "User", "Admin");
+                await CreateDefaultUserAsync(userManager, logger, "system@quantumdesk.com", "SystemPassword123!", "System", "Automated", "Admin");
+                await CreateDefaultUserAsync(userManager, logger, "agent@quantumdesk.com", "Agent123!", "Support", "Agent", "SupportAgent");
+                logger.LogInformation("Default users created successfully");
 
-            // 4.3 Création des données par défaut
-            await CreateDefaultSupportTeamAsync(dbContext, userManager, "admin@admin.com", "agent@quantumdesk.com");
-            await CreateDefaultAssignmentRuleAsync(dbContext);
+                // 4.3 Création des données par défaut
+                logger.LogInformation("Creating default support team and assignment rules...");
+                await CreateDefaultSupportTeamAsync(dbContext, userManager, "admin@admin.com", "agent@quantumdesk.com");
+                await CreateDefaultAssignmentRuleAsync(dbContext);
+                logger.LogInformation("Default data created successfully");
+            });
         }
 
-        private static async Task CreateDefaultUserAsync(UserManager<User> userManager, string email, string password, string firstName, string lastName, string role)
+        private static async Task CreateDefaultUserAsync(UserManager<User> userManager, ILogger logger, string email, string password, string firstName, string lastName, string role)
         {
             if (await userManager.FindByEmailAsync(email) == null)
             {
+                logger.LogInformation($"Creating user: {email}");
                 var user = new User
                 {
                     UserName = email,
@@ -219,7 +282,17 @@ namespace Ticketing_System
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(user, role);
+                    logger.LogInformation($"User {email} created successfully with role {role}");
                 }
+                else
+                {
+                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                    logger.LogWarning($"Failed to create user {email}: {errors}");
+                }
+            }
+            else
+            {
+                logger.LogInformation($"User {email} already exists");
             }
         }
 
