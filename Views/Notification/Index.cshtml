@@ -7,22 +7,29 @@
 }
 
 @{
-    ViewData["Title"] = "Tickets assignés";
+    var user = Context.User;
 
-    // Définir le bon layout en fonction du rôle de l'utilisateur
-    if (User.IsInRole("Admin"))
+    if (user?.Identity?.IsAuthenticated ?? false)
     {
-        Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    }
-    else if (User.IsInRole("SupportAgent"))
-    {
-        Layout = "~/Views/Shared/_SupportAgentLayout.cshtml";
+        if (user.IsInRole("Admin") || user.IsInRole("SuperAdmin"))
+        {
+            Layout = "~/Views/Shared/_AdminLayout.cshtml";
+        }
+        else if (user.IsInRole("SupportAgent"))
+        {
+            Layout = "~/Views/Shared/_SupportAgentLayout.cshtml";
+        }
+        else
+        {
+            Layout = "~/Views/Shared/_UserLayout.cshtml";
+        }
     }
     else
     {
-        Layout = "~/Views/Shared/_Layout.cshtml";
+        Layout = "~/Views/Shared/_Layout.cshtml"; // default fallback
     }
 }
+
 
 <div class="container py-5">
 

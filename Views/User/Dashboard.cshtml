@@ -7,93 +7,262 @@
     var resolved = ViewBag.TicketsResolved ?? 0;
     var open = ViewBag.TicketsOpen ?? 0;
 
-    var categoryLabels = new List<string> { "Bug", "Feature", "Support" };
-    var categoryValues = new List<int> { 4, 2, 3 };
+    var categoryLabels = ViewBag.CategoryLabels as List<string> ?? new List<string>();
+    var categoryValues = ViewBag.CategoryValues as List<int> ?? new List<int>();
 }
 
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
 <style>
     body {
-        background-color: #f4f6fa;
+        background-color: #f0f4f8;
+        font-family: 'Inter', sans-serif;
     }
 
-    .dashboard-card {
-        border-radius: 1.2rem;
+    .dashboard-container {
         padding: 2rem 1.5rem;
-        background-color: #ffffff;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
-        text-align: center;
-        border-left: 6px solid #e0e0e0;
+        max-width: 1400px;
+        margin: 0 auto;
     }
 
-    .dashboard-card:hover {
-        transform: scale(1.02);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    .dashboard-header {
+        margin-bottom: 2.5rem;
+        position: relative;
+        overflow: hidden;
+        border-radius: 1rem;
+        padding: 2.5rem;
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        box-shadow: 0 10px 25px rgba(79, 70, 229, 0.15);
     }
 
-    .dashboard-icon {
+    .header-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .dashboard-header:before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 60%);
+        transform: rotate(-15deg);
+    }
+
+    .welcome-title {
+        font-weight: 700;
         font-size: 2.2rem;
+        color: white;
         margin-bottom: 0.5rem;
     }
 
-    .chart-box {
-        background: #ffffff;
-        padding: 2rem;
-        border-radius: 1.2rem;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-        height: 360px;
+    .welcome-subtitle {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 1.1rem;
+        max-width: 500px;
     }
 
-    .chart-container canvas {
-        max-height: 220px !important;
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        border-radius: 1rem;
+        padding: 1.8rem;
+        background: white;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-icon {
+        background: rgba(99, 102, 241, 0.1);
+        color: #6366f1;
+        border-radius: 12px;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        margin-right: 1.5rem;
+    }
+
+    .stat-content {
+        flex: 1;
+    }
+
+    .stat-value {
+        font-size: 2.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-bottom: 0.2rem;
+    }
+
+    .stat-label {
+        font-size: 0.95rem;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .total-card .stat-icon {
+        background: rgba(99, 102, 241, 0.1);
+        color: #6366f1;
+    }
+
+    .total-card .stat-value {
+        color: #6366f1;
+    }
+
+    .resolved-card .stat-icon {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+
+    .resolved-card .stat-value {
+        color: #10b981;
+    }
+
+    .open-card .stat-icon {
+        background: rgba(250, 204, 21, 0.1);
+        color: #facc15;
+    }
+
+    .open-card .stat-value {
+        color: #facc15;
+    }
+
+    .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .chart-card {
+        background: white;
+        padding: 1.8rem;
+        border-radius: 1rem;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        height: 100%;
+    }
+
+    .chart-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+
+    .chart-title {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #334155;
+        display: flex;
+        align-items: center;
+    }
+
+    .chart-title i {
+        margin-right: 0.5rem;
+        color: #6366f1;
+    }
+
+    .chart-container {
+        height: 280px;
+        position: relative;
+    }
+
+    @@media (max-width: 768px) {
+        .dashboard-header {
+            padding: 1.8rem;
+        }
+        
+        .welcome-title {
+            font-size: 1.8rem;
+        }
+        
+        .charts-grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 
-<div class="container py-5">
-    <div class="text-center mb-5">
-        <h2 class="fw-bold text-primary mb-1">Welcome, @User.Identity.Name!</h2>
-        <p class="text-muted fs-5">Here’s a quick overview of your ticket activity.</p>
-    </div>
-
-    <div class="row g-4 mb-5">
-        <div class="col-md-4" data-aos="zoom-in">
-            <div class="dashboard-card border-start border-primary border-4">
-                <div class="dashboard-icon text-primary"><i class="fas fa-ticket-alt"></i></div>
-                <p class="text-muted mb-1">Total Tickets</p>
-                <h3 class="fw-bold text-primary">@total</h3>
-            </div>
-        </div>
-        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="150">
-            <div class="dashboard-card border-start border-success border-4">
-                <div class="dashboard-icon text-success"><i class="fas fa-check-circle"></i></div>
-                <p class="text-muted mb-1">Resolved</p>
-                <h3 class="fw-bold text-success">@resolved</h3>
-            </div>
-        </div>
-        <div class="col-md-4" data-aos="zoom-in" data-aos-delay="300">
-            <div class="dashboard-card border-start border-warning border-4">
-                <div class="dashboard-icon text-warning"><i class="fas fa-envelope-open-text"></i></div>
-                <p class="text-muted mb-1">Open / New</p>
-                <h3 class="fw-bold text-warning">@open</h3>
-            </div>
+<div class="dashboard-container">
+    <!-- Header -->
+    <div class="dashboard-header" data-aos="fade-up">
+        <div class="header-content">
+            <h1 class="welcome-title">Welcome back, @User.Identity.Name!</h1>
+            <p class="welcome-subtitle">Monitor your ticket activities and track important metrics in real-time.</p>
         </div>
     </div>
 
-    <div class="row g-4">
-        <div class="col-lg-6" data-aos="fade-up">
-            <div class="chart-box">
-                <h6 class="mb-3 fw-bold text-secondary text-center">
-                    <i class="fas fa-chart-bar me-1"></i> Tickets Overview
-                </h6>
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card total-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="stat-icon">
+                <i class="fas fa-ticket-alt"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">@total</div>
+                <div class="stat-label">Total Tickets</div>
+            </div>
+        </div>
+        
+        <div class="stat-card resolved-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">@resolved</div>
+                <div class="stat-label">Resolved Tickets</div>
+            </div>
+        </div>
+        
+        <div class="stat-card open-card" data-aos="fade-up" data-aos-delay="300">
+            <div class="stat-icon">
+                <i class="fas fa-envelope-open-text"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">@open</div>
+                <div class="stat-label">Open Tickets</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-grid">
+        <div class="chart-card" data-aos="fade-up" data-aos-delay="400">
+            <div class="chart-header">
+                <div class="chart-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Tickets Overview
+                </div>
+            </div>
+            <div class="chart-container">
                 <canvas id="ticketChart"></canvas>
             </div>
         </div>
-        <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
-            <div class="chart-box">
-                <h6 class="mb-3 fw-bold text-secondary text-center">
-                    <i class="fas fa-chart-pie me-1"></i> Tickets by Category
-                </h6>
+        
+        <div class="chart-card" data-aos="fade-up" data-aos-delay="500">
+            <div class="chart-header">
+                <div class="chart-title">
+                    <i class="fas fa-chart-pie"></i>
+                    Tickets by Category
+                </div>
+            </div>
+            <div class="chart-container">
                 <canvas id="categoryChart"></canvas>
             </div>
         </div>
@@ -104,50 +273,151 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ duration: 800 });
+        AOS.init({ 
+            duration: 800,
+            once: true 
+        });
 
-        new Chart(document.getElementById("ticketChart").getContext("2d"), {
+        // Bar chart (Tickets Overview)
+        const ctxBar = document.getElementById("ticketChart").getContext("2d");
+        const gradientBar = ctxBar.createLinearGradient(0, 0, 0, 280);
+        gradientBar.addColorStop(0, "#818cf8");
+        gradientBar.addColorStop(1, "#c7d2fe");
+
+        new Chart(ctxBar, {
             type: 'bar',
             data: {
                 labels: ['Total', 'Resolved', 'Open'],
                 datasets: [{
                     label: 'Tickets',
                     data: [@total, @resolved, @open],
-                    backgroundColor: ['#1a73e8', '#34a853', '#fbbc05'],
-                    borderRadius: 10
+                    backgroundColor: [
+                        '#6366f1',
+                        '#10b981',
+                        '#facc15'
+                    ],
+                    borderRadius: 8,
+                    borderWidth: 0,
+                    barThickness: 35,
+                    maxBarThickness: 50
                 }]
             },
             options: {
                 responsive: true,
-                plugins: { legend: { display: false } },
-                scales: { y: { beginAtZero: true } }
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        titleColor: '#fff',
+                        bodyColor: '#e2e8f0',
+                        padding: 12,
+                        cornerRadius: 8,
+                        boxPadding: 6,
+                        usePointStyle: true,
+                        bodyFont: {
+                            size: 14
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { 
+                            color: "rgba(226,232,240,0.5)"
+                        },
+                        ticks: { 
+                            color: "#64748b", 
+                            font: { 
+                                weight: "500",
+                                family: "'Inter', sans-serif" 
+                            }
+                        }
+                    },
+                    x: {
+                        grid: { 
+                            display: false 
+                        },
+                        ticks: { 
+                            color: "#334155", 
+                            font: { 
+                                weight: "600",
+                                family: "'Inter', sans-serif"
+                            }
+                        }
+                    }
+                }
             }
         });
 
-        new Chart(document.getElementById("categoryChart").getContext("2d"), {
+        // Doughnut chart (by category)
+        const ctxDonut = document.getElementById("categoryChart").getContext("2d");
+
+        new Chart(ctxDonut, {
             type: 'doughnut',
             data: {
                 labels: @Html.Raw(JsonConvert.SerializeObject(categoryLabels)),
                 datasets: [{
-                    label: 'Tickets',
+                    label: 'Tickets by Category',
                     data: @Html.Raw(JsonConvert.SerializeObject(categoryValues)),
-                    backgroundColor: ['#00a78e', '#ff6b6b', '#ffa502'],
-                    borderWidth: 1
+                    backgroundColor: [
+                        '#6366f1', // Primary
+                        '#10b981', // Success
+                        '#f43f5e', // Danger
+                        '#facc15', // Warning
+                        '#8b5cf6', // Purple
+                        '#06b6d4'  // Cyan
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 15
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 cutout: "75%",
                 plugins: {
                     legend: {
                         position: 'bottom',
+                        align: 'center',
                         labels: {
-                            boxWidth: 14,
-                            font: {
-                                size: 13
+                            boxWidth: 12,
+                            boxHeight: 12,
+                            padding: 15,
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            color: "#334155",
+                            font: { 
+                                size: 13, 
+                                weight: '600',
+                                family: "'Inter', sans-serif"
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        titleColor: '#fff',
+                        bodyColor: '#e2e8f0',
+                        padding: 12,
+                        cornerRadius: 8,
+                        boxPadding: 6,
+                        usePointStyle: true,
+                        bodyFont: {
+                            size: 14
+                        },
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.raw;
+                                const total = context.dataset.data.reduce((acc, data) => acc + data, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${context.label}: ${value} (${percentage}%)`;
                             }
                         }
                     }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
                 }
             }
         });

@@ -19,22 +19,37 @@ namespace Ticketing_System.Controllers
         }
 
         // GET: /User/Dashboard
-        public async Task<IActionResult> Dashboard()
+        // GET: /User/Dashboard
+public async Task<IActionResult> Dashboard()
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (string.IsNullOrEmpty(userId))
+        return Unauthorized();
+
+    var myTickets = await _ticketService.GetTicketsByUserIdAsync(userId);
+
+    ViewBag.TotalTickets = myTickets.Count();
+    ViewBag.TicketsResolved = myTickets.Count(t => t.Status == TicketStatus.Resolved);
+    ViewBag.TicketsOpen = myTickets.Count(t =>
+        t.Status == TicketStatus.Open ||
+        t.Status == TicketStatus.New);
+
+    // ✅ Données dynamiques pour "Tickets by Category"
+    var categoryGroups = myTickets
+        .GroupBy(t => t.Category)
+        .Select(g => new
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized();
+            Category = g.Key.ToString(),
+            Count = g.Count()
+        })
+        .ToList();
 
-            var myTickets = await _ticketService.GetTicketsByUserIdAsync(userId);
+    ViewBag.CategoryLabels = categoryGroups.Select(c => c.Category).ToList();
+    ViewBag.CategoryValues = categoryGroups.Select(c => c.Count).ToList();
 
-            ViewBag.TotalTickets = myTickets.Count();
-            ViewBag.TicketsResolved = myTickets.Count(t => t.Status == TicketStatus.Resolved);
-            ViewBag.TicketsOpen = myTickets.Count(t =>
-                t.Status == TicketStatus.Open ||
-                t.Status == TicketStatus.New);
+    return View(myTickets); // Crée ou modifie Views/User/Dashboard.cshtml
+}
 
-            return View(myTickets); // Tu peux créer une vue : Views/User/Dashboard.cshtml
-        }
 
         // GET: /User/MyTickets
         public async Task<IActionResult> MyTickets()
