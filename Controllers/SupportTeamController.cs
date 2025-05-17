@@ -113,7 +113,7 @@ namespace Ticketing_System.Controllers
 
             if (!allAreSupportAgents)
             {
-                ModelState.AddModelError("TeamMembers", "Tous les membres doivent avoir le r�le SupportAgent.");
+                ModelState.AddModelError("TeamMembers", "Tous les membres doivent avoir le role SupportAgent.");
             }
 
             // Si erreurs de validation
@@ -134,8 +134,8 @@ namespace Ticketing_System.Controllers
                 // Cr�ation d'une notification pour l'utilisateur
                 await _notificationService.CreateNotificationAsync(
                     user.Id,
-                    "?? Nouvelle �quipe Cr��e",
-                    $"L'�quipe \"{createdTeam.TeamName}\" a �t� cr��e avec succ�s."
+                    "Une Nouvelle équipe Crée",
+                    $"L'équipe \"{createdTeam.TeamName}\" a été crée avec succés."
                 );
 
                 // Notifications pour les membres ajout�s
@@ -143,17 +143,17 @@ namespace Ticketing_System.Controllers
                 {
                     await _notificationService.CreateNotificationAsync(
                         memberId,
-                        "?? Ajout � une �quipe",
-                        $"Vous avez �t� ajout� � l'�quipe \"{createdTeam.TeamName}\"."
+                        "?? Ajout à une équipe",
+                        $"Vous avez été ajouté à l'équipe \"{createdTeam.TeamName}\"."
                     );
                 }
 
-                TempData["SuccessMessage"] = "? �quipe cr��e avec succ�s.";
+                TempData["SuccessMessage"] = "L'équipe crée avec succés.";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Une erreur s'est produite lors de la cr�ation de l'�quipe: " + ex.Message);
+                ModelState.AddModelError("", "Une erreur s'est produite lors de la création de l'équipe: " + ex.Message);
                 await LoadViewBagDataWithSupportAgentsOnly(team.ManagerId, selectedMemberIds, selectedTicketIds);
                 return View(team);
             }
@@ -210,7 +210,7 @@ namespace Ticketing_System.Controllers
 
             if (!allAreSupportAgents)
             {
-                ModelState.AddModelError("TeamMembers", "Tous les membres doivent avoir le r�le SupportAgent.");
+                ModelState.AddModelError("TeamMembers", "Tous les membres doivent avoir le rôle SupportAgent.");
             }
 
             if (!ModelState.IsValid)
@@ -260,8 +260,8 @@ namespace Ticketing_System.Controllers
                     // Notification pour les nouveaux membres
                     await _notificationService.CreateNotificationAsync(
                         userId,
-                        "?? Ajout � une �quipe",
-                        $"Vous avez �t� ajout� � l'�quipe \"{existingTeam.TeamName}\"."
+                        "?? Ajout à une équipe",
+                        $"Vous avez été ajouté à l'équipe \"{existingTeam.TeamName}\"."
                     );
                 }
 
@@ -282,12 +282,12 @@ namespace Ticketing_System.Controllers
 
                 await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "? �quipe mise � jour avec succ�s.";
+                TempData["SuccessMessage"] = "? équipe mise à jour avec succés.";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Une erreur s'est produite lors de la mise � jour: " + ex.Message);
+                ModelState.AddModelError("", "Une erreur s'est produite lors de la mise à jour: " + ex.Message);
                 await LoadViewBagDataWithSupportAgentsOnly(team.ManagerId, selectedMemberIds, selectedTicketIds);
                 return View(team);
             }
@@ -309,7 +309,7 @@ namespace Ticketing_System.Controllers
             try
             {
                 await _teamService.DeleteAsync(id);
-                TempData["SuccessMessage"] = "? �quipe supprim�e avec succ�s.";
+                TempData["SuccessMessage"] = "L'équipe supprimée avec succés.";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)

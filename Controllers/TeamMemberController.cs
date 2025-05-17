@@ -68,7 +68,7 @@ namespace Ticketing_System.Controllers
 
             if (userAlreadyInTeam)
             {
-                ModelState.AddModelError("", "Cet utilisateur est d�j� membre de cette �quipe.");
+                ModelState.AddModelError("", "Cet utilisateur est déjà membre de cette équipe.");
                 await LoadViewBagDataAsync(member.TeamID, member.UserId);
                 return View(member);
             }
@@ -77,7 +77,7 @@ namespace Ticketing_System.Controllers
             var user = await _userManager.FindByIdAsync(member.UserId);
             if (user == null || !await _userManager.IsInRoleAsync(user, "SupportAgent"))
             {
-                ModelState.AddModelError("UserId", "Seuls les agents de support peuvent �tre ajout�s aux �quipes.");
+                ModelState.AddModelError("UserId", "Seuls les agents de support peuvent étre ajoutés aux équipes.");
                 await LoadViewBagDataAsync(member.TeamID, member.UserId);
                 return View(member);
             }
@@ -94,19 +94,19 @@ namespace Ticketing_System.Controllers
             {
                 await _notificationService.CreateNotificationAsync(
                     adminUser.Id,
-                    " Nouveau membre d'�quipe",
-                    $"L'utilisateur {user.FirstName} {user.LastName} a �t� ajout� � l'�quipe \"{team.TeamName}\"."
+                    " Nouveau membre d'équipe",
+                    $"L'utilisateur {user.FirstName} {user.LastName} a été ajouté à l'équipe \"{team.TeamName}\"."
                 );
 
                 // Notification pour l'utilisateur ajout�
                 await _notificationService.CreateNotificationAsync(
                     user.Id,
-                    " Ajout � une �quipe",
-                    $"Vous avez �t� ajout� � l'�quipe de support \"{team.TeamName}\"."
+                    " Ajout à une équipe",
+                    $"Vous avez été ajouté à l'équipe de support \"{team.TeamName}\"."
                 );
             }
 
-            TempData["SuccessMessage"] = " Membre ajout� avec succ�s";
+            TempData["SuccessMessage"] = " Membre ajouté avec succés";
             return RedirectToAction(nameof(Index));
         }
 

@@ -6,6 +6,24 @@
     ViewData["Title"] = "🔔 My Notifications";
 }
 
+@{
+    ViewData["Title"] = "Tickets assignés";
+
+    // Définir le bon layout en fonction du rôle de l'utilisateur
+    if (User.IsInRole("Admin"))
+    {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+    else if (User.IsInRole("SupportAgent"))
+    {
+        Layout = "~/Views/Shared/_SupportAgentLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+}
+
 <div class="container py-5">
 
     <!-- Header -->
@@ -14,9 +32,6 @@
             <h1 class="fw-bold mb-1">🔔 My Notifications</h1>
             <p class="text-muted mb-0">All your alerts and system updates.</p>
         </div>
-        <a asp-action="TestSend" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm">
-            📤 Send Test Notification
-        </a>
     </div>
 
     <!-- ✅ TempData Message (success) -->
