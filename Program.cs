@@ -67,6 +67,7 @@ namespace Ticketing_System
             services.AddScoped<ISupportTeamService, SupportTeamService>();
             services.AddScoped<IEscalationRuleService, EscalationRuleService>();
             services.AddScoped<IAssignmentRuleService, AssignmentRuleService>();
+            services.AddScoped<CompleteUserDeletionService>();
 
             // Enfin, le TicketService qui dépend de plusieurs autres services
             services.AddScoped<ITicketService, TicketService>();

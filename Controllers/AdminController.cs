@@ -199,26 +199,33 @@ namespace Ticketing_System.Controllers
             return View(user);
         }
 
-        // POST: Admin/DeleteUser/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteUserConfirmed(string id)
         {
             try
             {
-                await _userService.DeleteUserAsync(id);
-                TempData["SuccessMessage"] = "User deactivated successfully!";
+                // Utiliser le service de suppression complète
+                var deletionService = HttpContext.RequestServices.GetService<CompleteUserDeletionService>();
+                if (deletionService == null)
+                {
+                    TempData["ErrorMessage"] = "Service de suppression non disponible.";
+                    return RedirectToAction(nameof(Users));
+                }
+
+                await deletionService.DeleteUserCompletelyAsync(id);
+                TempData["SuccessMessage"] = "User deleted successfully!";
                 return RedirectToAction(nameof(Users));
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = ex.Message;
+                TempData["ErrorMessage"] = $"Error deleting user: {ex.Message}";
                 return RedirectToAction(nameof(Users));
             }
         }
 
 
-       [HttpGet]
+        [HttpGet]
 public async Task<IActionResult> Dashboard()
 {
     ViewBag.TotalUsers = await _userService.GetTotalUsersAsync();

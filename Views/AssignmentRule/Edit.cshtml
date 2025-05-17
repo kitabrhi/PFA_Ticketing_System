@@ -1,0 +1,164 @@
+﻿@model Ticketing_System.Models.AssignmentRule
+@{
+    var user = Context.User;
+    if (user?.Identity?.IsAuthenticated ?? false)
+    {
+        if (user.IsInRole("Admin") || user.IsInRole("SuperAdmin"))
+        {
+            Layout = "~/Views/Shared/_AdminLayout.cshtml";
+        }
+        else if (user.IsInRole("SupportAgent"))
+        {
+            Layout = "~/Views/Shared/_SupportAgentLayout.cshtml";
+        }
+        else
+        {
+            Layout = "~/Views/Shared/_UserLayout.cshtml";
+        }
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    ViewData["Title"] = "Modifier la règle d'assignation";
+}
+
+<div class="container-fluid px-4 py-5 bg-light">
+    <!-- Header -->
+    <div class="row mb-4 align-items-center">
+        <div class="col-lg-8">
+            <h2 class="fw-bold text-primary mb-1"><i class="fas fa-edit me-2"></i>Modifier la règle d'assignation</h2>
+            <p class="text-muted">Modifiez les critères et les paramètres de la règle.</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            <a asp-action="Index" class="btn btn-outline-secondary btn-lg shadow-sm">
+                <i class="fas fa-arrow-left me-1"></i>Retour à la liste
+            </a>
+        </div>
+    </div>
+
+    <!-- Card -->
+    <div class="card rounded-4 shadow-sm">
+        <div class="card-body p-4">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="RuleID" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-4 mb-4"></div>
+
+                <!-- Informations générales -->
+                <div class="mb-4">
+                    <h5 class="border-start border-4 border-primary ps-3 mb-4">Informations générales</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="RuleName" class="form-label fw-semibold">Nom de la règle</label>
+                            <input asp-for="RuleName" class="form-control rounded-pill" placeholder="Nom descriptif de la règle" />
+                            <span asp-validation-for="RuleName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="RuleOrder" class="form-label fw-semibold">Ordre d'exécution</label>
+                            <input asp-for="RuleOrder" class="form-control rounded-pill" type="number" min="1" />
+                            <span asp-validation-for="RuleOrder" class="text-danger"></span>
+                            <small class="form-text text-muted">Priorité d'application (1 = plus haute)</small>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label fw-semibold">État de la règle</label>
+                            <div class="form-check form-switch mt-2">
+                                <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch" />
+                                <label asp-for="IsActive" class="form-check-label">Règle active</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Critères de correspondance -->
+                <div class="mb-4">
+                    <h5 class="border-start border-4 border-warning ps-3 mb-4">Critères de correspondance</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Category" class="form-label fw-semibold">Catégorie</label>
+                            <select asp-for="Category" asp-items="ViewBag.Categories" class="form-select rounded-pill">
+                                <option value="">Toutes les catégories</option>
+                            </select>
+                            <small class="form-text text-muted">Laisser vide pour appliquer à toutes les catégories</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Priority" class="form-label fw-semibold">Priorité</label>
+                            <select asp-for="Priority" asp-items="ViewBag.Priorities" class="form-select rounded-pill">
+                                <option value="">Toutes les priorités</option>
+                            </select>
+                            <small class="form-text text-muted">Laisser vide pour appliquer à toutes les priorités</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assignation -->
+                <div class="mb-4">
+                    <h5 class="border-start border-4 border-success ps-3 mb-4">Assignation du ticket</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Assigner à un agent</label>
+                            <select asp-for="AssignToUserID" asp-items="ViewBag.SupportAgents" class="form-select rounded-pill">
+                                <option value="">Sélectionner un agent</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Ou assigner à une équipe</label>
+                            <select asp-for="AssignToTeamID" asp-items="ViewBag.Teams" class="form-select rounded-pill">
+                                <option value="">Sélectionner une équipe</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="alert alert-info rounded-4 d-flex align-items-center">
+                        <i class="fas fa-info-circle me-3 fs-4"></i>
+                        <div>Vous devez choisir soit un agent spécifique, soit une équipe pour cette règle.</div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+                        <i class="fas fa-times me-1"></i>Annuler
+                    </a>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">
+                        <i class="fas fa-save me-1"></i>Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control, .form-select {
+        padding: 0.6rem 1rem;
+    }
+    
+    .form-switch .form-check-input {
+        width: 3em;
+        height: 1.5em;
+    }
+    
+    .form-switch .form-check-input:checked {
+        background-color: #4CAA88;
+        border-color: #4CAA88;
+    }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            // Gestion exclusive d'assignation (soit à un agent, soit à une équipe)
+            $("#AssignToUserID").change(function() {
+                if ($(this).val()) {
+                    $("#AssignToTeamID").val("");
+                }
+            });
+            
+            $("#AssignToTeamID").change(function() {
+                if ($(this).val()) {
+                    $("#AssignToUserID").val("");
+                }
+            });
+        });
+    </script>
+}
