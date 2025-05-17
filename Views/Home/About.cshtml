@@ -2,57 +2,375 @@
     ViewData["Title"] = "About Us";
 }
 
-<div class="container mt-5">
-    <!-- Section Title -->
-    <div class="text-center mb-5 quantum-animate-fade-in">
-        <h1 class="quantum-section-title mb-4">@ViewData["Title"]</h1>
-        <p class="lead quantum-text-muted">Welcome to the About page of QuantumDesk. Here, you can learn more about our support platform and the features that make it the best choice for your team.</p>
-    </div>
-
-    <!-- What We Do and Our Mission -->
-    <div class="row justify-content-center quantum-animate-slide-up">
-        <div class="col-md-5 mb-4 mb-md-0">
-            <h4 class="quantum-subtitle">What We Do</h4>
-            <p class="text-muted">QuantumDesk is a modern ticketing system designed to streamline customer support processes. It helps you manage, track, and resolve customer issues efficiently.</p>
-        </div>
-        <div class="col-md-5">
-            <h4 class="quantum-subtitle">Our Mission</h4>
-            <p class="text-muted">Our mission is to help businesses provide excellent customer service by providing tools that make customer support easier, faster, and more effective.</p>
+<div class="quantum-about-container">
+    <!-- Hero Section -->
+    <div class="quantum-hero-section">
+        <div class="quantum-hero-content">
+            <h1 class="quantum-title quantum-animate-fade-in">About QuantumDesk</h1>
+            <div class="quantum-divider"></div>
+            <p class="quantum-subtitle quantum-animate-fade-in delay-1">Reimagining Customer Support Experience</p>
         </div>
     </div>
 
-    <!-- CTA Button -->
-    <div class="text-center mt-5 quantum-animate-fade-in">
-        <a href="/" class="quantum-btn quantum-btn-primary quantum-btn-lg mb-3">
-            <i class="fas fa-home me-2"></i>Back to Home
-        </a>
+    <!-- Main Content Container -->
+    <div class="quantum-content-wrapper">
+        <!-- Introduction -->
+        <div class="quantum-intro-section quantum-animate-fade-in">
+            <p class="quantum-lead">Welcome to the world of QuantumDesk, where we transform customer support into a seamless, efficient, and satisfying experience for both businesses and their customers.</p>
+        </div>
+
+        <!-- What We Do Section -->
+        <div class="quantum-info-card-container">
+            <div class="quantum-info-card quantum-animate-slide-up delay-2">
+                <div class="quantum-card-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <div class="quantum-card-content">
+                    <h2 class="quantum-card-title">What We Do</h2>
+                    <p class="quantum-card-text">QuantumDesk is a modern ticketing system designed to streamline customer support processes. We help you manage, track, and resolve customer issues with unprecedented efficiency and clarity.</p>
+                </div>
+            </div>
+
+            <!-- Our Mission Section -->
+            <div class="quantum-info-card quantum-animate-slide-up delay-3">
+                <div class="quantum-card-icon">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+                <div class="quantum-card-content">
+                    <h2 class="quantum-card-title">Our Mission</h2>
+                    <p class="quantum-card-text">Our mission is to empower businesses with intelligent support tools that transform customer service into a competitive advantage. We believe every interaction is an opportunity to build lasting relationships.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Core Values Section -->
+        <div class="quantum-values-section quantum-animate-fade-in delay-4">
+            <h2 class="quantum-section-heading">Our Core Values</h2>
+            <div class="quantum-values-container">
+                <div class="quantum-value-item">
+                    <div class="quantum-value-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Customer First</h3>
+                    <p>We prioritize the needs of customers in everything we build</p>
+                </div>
+                <div class="quantum-value-item">
+                    <div class="quantum-value-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>Innovation</h3>
+                    <p>We continuously evolve our solutions to stay ahead</p>
+                </div>
+                <div class="quantum-value-item">
+                    <div class="quantum-value-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Reliability</h3>
+                    <p>Our platform is built for performance you can count on</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action Section -->
+        <div class="quantum-cta-section quantum-animate-fade-in delay-5">
+            <h2 class="quantum-cta-heading">Ready to transform your customer support?</h2>
+            <div class="quantum-btn-group">
+                <a href="/contact" class="quantum-btn quantum-btn-primary">
+                    <i class="fas fa-paper-plane me-2"></i>Contact Us
+                </a>
+                <a href="/" class="quantum-btn quantum-btn-outline">
+                    <i class="fas fa-home me-2"></i>Back to Home
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Add Custom Styles -->
+<!-- Enhanced Styles -->
 <style>
-    /* Section Title and Subtitle */
-    .quantum-section-title {
-        font-size: 2.5rem;
-        font-weight: 700;
+    /* Global Styles */
+    .quantum-about-container {
+        font-family: 'Poppins', sans-serif;
         color: #333;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    /* Hero Section */
+    .quantum-hero-section {
+        background: linear-gradient(135deg, #00a78e 0%, #004d70 100%);
+        height: 320px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+        margin-bottom: 60px;
+        position: relative;
+    }
+
+    .quantum-hero-content {
+        padding: 0 20px;
+        z-index: 2;
+    }
+
+    .quantum-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 10px;
         letter-spacing: 1px;
     }
+
+    .quantum-divider {
+        width: 80px;
+        height: 4px;
+        background-color: #fff;
+        margin: 20px auto;
+        border-radius: 2px;
+    }
+
     .quantum-subtitle {
         font-size: 1.5rem;
-        color: #333;
+        font-weight: 300;
+        margin-top: 10px;
+    }
+
+    /* Content Wrapper */
+    .quantum-content-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    /* Intro Section */
+    .quantum-intro-section {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .quantum-lead {
+        font-size: 1.25rem;
+        line-height: 1.8;
+        color: #555;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    /* Info Cards */
+    .quantum-info-card-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        justify-content: center;
+        margin-bottom: 60px;
+    }
+
+    .quantum-info-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        padding: 30px;
+        flex: 1;
+        min-width: 300px;
+        max-width: 500px;
+        display: flex;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .quantum-info-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+    }
+
+    .quantum-card-icon {
+        font-size: 2.5rem;
+        margin-right: 20px;
+        color: #00a78e;
+        flex-shrink: 0;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 167, 142, 0.1);
+        border-radius: 50%;
+    }
+
+    .quantum-card-content {
+        flex-grow: 1;
+    }
+
+    .quantum-card-title {
+        font-size: 1.5rem;
         font-weight: 600;
+        margin-bottom: 15px;
+        color: #00a78e;
     }
 
-    /* Subtle Animations */
+    .quantum-card-text {
+        color: #666;
+        line-height: 1.6;
+    }
+
+    /* Core Values Section */
+    .quantum-values-section {
+        margin-bottom: 60px;
+        text-align: center;
+    }
+
+    .quantum-section-heading {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 40px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .quantum-section-heading:after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background-color: #00a78e;
+        border-radius: 2px;
+    }
+
+    .quantum-values-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+    }
+
+    .quantum-value-item {
+        padding: 20px;
+        flex: 1;
+        min-width: 200px;
+        max-width: 300px;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .quantum-value-item:hover {
+        transform: translateY(-5px);
+    }
+
+    .quantum-value-icon {
+        font-size: 2rem;
+        margin-bottom: 15px;
+        color: #00a78e;
+        height: 70px;
+        width: 70px;
+        line-height: 70px;
+        border-radius: 50%;
+        background-color: rgba(0, 167, 142, 0.1);
+        margin: 0 auto 20px;
+    }
+
+    .quantum-value-item h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .quantum-value-item p {
+        color: #666;
+        font-size: 0.95rem;
+    }
+
+    /* CTA Section */
+    .quantum-cta-section {
+        background-color: #f8f9fa;
+        padding: 60px 40px;
+        text-align: center;
+        border-radius: 12px;
+        margin-bottom: 60px;
+    }
+
+    .quantum-cta-heading {
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin-bottom: 30px;
+        color: #333;
+    }
+
+    .quantum-btn-group {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    /* Button Styles */
+    .quantum-btn {
+        border-radius: 50px;
+        font-weight: 600;
+        padding: 14px 32px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        min-width: 180px;
+    }
+
+    .quantum-btn-primary {
+        background-color: #00a78e;
+        color: white;
+        border: 2px solid #00a78e;
+    }
+
+    .quantum-btn-primary:hover {
+        background-color: #008a75;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 167, 142, 0.2);
+    }
+
+    .quantum-btn-outline {
+        background-color: transparent;
+        color: #00a78e;
+        border: 2px solid #00a78e;
+    }
+
+    .quantum-btn-outline:hover {
+        background-color: rgba(0, 167, 142, 0.1);
+        transform: translateY(-3px);
+    }
+
+    /* Animations */
     .quantum-animate-fade-in {
-        animation: fadeIn 1s ease-out;
-    }
-    .quantum-animate-slide-up {
-        animation: slideUp 1s ease-out;
+        animation: fadeIn 1s ease-out forwards;
     }
 
-    /* Fade-in Animation */
+    .quantum-animate-slide-up {
+        animation: slideUp 1s ease-out forwards;
+    }
+
+    .delay-1 {
+        animation-delay: 0.2s;
+    }
+
+    .delay-2 {
+        animation-delay: 0.3s;
+    }
+
+    .delay-3 {
+        animation-delay: 0.4s;
+    }
+
+    .delay-4 {
+        animation-delay: 0.5s;
+    }
+
+    .delay-5 {
+        animation-delay: 0.6s;
+    }
+
     @@keyframes fadeIn {
         0% {
             opacity: 0;
@@ -62,10 +380,9 @@
         }
     }
 
-    /* Slide-up Animation */
     @@keyframes slideUp {
         0% {
-            transform: translateY(20px);
+            transform: translateY(30px);
             opacity: 0;
         }
         100% {
@@ -74,28 +391,53 @@
         }
     }
 
-    /* Button Styles */
-    .quantum-btn {
-        border-radius: 30px;
-        font-weight: 600;
-        padding: 12px 30px;
-        transition: background 0.3s ease, transform 0.2s ease-in-out;
+    /* Responsive Adjustments */
+    @@media (max-width: 768px) {
+        .quantum-title {
+            font-size: 2.5rem;
+        }
+        
+        .quantum-subtitle {
+            font-size: 1.2rem;
+        }
+        
+        .quantum-hero-section {
+            height: 250px;
+        }
+        
+        .quantum-info-card {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .quantum-card-icon {
+            margin-right: 0;
+            margin-bottom: 20px;
+        }
+        
+        .quantum-values-container {
+            gap: 20px;
+        }
     }
 
-    .quantum-btn-primary {
-        background-color: #00a78e;
-        color: white;
-        border: none;
-    }
-
-    .quantum-btn-primary:hover {
-        background-color: #007b6f;
-        transform: translateY(-3px);
-    }
-
-    /* Text Muted */
-    .quantum-text-muted {
-        color: #6c757d;
+    @@media (max-width: 576px) {
+        .quantum-title {
+            font-size: 2rem;
+        }
+        
+        .quantum-hero-section {
+            height: 200px;
+        }
+        
+        .quantum-btn {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        
+        .quantum-btn-group {
+            flex-direction: column;
+            gap: 10px;
+        }
     }
 </style>
-

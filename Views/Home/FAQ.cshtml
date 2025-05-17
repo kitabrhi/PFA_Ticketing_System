@@ -2,132 +2,412 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-5">
-    <h1 class="text-center mb-5 quantum-section-title">Frequently Asked Questions</h1>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 
-    <!-- FAQ Section -->
-    <div class="accordion" id="faqAccordion">
-        <div class="accordion-item quantum-animate-slide-up" style="animation-delay: 0.1s;">
-            <h2 class="accordion-header" id="faqHeadingOne">
-                <button class="accordion-button quantum-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseOne" aria-expanded="true" aria-controls="faqCollapseOne">
-                    <strong>What is QuantumDesk?</strong>
-                </button>
-            </h2>
-            <div id="faqCollapseOne" class="accordion-collapse collapse show" aria-labelledby="faqHeadingOne" data-bs-parent="#faqAccordion">
-                <div class="accordion-body quantum-accordion-body">
-                    QuantumDesk is a ticket management system designed to help businesses streamline their customer support.
+<style>
+    body {
+        background-color: #f0f4f8;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .faq-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+    }
+
+    .faq-header {
+        text-align: center;
+        margin-bottom: 3.5rem;
+        position: relative;
+    }
+
+    .faq-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 1rem;
+        position: relative;
+        display: inline-block;
+    }
+
+    .faq-title:after {
+        content: '';
+        position: absolute;
+        bottom: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, #6366f1, #4f46e5);
+        border-radius: 2px;
+    }
+
+    .faq-subtitle {
+        font-size: 1.1rem;
+        color: #64748b;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .faq-search {
+        position: relative;
+        max-width: 500px;
+        margin: 2rem auto 3rem;
+    }
+
+    .faq-search input {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        padding-left: 3rem;
+        border: none;
+        background-color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        border-radius: 12px;
+        font-size: 1rem;
+        color: #334155;
+        transition: all 0.3s ease;
+    }
+
+    .faq-search input:focus {
+        outline: none;
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+    }
+
+    .faq-search i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6366f1;
+        font-size: 1.2rem;
+    }
+
+    .faq-accordion-item {
+        background: white;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        transition: all 0.3s ease;
+    }
+
+    .faq-accordion-item:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .faq-accordion-button {
+        width: 100%;
+        padding: 1.2rem 1.5rem;
+        background: white;
+        border: none;
+        text-align: left;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #334155;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .faq-accordion-button:hover {
+        background-color: #f8fafc;
+    }
+
+    .faq-accordion-button .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        background-color: #eff6ff;
+        color: #6366f1;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        transform: rotate(0deg);
+        flex-shrink: 0;
+        margin-left: 12px;
+    }
+
+    .faq-accordion-button.active .icon {
+        background-color: #6366f1;
+        color: white;
+        transform: rotate(180deg);
+    }
+
+    .faq-accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        background-color: white;
+    }
+
+    .faq-accordion-content.active {
+        max-height: 300px;
+    }
+
+    .faq-accordion-body {
+        padding: 0 1.5rem 1.5rem;
+        color: #64748b;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .faq-category-tabs {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 2.5rem;
+        flex-wrap: wrap;
+    }
+
+    .faq-category-tab {
+        background-color: white;
+        border: 1px solid #e2e8f0;
+        color: #64748b;
+        padding: 0.6rem 1.2rem;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .faq-category-tab:hover {
+        background-color: #f8fafc;
+        border-color: #cbd5e1;
+    }
+
+    .faq-category-tab.active {
+        background-color: #eff6ff;
+        color: #6366f1;
+        border-color: #c7d2fe;
+    }
+
+    .contact-support {
+        text-align: center;
+        margin-top: 3rem;
+        padding: 2rem;
+        background: linear-gradient(135deg, #eff6ff, #eef2ff);
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    }
+
+    .contact-support h3 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 1rem;
+    }
+
+    .contact-support p {
+        color: #64748b;
+        margin-bottom: 1.5rem;
+        font-size: 1rem;
+    }
+
+    .contact-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        color: white;
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .contact-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+        text-decoration: none;
+        color: white;
+    }
+
+    @@media (max-width: 768px) {
+        .faq-title {
+            font-size: 1.8rem;
+        }
+
+        .faq-subtitle {
+            font-size: 1rem;
+        }
+
+        .faq-accordion-button {
+            font-size: 1rem;
+            padding: 1rem 1.2rem;
+        }
+
+        .faq-accordion-body {
+            padding: 0 1.2rem 1.2rem;
+        }
+    }
+</style>
+
+<div class="faq-container">
+    <div class="faq-header" data-aos="fade-up">
+        <h1 class="faq-title">Frequently Asked Questions</h1>
+        <p class="faq-subtitle">Find answers to the most common questions about QuantumDesk and how to get the most out of our platform.</p>
+    </div>
+
+    <div class="faq-search" data-aos="fade-up" data-aos-delay="100">
+        <i class="fas fa-search"></i>
+        <input type="text" id="faqSearch" placeholder="Search for questions..." />
+    </div>
+
+    <div class="faq-category-tabs" data-aos="fade-up" data-aos-delay="200">
+        <div class="faq-category-tab active">All</div>
+        <div class="faq-category-tab">Getting Started</div>
+        <div class="faq-category-tab">Tickets</div>
+        <div class="faq-category-tab">Account</div>
+        <div class="faq-category-tab">Billing</div>
+    </div>
+
+    <div class="faq-accordion" data-aos="fade-up" data-aos-delay="300">
+        <div class="faq-accordion-item">
+            <button class="faq-accordion-button active">
+                <span>What is QuantumDesk?</span>
+                <span class="icon"><i class="fas fa-chevron-down"></i></span>
+            </button>
+            <div class="faq-accordion-content active">
+                <div class="faq-accordion-body">
+                    QuantumDesk is a comprehensive ticket management system designed to help businesses streamline their customer support operations. Our platform offers tools for ticket tracking, customer communication, performance analytics, and more to ensure efficient issue resolution and improved customer satisfaction.
                 </div>
             </div>
         </div>
 
-        <div class="accordion-item quantum-animate-slide-up" style="animation-delay: 0.2s;">
-            <h2 class="accordion-header" id="faqHeadingTwo">
-                <button class="accordion-button quantum-accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseTwo" aria-expanded="false" aria-controls="faqCollapseTwo">
-                    <strong>How do I create a ticket?</strong>
-                </button>
-            </h2>
-            <div id="faqCollapseTwo" class="accordion-collapse collapse" aria-labelledby="faqHeadingTwo" data-bs-parent="#faqAccordion">
-                <div class="accordion-body quantum-accordion-body">
-                    To create a ticket, simply log in to your dashboard and click on the 'Create New Ticket' button.
+        <div class="faq-accordion-item">
+            <button class="faq-accordion-button">
+                <span>How do I create a ticket?</span>
+                <span class="icon"><i class="fas fa-chevron-down"></i></span>
+            </button>
+            <div class="faq-accordion-content">
+                <div class="faq-accordion-body">
+                    To create a ticket, simply log in to your dashboard and click on the 'Create New Ticket' button located at the top-right corner of your screen. Fill in the required details such as ticket title, description, priority level, and category. You can also attach files if needed. Once submitted, your ticket will be assigned to an available agent.
                 </div>
             </div>
         </div>
 
-        <div class="accordion-item quantum-animate-slide-up" style="animation-delay: 0.3s;">
-            <h2 class="accordion-header" id="faqHeadingThree">
-                <button class="accordion-button quantum-accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseThree" aria-expanded="false" aria-controls="faqCollapseThree">
-                    <strong>How can I contact support?</strong>
-                </button>
-            </h2>
-            <div id="faqCollapseThree" class="accordion-collapse collapse" aria-labelledby="faqHeadingThree" data-bs-parent="#faqAccordion">
-                <div class="accordion-body quantum-accordion-body">
-                    You can contact support by submitting a ticket through the system, or by emailing <a href="mailto:support@quantumdesk.com" class="text-info">support@quantumdesk.com</a>.
+        <div class="faq-accordion-item">
+            <button class="faq-accordion-button">
+                <span>How can I contact support?</span>
+                <span class="icon"><i class="fas fa-chevron-down"></i></span>
+            </button>
+            <div class="faq-accordion-content">
+                <div class="faq-accordion-body">
+                    You can contact our support team by submitting a ticket through the system, or by emailing <a href="mailto:support@quantumdesk.com" style="color: #6366f1; font-weight: 500;">support@quantumdesk.com</a>. Our team is available 24/7 to help resolve any issues you might encounter while using QuantumDesk.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-accordion-item">
+            <button class="faq-accordion-button">
+                <span>What are the system requirements?</span>
+                <span class="icon"><i class="fas fa-chevron-down"></i></span>
+            </button>
+            <div class="faq-accordion-content">
+                <div class="faq-accordion-body">
+                    QuantumDesk is a cloud-based solution that works on any modern web browser. We recommend using the latest versions of Chrome, Firefox, Safari, or Edge for the best experience. Our mobile app is available for iOS and Android devices running the latest OS versions.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-accordion-item">
+            <button class="faq-accordion-button">
+                <span>How secure is my data?</span>
+                <span class="icon"><i class="fas fa-chevron-down"></i></span>
+            </button>
+            <div class="faq-accordion-content">
+                <div class="faq-accordion-body">
+                    We take security seriously. QuantumDesk employs industry-standard encryption protocols, regular security audits, and strict access controls to ensure your data remains secure. All information is encrypted both in transit and at rest, and we comply with GDPR, CCPA, and other data protection regulations.
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="contact-support" data-aos="fade-up" data-aos-delay="400">
+        <h3>Couldn't find what you're looking for?</h3>
+        <p>Our support team is available 24/7 to help you with any questions or concerns.</p>
+        <a href="mailto:support@quantumdesk.com" class="contact-btn">
+            <i class="fas fa-envelope"></i>
+            Contact Support
+        </a>
+    </div>
 </div>
 
-@section Styles {
-    <style>
-        /* Main Title Styling */
-        .quantum-section-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #333;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            position: relative;
-            padding-bottom: 10px;
-            margin-bottom: 50px;
-        }
+@section Scripts {
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize AOS
+            AOS.init({ 
+                duration: 800,
+                once: true 
+            });
 
-        .quantum-section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 60px;
-            height: 3px;
-            background-color: #00a78e;
-        }
+            // Accordion functionality
+            const accordionButtons = document.querySelectorAll('.faq-accordion-button');
+            
+            accordionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Toggle current button
+                    this.classList.toggle('active');
+                    
+                    // Toggle content
+                    const content = this.nextElementSibling;
+                    if (content.classList.contains('active')) {
+                        content.classList.remove('active');
+                    } else {
+                        content.classList.add('active');
+                    }
+                });
+            });
 
-        /* Accordion Button Styling */
-        .quantum-accordion-button {
-            background-color: #007b6f;
-            color: white;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-        }
+            // Search functionality
+            const searchInput = document.getElementById('faqSearch');
+            const accordionItems = document.querySelectorAll('.faq-accordion-item');
+            
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                accordionItems.forEach(item => {
+                    const questionText = item.querySelector('.faq-accordion-button span').textContent.toLowerCase();
+                    const answerText = item.querySelector('.faq-accordion-body').textContent.toLowerCase();
+                    
+                    if (questionText.includes(searchTerm) || answerText.includes(searchTerm)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
 
-        .quantum-accordion-button:not(.collapsed) {
-            background-color: #005f47;
-        }
-
-        .quantum-accordion-button:focus {
-            box-shadow: none;
-        }
-
-        .quantum-accordion-body {
-            background-color: #f7f7f7;
-            color: #555;
-            font-size: 1.1rem;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
-            line-height: 1.6;
-        }
-
-        /* Animation */
-        .quantum-animate-slide-up {
-            animation: slideUp 0.5s ease-out forwards;
-        }
-
-        @@keyframes slideUp {
-            0% {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-            100% {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        /* Custom Link Styling */
-        a {
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        .text-info {
-            color: #00a78e !important;
-        }
-    </style>
+            // Category tabs
+            const categoryTabs = document.querySelectorAll('.faq-category-tab');
+            
+            categoryTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    categoryTabs.forEach(t => t.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // For demo purposes, just reset search when clicking tabs
+                    searchInput.value = '';
+                    accordionItems.forEach(item => {
+                        item.style.display = 'block';
+                    });
+                });
+            });
+        });
+    </script>
 }

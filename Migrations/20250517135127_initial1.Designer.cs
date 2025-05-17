@@ -12,8 +12,8 @@ using Ticketing_System;
 namespace Ticketing_System.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250517103930_initial")]
-    partial class initial
+    [Migration("20250517135127_initial1")]
+    partial class initial1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

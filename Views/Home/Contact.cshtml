@@ -2,119 +2,476 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<section class="contact-us py-5" style="background-color: #f4f6f9;">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-6 text-center mb-4">
-                <h2 class="display-4 text-dark">Get In Touch</h2>
-                <p class="lead text-muted">We're here to help you with any queries or support. Fill out the form below, and our team will get back to you shortly.</p>
-            </div>
-        </div>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 
-        <!-- Contact Information Section -->
-        <div class="row justify-content-center">
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card shadow-lg p-4 rounded-4" style="background-color: #ffffff;">
-                    <h4 class="text-center text-primary mb-4">Contact Information</h4>
-                    <ul class="list-unstyled">
-                        <li><i class="fas fa-envelope text-primary me-2"></i><strong>Email:</strong> <a href="mailto:support@gmail.com">support@gmail.com</a></li>
-                        <li><i class="fas fa-phone-alt text-primary me-2"></i><strong>Phone:</strong> +2126000000</li>
-                        <li><i class="fas fa-map-marker-alt text-primary me-2"></i><strong>Address:</strong> QuantumDesk, 123 Support St, Casablanca, Morocco</li>
-                    </ul>
+<style>
+    body {
+        background-color: #f0f4f8;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .contact-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 4rem 1.5rem;
+    }
+
+    .contact-header {
+        text-align: center;
+        margin-bottom: 3.5rem;
+        position: relative;
+    }
+
+    .contact-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 1rem;
+        position: relative;
+        display: inline-block;
+    }
+
+    .contact-title:after {
+        content: '';
+        position: absolute;
+        bottom: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, #6366f1, #4f46e5);
+        border-radius: 2px;
+    }
+
+    .contact-subtitle {
+        font-size: 1.1rem;
+        color: #64748b;
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 2rem;
+    }
+
+    .contact-info-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        color: white;
+    }
+
+    .contact-info-card:before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 60%);
+        transform: rotate(-15deg);
+        z-index: -1;
+    }
+
+    .contact-info-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: white;
+        position: relative;
+        padding-bottom: 0.8rem;
+    }
+
+    .contact-info-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 1px;
+    }
+
+    .contact-info-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .contact-info-item {
+        display: flex;
+        align-items: flex-start;
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .contact-info-item:last-child {
+        border-bottom: none;
+    }
+
+    .contact-info-icon {
+        width: 40px;
+        height: 40px;
+        background-color: rgba(255, 255, 255, 0.15);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+
+    .contact-info-content {
+        flex: 1;
+    }
+
+    .contact-info-label {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        margin-bottom: 0.3rem;
+    }
+
+    .contact-info-value {
+        font-size: 1.05rem;
+        font-weight: 500;
+    }
+
+    .contact-info-value a {
+        color: white;
+        text-decoration: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .contact-info-value a:hover {
+        opacity: 0.8;
+        text-decoration: none;
+    }
+
+    .social-links {
+        margin-top: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .social-link {
+        width: 36px;
+        height: 36px;
+        background-color: rgba(255, 255, 255, 0.15);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .social-link:hover {
+        background-color: rgba(255, 255, 255, 0.25);
+        transform: translateY(-3px);
+    }
+
+    .contact-form-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+    }
+
+    .form-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 2rem;
+        position: relative;
+        padding-bottom: 0.8rem;
+    }
+
+    .form-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background-color: #6366f1;
+        border-radius: 1px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.9rem 1.2rem;
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 1rem;
+        color: #334155;
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #334155;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        background-color: white;
+    }
+
+    .form-textarea {
+        resize: none;
+        height: 150px;
+    }
+
+    .form-submit-btn {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .form-submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(99, 102, 241, 0.25);
+    }
+
+    .location-map {
+        width: 100%;
+        height: 300px;
+        background-color: #f8fafc;
+        border-radius: 16px;
+        margin-top: 3rem;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+    }
+
+    .support-info {
+        margin-top: 3rem;
+        text-align: center;
+        background: #f8fafc;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    }
+
+    .support-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 1rem;
+    }
+
+    .support-text {
+        color: #64748b;
+        max-width: 600px;
+        margin: 0 auto 1.5rem;
+    }
+
+    .floating-shape {
+        position: absolute;
+        z-index: -1;
+        opacity: 0.5;
+    }
+
+    .shape-1 {
+        top: 10%;
+        left: 5%;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #6366f1, #a5b4fc);
+        filter: blur(30px);
+    }
+
+    .shape-2 {
+        bottom: 10%;
+        right: 5%;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #4f46e5, #c7d2fe);
+        filter: blur(40px);
+    }
+
+    @@media (max-width: 992px) {
+        .contact-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .contact-form-card, .contact-info-card {
+            padding: 1.8rem;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .contact-title {
+            font-size: 2rem;
+        }
+
+        .contact-container {
+            padding: 2rem 1rem;
+        }
+    }
+</style>
+
+<div class="contact-container">
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+
+    <div class="contact-header" data-aos="fade-up">
+        <h1 class="contact-title">Get In Touch</h1>
+        <p class="contact-subtitle">We're here to help with any questions you might have about QuantumDesk. Feel free to reach out through any of the channels below or use our contact form.</p>
+    </div>
+
+    <div class="contact-grid">
+        <div class="contact-info-wrapper" data-aos="fade-right" data-aos-delay="100">
+            <div class="contact-info-card">
+                <h2 class="contact-info-title">Contact Information</h2>
+                <ul class="contact-info-list">
+                    <li class="contact-info-item">
+                        <div class="contact-info-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-info-content">
+                            <div class="contact-info-label">Email</div>
+                            <div class="contact-info-value">
+                                <a href="mailto:support@quantumdesk.com">support@quantumdesk.com</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="contact-info-item">
+                        <div class="contact-info-icon">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div class="contact-info-content">
+                            <div class="contact-info-label">Phone</div>
+                            <div class="contact-info-value">+212 600 000 000</div>
+                        </div>
+                    </li>
+                    <li class="contact-info-item">
+                        <div class="contact-info-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-info-content">
+                            <div class="contact-info-label">Office Address</div>
+                            <div class="contact-info-value">
+                                QuantumDesk HQ<br>
+                                123 Support Street<br>
+                                Casablanca, Morocco
+                            </div>
+                        </div>
+                    </li>
+                    <li class="contact-info-item">
+                        <div class="contact-info-icon">
+                            <i class="far fa-clock"></i>
+                        </div>
+                        <div class="contact-info-content">
+                            <div class="contact-info-label">Working Hours</div>
+                            <div class="contact-info-value">
+                                Monday - Friday: 9am - 6pm<br>
+                                Weekend: 10am - 4pm
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
         </div>
 
-        <!-- Contact Form Section -->
-        <div class="row justify-content-center mt-5">
-            <div class="col-lg-8">
-                <h4 class="text-center text-primary mb-4">Send Us a Message</h4>
+        <div class="contact-form-wrapper" data-aos="fade-left" data-aos-delay="200">
+            <div class="contact-form-card">
+                <h2 class="form-title">Send Us a Message</h2>
                 <form method="post" action="/Home/SubmitContactForm" class="contact-form">
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <input type="text" name="name" id="name" class="form-control rounded-pill" placeholder="Your Name" required />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="email" name="email" id="email" class="form-control rounded-pill" placeholder="Your Email" required />
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label">Your Name</label>
+                        <input type="text" name="name" id="name" class="form-control" placeholder="Enter your full name" required />
                     </div>
-                    <div class="mb-4">
-                        <textarea class="form-control rounded-4" name="message" id="message" rows="5" placeholder="Your Message" required></textarea>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" name="email" id="email" class="form-control" placeholder="Enter your email address" required />
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-3" style="font-size: 1.1rem; transition: all 0.3s ease;">
-                        <i class="fas fa-paper-plane me-2"></i>Send Message
+                    
+                    <div class="form-group">
+                        <label class="form-label">Subject</label>
+                        <input type="text" name="subject" id="subject" class="form-control" placeholder="What is this regarding?" required />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Your Message</label>
+                        <textarea class="form-control form-textarea" name="message" id="message" rows="5" placeholder="How can we help you?" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="form-submit-btn">
+                        <i class="fas fa-paper-plane"></i>
+                        Send Message
                     </button>
                 </form>
             </div>
         </div>
     </div>
-</section>
 
-@section Styles {
-    <style>
-        /* Section Styling */
-        .contact-us {
-            background-color: #f4f6f9;
-        }
+    <div class="location-map" data-aos="fade-up" data-aos-delay="300">
+        <!-- Replace with actual map embed code -->
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d106376.72692335998!2d-7.669336051091895!3d33.57240299168607!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xda7cd4778aa113b%3A0xb06c1d84f310fd3!2sCasablanca%2C%20Morocco!5e0!3m2!1sen!2sus!4v1621345678901!5m2!1sen!2sus" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    </div>
 
-        /* Card Styling */
-        .card {
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
+    <div class="support-info" data-aos="fade-up" data-aos-delay="400">
+        <h3 class="support-title">Need immediate assistance?</h3>
+        <p class="support-text">Our support team is available 24/7 to help you resolve issues quickly. For faster response, please include your account details when contacting us.</p>
+    </div>
+</div>
 
-        /* Button Styling */
-        .btn-primary {
-            background-color: #00a78e;
-            border-color: #00a78e;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: #028a70;
-            border-color: #028a70;
-            transform: translateY(-5px);
-        }
-
-        /* Form Styling */
-        .form-control {
-            border-radius: 50px;
-            padding: 1rem;
-            border: 1px solid #ddd;
-            font-size: 1.1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-control:focus {
-            border-color: #00a78e;
-            box-shadow: 0 0 8px rgba(0, 167, 142, 0.3);
-        }
-
-        /* Header Styling */
-        h2.display-4 {
-            font-weight: 700;
-            font-size: 2.5rem;
-            color: #333;
-        }
-
-        h4 {
-            font-size: 1.75rem;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .text-primary {
-            color: #00a78e;
-        }
-
-        /* Animation on Form Inputs */
-        .contact-form input, .contact-form textarea {
-            transition: all 0.3s ease;
-        }
-
-        .contact-form input:focus, .contact-form textarea:focus {
-            border-color: #00a78e;
-            box-shadow: 0 0 5px rgba(0, 167, 142, 0.3);
-        }
-    </style>
+@section Scripts {
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize AOS
+            AOS.init({ 
+                duration: 800,
+                once: true,
+                easing: 'ease-out'
+            });
+        });
+    </script>
 }
